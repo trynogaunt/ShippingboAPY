@@ -41,7 +41,7 @@ class Product(APIWrapper):
 
     def update_product(self, product_id, asin = None, cdiscount_price = None, client_ref = None, eco_tax_cents = None, hs_code = None, is_pack = None, location = None,\
                     parent_source = None, parent_source_ref = None, physical_stock = None, picture_url = None, source = None, source_ref = None, supplier = None,\
-                     user_ref = None , weight = None , width = None, height = None , lengh = None, title = None):
+                     user_ref = None , weight = None , width = None, height = None , lenght = None, title = None):
         '''Update product by product id'''
 
         payload = {}
@@ -52,7 +52,7 @@ class Product(APIWrapper):
         
         return self.patch(f"{self.endpoint}/{product_id}", payload)
 
-    def update_product_sku_ean(self, sku = None,  ean13 = None):
+    def update_product_sku_ean(self, sku = None,  ean13 = None, ):
         url_compose = []
         if sku is None and ean13 is None:
             raise ValueError("sku or ean13 is required")

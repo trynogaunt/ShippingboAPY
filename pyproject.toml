@@ -1,0 +1,11 @@
+[project]
+name = "shippinboapi"
+version= "0.0.1"
+authors = [{name = "Quentin Toussaint", email = "toussaint.quentin00@gmail.com"}]
+description = "Python wrapper for the Shippinbo API"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.6"
+classifiers = ["Programming Language :: Python :: 3.6", "Programming Language :: Python :: 3.7", "Programming Language :: Python :: 3.8", "Programming Language :: Python :: 3.9"]
+
