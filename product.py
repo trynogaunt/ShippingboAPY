@@ -35,11 +35,22 @@ class Product(APIWrapper):
     
         return self.post(self.endpoint, payload)
 
-    def delete_product(self, product_id):
+    def delete_product(self, product_id : int) -> dict:
+        '''Delete product by product id'''
         return self.delete(f"{self.endpoint}/{product_id}")
 
-    def update_product(self, product_id):
-        return self.put(f"{self.endpoint}/{product_id}")
+    def update_product(self, product_id, asin = None, cdiscount_price = None, client_ref = None, eco_tax_cents = None, hs_code = None, is_pack = None, location = None,\
+                    parent_source = None, parent_source_ref = None, physical_stock = None, picture_url = None, source = None, source_ref = None, supplier = None,\
+                     user_ref = None , weight = None , width = None, height = None , lengh = None, title = None):
+        '''Update product by product id'''
+
+        payload = {}
+        for key, value in locals().items():
+            if key != "product_id" or key != "self" and value is not None:
+                payload[key] = value
+                
+        
+        return self.patch(f"{self.endpoint}/{product_id}", payload)
 
     def update_product_sku_ean(self, sku = None,  ean13 = None):
         url_compose = []
@@ -50,9 +61,9 @@ class Product(APIWrapper):
         elif sku is not None and ean13 is None:
             url_compose.append("sku")
             url_compose.append(sku)
-            pass
+            
         elif ean13 is not None and sku is None:
             url_compose.append("ean13")
             url_compose.append(ean13)
-            pass
-        return self.put(f"{self.endpoint}/{url_compose[0]}/{url_compose[1]}", payload)
+           
+        return self.patch(f"{self.endpoint}/{url_compose[0]}/{url_compose[1]}", payload)

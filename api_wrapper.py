@@ -7,11 +7,16 @@ class APIWrapper:
         self.api_key = api_key
         self.refresh_token = None
         self.session = requests.Session()
-        self.session.headers.update({"Content-Type": "application/json","Accept": "application/json",})
+        self.headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
+        self.session.headers.update(self.headers)
 
         logging.basicConfig(level=logging.INFO)
 
-    def _handle_response(self, response):
+    def _handle_response(self, response) -> dict | None:
         if response.status_code == 200:
             return response.json()
         else:
@@ -24,10 +29,10 @@ class APIWrapper:
             "grant_type": "authorization_code",
             "client_id": self.client_id,
             "client_secret": self.client_secret,
-            "code": self.token ,
+            "code": self.token,
             "redirect_uri": "urn:ietf:wg:oauth:2.0:oob"
         }
-        try :
+        try:
             requests.post(url, json=payload, headers=self.headers)
             print(f"Token {self.token} is still valid")
         except requests.RequestException as e:
@@ -48,41 +53,41 @@ class APIWrapper:
                 print("Can't refresh token")
                 exit(1)
 
-    def get(self , endpoint):
+    def get(self, endpoint) -> dict | None:
         url = f"{self.base_url}/{endpoint}"
         self.authenticate()
         try:
-            response = self.session.get(url)
+            response = self.session.get(url=url, headers=self.headers)
             return self._handle_response(response)
         except requests.RequestException as e:
             logging.error(f"GET request failed: {e}")
             return None
-    
-    def post(self , endpoint, payload):
+
+    def post(self, endpoint, payload) -> dict | None:
         url = f"{self.base_url}/{endpoint}"
         self.authenticate()
         try:
-            response = self.session.post(url=url , data=payload)
+            response = self.session.post(url=url, json=payload, headers=self.headers)
             return self._handle_response(response)
         except requests.RequestException as e:
             logging.error(f"POST request failed: {e}")
             return None
-    
-    def patch(self , endpoint):
+
+    def patch(self, endpoint, payload) -> dict | None:
         url = f"{self.base_url}/{endpoint}"
         self.authenticate()
         try:
-            response = self.session.patch(url)
+            response = self.session.patch(url=url, json=payload, headers=self.headers)
             return self._handle_response(response)
         except requests.RequestException as e:
             logging.error(f"PATCH request failed: {e}")
             return None
     
-    def delete(self , endpoint):
+    def delete(self , endpoint) -> dict | None:
         url = f"{self.base_url}/{endpoint}"
         self.authenticate()
         try: 
-            response = self.session.delete(url)
+            response = self.session.delete(url=url, headers=self.headers)
             return self._handle_response(response)
         except requests.RequestException as e:
             logging.error(f"DELETE request failed: {e}")
