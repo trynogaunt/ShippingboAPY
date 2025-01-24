@@ -124,30 +124,43 @@ class APIWrapper:
 
     def post(self, endpoint, payload) -> dict | None:
         url = f"{self.base_url}/{endpoint}"
-        self.authenticate()
-        try:
-            response = self.session.post(url=url, json=payload, headers=self.headers)
-            return self._handle_response(response)
-        except requests.RequestException as e:
-            logging.error(f"POST request failed: {e}")
-            return None
 
+
+        if self.authenticate():
+            try:
+                response = self.session.post(url=url, json=payload, headers=self.headers)
+                return self._handle_response(response)
+            except requests.RequestException as e:
+                logging.error(f"POST request failed: {e}")
+                return None
+        else:
+            print("Can't authenticate")
+            return None
+        
     def patch(self, endpoint, payload) -> dict | None:
         url = f"{self.base_url}/{endpoint}"
-        self.authenticate()
-        try:
-            response = self.session.patch(url=url, json=payload, headers=self.headers)
-            return self._handle_response(response)
-        except requests.RequestException as e:
-            logging.error(f"PATCH request failed: {e}")
+
+        if self.authenticate():
+            try:
+                response = self.session.patch(url=url, json=payload, headers=self.headers)
+                return self._handle_response(response)
+            except requests.RequestException as e:
+                logging.error(f"PATCH request failed: {e}")
+                return None
+        else:
+            print("Can't authenticate")
             return None
     
     def delete(self , endpoint) -> dict | None:
         url = f"{self.base_url}/{endpoint}"
-        self.authenticate()
-        try: 
-            response = self.session.delete(url=url, headers=self.headers)
-            return self._handle_response(response)
-        except requests.RequestException as e:
-            logging.error(f"DELETE request failed: {e}")
+
+        if self.authenticate():
+            try: 
+                response = self.session.delete(url=url, headers=self.headers)
+                return self._handle_response(response)
+            except requests.RequestException as e:
+                logging.error(f"DELETE request failed: {e}")
+                return None
+        else:
+            print("Can't authenticate")
             return None
