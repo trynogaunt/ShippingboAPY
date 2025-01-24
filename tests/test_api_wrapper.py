@@ -9,7 +9,7 @@ from api_wrapper import APIWrapper
 
 class TestAPIWrapper(unittest.TestCase):
     def setUp(self):
-        self.api = APIWrapper("C353su-OeNKw298ZZfmhHdOzq8KBzbQ5Yd9OXbr57Ic")
+        self.api = APIWrapper("C353su-OeNKw298ZZfmhHdOzq8KBzbQ5Yd9OXbr57Ic", 1, 1, "client_id", "client_secret")
 
     def test_get_access_token(self):
         self.assertIsNotNone(self.api.get_access_token())

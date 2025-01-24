@@ -1,8 +1,8 @@
 from api_wrapper import APIWrapper
 
 class Product(APIWrapper):
-    def __init__(self, api_key):
-        super().__init__(api_key)
+    def __init__(self, token : str , app_id : int , api_version : int , client_id : str , client_secret : str):
+        super().__init__(token, app_id, api_version, client_id, client_secret)
         self.endpoint = 'products'
     
     def get_products(self):
@@ -52,18 +52,3 @@ class Product(APIWrapper):
         
         return self.patch(f"{self.endpoint}/{product_id}", payload)
 
-    def update_product_sku_ean(self, sku = None,  ean13 = None, ):
-        url_compose = []
-        if sku is None and ean13 is None:
-            raise ValueError("sku or ean13 is required")
-        elif sku is not None and ean13 is not None:
-            raise ValueError("Can't request with both key")
-        elif sku is not None and ean13 is None:
-            url_compose.append("sku")
-            url_compose.append(sku)
-            
-        elif ean13 is not None and sku is None:
-            url_compose.append("ean13")
-            url_compose.append(ean13)
-           
-        return self.patch(f"{self.endpoint}/{url_compose[0]}/{url_compose[1]}", payload)

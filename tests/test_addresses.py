@@ -9,8 +9,8 @@ from addresses import Addresses
 
 class TestAddresses(unittest.TestCase):
     def setUp(self):
-        self.api_key = 'asRrIM5Q7BBCwcq8Z90Xdb4A5ajM8wJhxwLPgVJ0xpg'
-        self.addresses = Addresses(self.api_key)
+        
+        self.addresses = Addresses()
 
     def test_get_addresses(self):
         self.assertIsNotNone(self.addresses.get_addresses())

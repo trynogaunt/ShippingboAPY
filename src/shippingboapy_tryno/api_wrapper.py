@@ -2,13 +2,14 @@ import requests
 import logging
 
 class APIWrapper:
-    def __init__(self, token : str):
+    def __init__(self, token : str , app_id : int , api_version : int , client_id : str , client_secret : str):
         self.base_url = "https://app.shippingbo.com"
         self.refresh_token = None
         self.access_token = None
-        self.id = 447
-        self.client_id = "Q8TGUF0QDZVPlDZzck9kIjCs6aj7efqWoNAcnyiljKc"
-        self.client_secret = "TalkAlPu47s331DxTo-z1btOiww_2luCQ-6w5oc4lX0"
+        self.id = app_id
+        self.version = api_version
+        self.client_id = client_id
+        self.client_secret = client_secret
         self.token = token
         self.session = requests.Session()
         self.headers = {
@@ -16,7 +17,7 @@ class APIWrapper:
             "Accept": "application/json",
             "Authorization": f"Bearer {self.access_token}",
             "X-API-APP-ID ": f"{self.id}",
-            "X-API-VERSION": f"{1.0}"
+            "X-API-VERSION": f"{self.version}"
         }
         self.session.headers.update(self.headers)
 
@@ -30,21 +31,7 @@ class APIWrapper:
             response.raise_for_status()
     
     def get_access_token(self) -> bool:
-        '''Get the access token from the API'''
-        url = f"https://oauth.shippingbo.com/oauth/token"
-        headers = {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-        payload = {
-            "grant_type": "authorization_code",
-            "client_id": self.client_id,
-            "client_secret": self.client_secret,
-            "code": self.token,
-            "redirect_uri": "urn:ietf:wg:oauth:2.0:oob"
-        }
-        
-        response = requests.post(url=url, json=payload, headers=headers)
+       
         
         match response.status_code:
             case 200:
