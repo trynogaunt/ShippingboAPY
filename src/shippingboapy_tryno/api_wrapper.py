@@ -78,7 +78,7 @@ class APIWrapper:
         }
         
         response = requests.post(url=url, json=payload, headers=headers)
-        
+
         match response.status_code:
             case 200:
                 self.access_token = response.json().get("access_token")
