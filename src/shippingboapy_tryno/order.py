@@ -4,14 +4,13 @@ from datetime import datetime
 class Order(APIWrapper):
     def __init__(self, base_url, api_key):
         super().__init__(base_url, api_key)
+        self.endpoint = 'orders'
     
     def get_orders(self):
-        endpoint = 'orders'
-        return self.get(endpoint)
+        return self.get(self.endpoint)
     
     def order(self, order_id):
-        endpoint = f'orders/{order_id}'
-        return self.get(endpoint)
+        return self.get(f"{self.endpoint}/{order_id}")
 
     def create_order(self, billing_address_id : int, chosen_delivery_service : str, earliest_chosen_delivery_at : str[datetime] = datetime.now, earliest_delivery_at : str[datetime] =  datetime.now,\
                     earliest_shipped_at : str[datetime] = datetime.now, invoice_ref : int = 0, latest_chosen_delivery_at : str[datetime] = datetime.now, \
@@ -20,7 +19,6 @@ class Order(APIWrapper):
                     total_price_cents, total_price_currency, total_shipping_tax_cents, total_shipping_tax_currency, total_shipping_tax_included_cents,\
                     total_shipping_tax_included_currency, total_tax_cents, total_tax_currency, computed_prices, mapped_carrier, preparation_order_at, total_weight):
 
-        endpoint = 'orders'
         order = {
             "billing_address_id": billing_address_id,
             "chosen_delivery_service": chosen_delivery_service,
@@ -57,4 +55,4 @@ class Order(APIWrapper):
             "preparation_order_at": preparation_order_at,
             "total_weight": total_weight
         }
-        return self.post(endpoint, order)
+        return self.post(self.endpoint, order)
