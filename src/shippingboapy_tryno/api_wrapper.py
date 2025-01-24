@@ -95,7 +95,19 @@ class APIWrapper:
             case _:
                 print("Unknow error") 
                 return 0
-
+    
+    def authenticate(self) -> bool:
+        access_token_check = self.get_access_token()
+        if access_token_check:
+            return 1
+        else:
+            refresh_token_check = self.refresh_access_token()
+            if refresh_token_check:
+                return 1
+            else:
+                return 0
+            
+            
     def get(self, endpoint) -> dict | None:
         url = f"{self.base_url}/{endpoint}"
         self.authenticate()
