@@ -6,6 +6,9 @@ class APIWrapper:
         self.base_url = "https://app.shippingbo.com"
         self.api_key = api_key
         self.refresh_token = None
+        self.client_id = "Q8TGUF0QDZVPlDZzck9kIjCs6aj7efqWoNAcnyiljKc"
+        self.client_secret = "TalkAlPu47s331DxTo-z1btOiww_2luCQ-6w5oc4lX0"
+        self.token = "asRrIM5Q7BBCwcq8Z90Xdb4A5ajM8wJhxwLPgVJ0xpg"
         self.session = requests.Session()
         self.headers = {
             "Content-Type": "application/json",

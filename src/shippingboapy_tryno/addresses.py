@@ -1,12 +1,12 @@
-from api_wrapper import ApiWrapper
+from api_wrapper import APIWrapper
 
-class Addresses(ApiWrapper):
+class Addresses(APIWrapper):
     def __init__(self, api_key):
         super().__init__(api_key)
         self.endpoint = 'addresses'
     
-    def get_addresses(self, limit = 10, offset = 0):
-        return self.get(self.endpoint , limit = limit, offset = offset)
+    def get_addresses(self):
+        return self.get(f"{self.endpoint}?limit=2")
     
     def address(self, adress_id):
         return self.get(f"{self.endpoint}/{adress_id}")
