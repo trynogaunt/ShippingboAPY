@@ -107,15 +107,19 @@ class APIWrapper:
             else:
                 return 0
             
-            
+
     def get(self, endpoint) -> dict | None:
         url = f"{self.base_url}/{endpoint}"
-        self.authenticate()
-        try:
-            response = self.session.get(url=url, headers=self.headers)
-            return self._handle_response(response)
-        except requests.RequestException as e:
-            logging.error(f"GET request failed: {e}")
+        
+        if self.authenticate():
+            try:
+                response = self.session.get(url=url, headers=self.headers)
+                return self._handle_response(response)
+            except requests.RequestException as e:
+                logging.error(f"GET request failed: {e}")
+                return None
+        else:
+            print("Can't authenticate")
             return None
 
     def post(self, endpoint, payload) -> dict | None:
