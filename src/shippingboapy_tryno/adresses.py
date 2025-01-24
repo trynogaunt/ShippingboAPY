@@ -10,3 +10,9 @@ class Adresses(ApiWrapper):
     
     def adress(self, adress_id):
         return self.get(f"{self.endpoint}/{adress_id}")
+    
+    def create_adress(self, data):
+        return self.post(self.endpoint, data)
+    
+    def update_adress(self, adress_id, data):
+        return self.put(f"{self.endpoint}/{adress_id}", data)
