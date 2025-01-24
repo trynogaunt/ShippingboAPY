@@ -2,18 +2,21 @@ import requests
 import logging
 
 class APIWrapper:
-    def __init__(self, api_key):
+    def __init__(self, token : str):
         self.base_url = "https://app.shippingbo.com"
-        self.api_key = api_key
         self.refresh_token = None
+        self.access_token = None
+        self.id = 447
         self.client_id = "Q8TGUF0QDZVPlDZzck9kIjCs6aj7efqWoNAcnyiljKc"
         self.client_secret = "TalkAlPu47s331DxTo-z1btOiww_2luCQ-6w5oc4lX0"
-        self.token = "asRrIM5Q7BBCwcq8Z90Xdb4A5ajM8wJhxwLPgVJ0xpg"
+        self.token = token
         self.session = requests.Session()
         self.headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": f"Bearer {self.api_key}"
+            "Authorization": f"Bearer {self.access_token}",
+            "X-API-APP-ID ": f"{self.id}",
+            "X-API-VERSION": f"{1.0}"
         }
         self.session.headers.update(self.headers)
 
@@ -26,8 +29,13 @@ class APIWrapper:
             logging.error(f"Error {response.status_code}: {response.text}")
             response.raise_for_status()
     
-    def authenticate(self):
-        url = "https://oauth.shippingbo.com/oauth/token"
+    def get_access_token(self) -> bool:
+        '''Get the access token from the API'''
+        url = f"https://oauth.shippingbo.com/oauth/token"
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
         payload = {
             "grant_type": "authorization_code",
             "client_id": self.client_id,
@@ -35,26 +43,58 @@ class APIWrapper:
             "code": self.token,
             "redirect_uri": "urn:ietf:wg:oauth:2.0:oob"
         }
-        try:
-            requests.post(url, json=payload, headers=self.headers)
-            print(f"Token {self.token} is still valid")
-        except requests.RequestException as e:
-            logging.error(f"POST request failed: {e}")
-            print("Token is invalid, refreshing token")
-            payload = {
-                "grant_type": "refresh_token",
-                "client_id": self.client_id,
-                "client_secret": self.client_secret,
-                "refresh_token": self.refresh,
-                "redirect_uri": "urn:ietf:wg:oauth:2.0:oob"
-            }
-            try:
-                refreshed_token = requests.post(url, json=payload, headers=self.headers)
-                print(refreshed_token.json())
-            except requests.RequestException as e:
-                logging.error(f"POST request failed: {e}")
-                print("Can't refresh token")
-                exit(1)
+        
+        response = requests.post(url=url, json=payload, headers=headers)
+        
+        match response.status_code:
+            case 200:
+                self.access_token = response.json().get("access_token")
+                self.headers["Authorization"] = f"Bearer {self.access_token}"
+                self.session.headers.update(self.headers)
+                return 1
+            
+            case 404:
+                print(f"Error {response.status_code}: Ressource not found")
+                return 0
+            case 403:
+                print(f"Error {response.status_code}: Access denied")
+                return 0
+            case _:
+                print("Unknow error") 
+                return 0
+        
+    def refresh_access_token(self) -> bool:
+        '''Refresh the access token'''
+        url = f"https://oauth.shippingbo.com/oauth/token"
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
+        payload = {
+            "grant_type": "refresh_token",
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+            "refresh_token": self.refresh_token
+        }
+        
+        response = requests.post(url=url, json=payload, headers=headers)
+        
+        match response.status_code:
+            case 200:
+                self.access_token = response.json().get("access_token")
+                self.headers["Authorization"] = f"Bearer {self.access_token}"
+                self.session.headers.update(self.headers)
+                return 1
+            
+            case 404:
+                print(f"Error {response.status_code}: Ressource not found")
+                return 0
+            case 403:
+                print(f"Error {response.status_code}: Access denied")
+                return 0
+            case _:
+                print("Unknow error") 
+                return 0
 
     def get(self, endpoint) -> dict | None:
         url = f"{self.base_url}/{endpoint}"
