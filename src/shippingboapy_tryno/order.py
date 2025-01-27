@@ -6,9 +6,9 @@ class Order(APIWrapper):
         super().__init__(client, headers)
         self.endpoint = 'orders'
     
-    def get_orders(self):
+    def get_orders(self, limit=10):
         try:
-            return self.get(endpoint=f"{self.endpoint}", querystring={"limit": 1})
+            return self.get(endpoint=f"{self.endpoint}", querystring={"limit": limit})
         except Exception as e:
             print(e)
             return None

@@ -55,7 +55,7 @@ class Client:
             self.access_token = response.json().get("access_token")
             self.refresh_token = response.json().get("refresh_token")
             self.token_type = response.json().get("token_type")
-            self.headers = {'Accept': 'application/json', 'X-API-VERSION': '1.0', 'X-API-APP-ID': '447', 'Authorization': f'Bearer {self.access_token}'}
+            self.headers = {'Accept': 'application/json', 'X-API-VERSION': f'{self.api_version}', 'X-API-APP-ID': f'{self.app_id}', 'Authorization': f'Bearer {self.access_token}'}
            # self.product = Product(self.headers)
            # self.reseller =  Reseller(self.headers)
            # self.address = Address(self.headers)
