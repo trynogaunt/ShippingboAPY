@@ -2,7 +2,7 @@ import requests
 import logging
 
 class APIWrapper:
-    def __init__(self, headers):
+    def __init__(self, client, headers):
         self.base_url = "https://app.shippingbo.com"
 
         self.session = requests.Session()
@@ -18,19 +18,15 @@ class APIWrapper:
             logging.error(f"Error {response.status_code}: {response.text}")
             response.raise_for_status()
     
-    def get(self, endpoint) -> dict | None:
+    def get(self, endpoint, querystring) -> dict | None:
         url = f"{self.base_url}/{endpoint}"
-        
-        if self.authenticate():
-            try:
-                response = self.session.get(url=url, headers=self.headers)
-                return self._handle_response(response)
-            except requests.RequestException as e:
-                logging.error(f"GET request failed: {e}")
-                return None
-        else:
-            print("Can't authenticate")
+        try:
+            response = self.session.get(url=url, headers=self.headers , params=querystring)
+            return self._handle_response(response)
+        except requests.RequestException as e:
+            logging.error(f"GET request failed: {e}")
             return None
+        
 
     def post(self, endpoint, payload) -> dict | None:
         url = f"{self.base_url}/{endpoint}"

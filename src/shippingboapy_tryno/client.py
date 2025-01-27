@@ -52,26 +52,21 @@ class Client:
         response = requests.post(url=url, json=payload, headers=headers)
 
         if response.status_code == 200:
-            self.token = response.json().get("access_token")
+            self.access_token = response.json().get("access_token")
             self.refresh_token = response.json().get("refresh_token")
             self.token_type = response.json().get("token_type")
-            self.headers = {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Authorization": f"Bearer {self.access_token}",
-            "X-API-APP-ID ": f"{self.app_id}",
-            "X-API-VERSION": f"{self.api_version}"
-        }
-            self.product = Product(self.headers)
-            self.reseller =  Reseller(self.headers)
-            self.address = Address(self.headers)
-            self.order = Order(self.headers)
-            self.order_item = OrderItem(self.headers)
-            self.reseller_product = ResellerProducts(self.headers)
+            self.headers = {'Accept': 'application/json', 'X-API-VERSION': '1.0', 'X-API-APP-ID': '447', 'Authorization': f'Bearer {self.access_token}'}
+           # self.product = Product(self.headers)
+           # self.reseller =  Reseller(self.headers)
+           # self.address = Address(self.headers)
+            self.order = Order(self, self.headers)
+           # self.order_item = OrderItem(self.headers)
+           # self.reseller_product = ResellerProducts(self.headers)
 
             print("Client connecté à l'api shippingbo")
 
         else:
             print("[!] Veuillez lancer le client avec un code d'autorisation valide [!]")
+            exit(1)
         
      
