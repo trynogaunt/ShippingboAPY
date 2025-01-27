@@ -1,8 +1,8 @@
 from api_wrapper import APIWrapper
 
 class Address(APIWrapper):
-    def __init__(self, token : str , app_id : int , api_version : int , client_id : str , client_secret : str):
-        super().__init__(token, app_id, api_version, client_id, client_secret)
+    def __init__(self, headers):
+        super().__init__(headers)
         self.endpoint = 'addresses'
     
     def get_addresses(self):

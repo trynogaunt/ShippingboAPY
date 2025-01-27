@@ -68,8 +68,10 @@ class Client:
             self.order = Order(self.headers)
             self.order_item = OrderItem(self.headers)
             self.reseller_product = ResellerProducts(self.headers)
-            
+
+            print("Client connecté à l'api shippingbo")
+
         else:
-            print("Veuillez lancer le client avec un code d'autorisation valide")
+            print("[!] Veuillez lancer le client avec un code d'autorisation valide [!]")
         
      

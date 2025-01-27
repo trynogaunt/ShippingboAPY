@@ -1,8 +1,8 @@
 from api_wrapper import APIWrapper
 
 class ResellerProducts(APIWrapper):
-    def __init__(self, api_key):
-        super().__init__(api_key)
+    def __init__(self, headers):
+        super().__init__(headers)
         self.endpoint = 'reseller_products'
 
     def get_reseller_products(self):
