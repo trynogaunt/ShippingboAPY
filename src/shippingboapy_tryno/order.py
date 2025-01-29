@@ -10,6 +10,9 @@ class Order(APIWrapper):
         try:
             return self.get(endpoint=f"{self.endpoint}", querystring={"limit": limit})
         except Exception as e:
+            if e.response.status_code == 401:
+                self.client.refreshing_token()
+                return self.get_orders(limit)
             print(e)
             return None
     def get_order(self, order_id):
