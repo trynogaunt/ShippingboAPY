@@ -3,3 +3,4 @@ file.py
 dist/shippinboapi-0.0.1-py3-none-any.whl
 dist/shippinboapi-0.0.1.tar.gz
 dist/*
+tests/*
