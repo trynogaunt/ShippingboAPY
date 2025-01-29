@@ -12,7 +12,8 @@ class Order(APIWrapper):
         except Exception as e:
             if e.response.status_code == 401:
                 self.client.refreshing_token()
-                return self.get_orders(limit)
+                orders_list = self.get_orders(limit)
+                return orders_list["orders"]
             print(e)
             return None
         
