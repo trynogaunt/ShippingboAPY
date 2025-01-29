@@ -57,6 +57,13 @@ class Client:
             self.token_type = response.json().get("token_type")
             self.headers = {'Accept': 'application/json', 'X-API-VERSION': f'{self.api_version}', 'X-API-APP-ID': f'{self.app_id}', 'Authorization': f'Bearer {self.access_token}'}
             print("Token rafraîchi")
+            with open("src/config.toml", "w+") as f:
+                config = toml.load(f)
+                config["auth"] = {
+                    "access_token": self.access_token,
+                    "refresh_token": self.refresh_token
+                }
+                toml.dump(config, f)
         else:
             print("Erreur lors du rafraîchissement du token")
             exit(1)
@@ -91,9 +98,10 @@ class Client:
            # self.order_item = OrderItem(self.headers)
            # self.reseller_product = ResellerProducts(self.headers)
             print(f"{self.access_token} {self.refresh_token}")
-            with open("sr/config.toml", "a") as f:
+            with open("src/config.toml", "w+") as f:
+                config = toml.load(f)
                 config["auth"] = {
-                    "token": self.access_token,
+                    "access_token": self.access_token,
                     "refresh_token": self.refresh_token
                 }
                 toml.dump(config, f)
