@@ -5,5 +5,4 @@ dist/shippinboapi-0.0.1.tar.gz
 dist/*
 tests/*
 pyproject.toml
-src/config.toml
-src/config.toml
+src/shippingboapy/config.toml
