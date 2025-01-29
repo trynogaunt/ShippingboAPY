@@ -90,8 +90,9 @@ class Client:
             self.order = Order(self, self.headers)
            # self.order_item = OrderItem(self.headers)
            # self.reseller_product = ResellerProducts(self.headers)
-            with open("config.toml", "w") as f:
-                config = {
+            print(f"{self.access_token} {self.refresh_token}")
+            with open("sr/config.toml", "a") as f:
+                config["auth"] = {
                     "token": self.access_token,
                     "refresh_token": self.refresh_token
                 }
@@ -100,20 +101,20 @@ class Client:
             print("Client connecté à l'api shippingbo")
 
         else:
-            with open("config.toml", "r") as f:
+            with open("src/config.toml", "r") as f:
                 config = toml.load(f)
-                if config["token"] == "your_access_token" and config["refresh_token"] == "your_refresh_token":
+                if config["auth"]["access_token"] == "your_access_token" and config["auth"]["refresh_token"] == "your_refresh_token":
                     print("[!] Veuillez lancer le client avec un code d'autorisation valide [!]")
                     exit(1)
-                elif config["token"] == "your_access_token" and config["refresh_token"] != "your_refresh_token":
+                elif config["auth"]["access_token"] == "your_access_token" and config["auth"]["refresh_token"] != "your_refresh_token":
                     print("[!] Veuillez lancer le client avec un code d'autorisation valide [!]")
                     exit(1)
-                elif config["token"] != "your_access_token" and config["refresh_token"] == "your_refresh_token":
+                elif config["auth"]["access_token"] != "your_access_token" and config["auth"]["refresh_token"] == "your_refresh_token":
                     print("[!] Veuillez lancer le client avec un token valide [!]")
                     exit(1)
                 else:
-                    self.refreshing_token()
-        
+                    self.access_token = config["auth"]["access_token"]
+                    self.refresh_token = config["auth"]["refresh_token"]
                     self.token_type = response.json().get("token_type")
                     self.headers = {'Accept': 'application/json', 'X-API-VERSION': f'{self.api_version}', 'X-API-APP-ID': f'{self.app_id}', 'Authorization': f'Bearer {self.access_token}'}
                     # self.product = Product(self.headers)
