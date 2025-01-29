@@ -21,7 +21,10 @@ class APIWrapper:
     def get(self, endpoint, querystring) -> dict | None:
         url = f"{self.base_url}/{endpoint}"
         try:
-            response = self.session.get(url=url, headers=self.headers , params=querystring)
+            if querystring == None:
+                response = self.session.get(url=url, headers=self.headers)
+            else:
+                response = self.session.get(url=url, headers=self.headers , params=querystring)
             return self._handle_response(response)
         except requests.RequestException as e:
             logging.error(f"GET request failed: {e}")
