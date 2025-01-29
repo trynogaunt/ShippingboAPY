@@ -6,3 +6,4 @@ dist/*
 tests/*
 pyproject.toml
 src/config.toml
+src/config.toml
