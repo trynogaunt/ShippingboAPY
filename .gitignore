@@ -13,3 +13,4 @@ __pycache__/*
 shippingboapy.egg-info/*
 *.pyc
 shippingboapy/__pycache__/*
+.pyrc
