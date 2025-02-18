@@ -86,6 +86,7 @@ class Client:
                 self.product = Product(self, self.headers)
                 print("Authentification réussie")
                 self.running = True
+                return self.access_token , self.refresh_token
             case 400:
                 print("Requête invalide")
             case 403:
@@ -98,9 +99,7 @@ class Client:
                 print("Ressource non trouvée")
             case _:
                 print("Authentification échouée")
-                print(response.json())
-        print(self.access_token)                  
-        return response.json()          
+                print(response.json())       
 
     def authenticated(self):
         """
