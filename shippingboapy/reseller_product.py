@@ -1,4 +1,4 @@
-from api_wrapper import APIWrapper
+from shippingboapy.api_wrapper import APIWrapper
 
 class ResellerProducts(APIWrapper):
     def __init__(self, headers):

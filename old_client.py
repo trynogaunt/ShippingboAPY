@@ -1,17 +1,11 @@
 import requests
-import sys
-import os
-import toml
 
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src/shippingboapy_tryno')))
-from product import Product
-from reseller import Reseller
-from address import Address
-from product import Product
-from order import Order
-from order_item import OrderItem
-from reseller_product import ResellerProducts
+from shippingboapy.product import Product
+from shippingboapy.reseller import Reseller
+from shippingboapy.address import Address
+from shippingboapy.order import Order
+from shippingboapy.order_item import OrderItem
+from shippingboapy.reseller_product import ResellerProducts
 
 class Client:
     def __init__(self, app_id : int , api_version : int , client_id : str , client_secret : str , redirect_uri : str):
@@ -110,7 +104,7 @@ class Client:
             print("Client connecté à l'api shippingbo")
 
         else:
-            with open("src/config.toml", "r") as f:
+            with open("src/config.toml", "") as f:
                 config = toml.load(f)
                 if config["auth"]["access_token"] == "your_access_token" and config["auth"]["refresh_token"] == "your_refresh_token":
                     print("[!] Veuillez lancer le client avec un code d'autorisation valide [!]")

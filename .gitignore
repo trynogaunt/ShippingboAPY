@@ -6,3 +6,5 @@ dist/*
 tests/*
 pyproject.toml
 src/shippingboapy/config.toml
+src/config.toml
+src\config.toml
