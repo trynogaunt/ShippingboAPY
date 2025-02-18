@@ -1,19 +1,42 @@
-from api_wrapper import APIWrapper
+from .api_wrapper import APIWrapper
+from .product import Product
 from datetime import datetime
 
 class Order(APIWrapper):
     def __init__(self,client, headers):
         super().__init__(client, headers)
         self.endpoint = 'orders'
+        self.client = client
     
     def get_orders(self, limit=10):
-        try:
+        if self.client.running == False:
+            print("Please run client with valid token before refreshing")
+            return
+        else:
             return self.get(endpoint=f"{self.endpoint}", querystring={"limit": limit, "sort[id]": "desc"})
-        except Exception as e:
-            return None
+     
         
     def get_order_by_id(self, order_id):
-        order_id = str(order_id)
-        return self.get(f"{self.endpoint}/{order_id}", querystring=None)
+        if self.client.running == False:
+            print("Please run client with valid token before refreshing")
+            return
+        else:
+            order_id = str(order_id)
+            order = self.get(f"{self.endpoint}/{order_id}", querystring=None)['order']
+            order_object = OrderObject(order)
+            return order_object
 
+
+class OrderObject():
+    def __init__(self, response):
+        self.__dict__.update(response)
+        new_mapped_products = []
+        for product in self.mapped_products:
+            new_mapped_products.append(Product(product['id']))
+    
+    def __setattr__(self, name, value):
+        if name == "id":
+            print("You can't change the id of an order")
+        else:
+            self.__dict__[name] = value   
    

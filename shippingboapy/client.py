@@ -1,4 +1,5 @@
 import requests
+from .order import Order
 
 class Client:
     def __init__(self, app_id : int , api_version : int , client_id : str , client_secret : str , redirect_uri : str):
@@ -17,7 +18,8 @@ class Client:
         self.redirect_uri = redirect_uri
         self.access_token = None
         self.refresh_token = None
-
+        self.running = False
+        self.order = None
 
     def build_headers(self):
         """
@@ -29,7 +31,12 @@ class Client:
         """
         Rafraîchit le token
         """
-        url = f"https://stoplight.io/mocks/shippingbo/api/256683485/oauth/token"
+        
+        if self.refresh_token is None or self.access_token is None:
+            print("Please run client with valid token before refreshing")
+            return
+
+        url = f"https://oauth.shippingbo.com/oauth/token"
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json"
@@ -52,7 +59,7 @@ class Client:
         """
         Lance l'authentification
         """
-        url = f"https://stoplight.io/mocks/shippingbo/api/256683485/oauth/token"
+        url = f"https://oauth.shippingbo.com/oauth/token"
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json"
@@ -72,7 +79,14 @@ class Client:
                 self.access_token = response.json().get("access_token")
                 self.refresh_token = response.json().get("refresh_token")
                 self.token_type = response.json().get("token_type")
+                self.headers = self.build_headers()
+                self.order = Order(self, self.headers)
                 print("Authentification réussie")
+                self.running = True
+            case 400:
+                print("Requête invalide")
+            case 403:
+                print("Interdit")
             case 401:
                 print("Non autorisé")
             case 500:
@@ -82,5 +96,14 @@ class Client:
             case _:
                 print("Authentification échouée")
                 print(response.json())
-        print(response.json())                    
-        return response.json()            
+        print(self.access_token)                  
+        return response.json()          
+
+    def authenticated(self):
+        """
+        Vérifie si le client est authentifié
+        """
+        return self.running
+
+
+    

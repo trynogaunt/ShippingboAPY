@@ -1,54 +1,34 @@
-from shippingboapy.api_wrapper import APIWrapper
+from .api_wrapper import APIWrapper
 
 class Product(APIWrapper):
-    def __init__(self,client,  headers):
+    def __init__(self,client, headers):
         super().__init__(client, headers)
-        self.endpoint = 'products'
+        self.endpoint = 'orders'
+        self.client = client
     
-    def get_products(self):
-        return self.get(self.endpoint)
-
-    def product(self, product_id):
-
-        return self.get(f"{self.endpoint}/{product_id}")
+    def get_products(self, limit=10):
+        if self.client.running == False:
+            print("Please run client with valid token before refreshing")
+            return
+        else:
+            return self.get(endpoint=f"{self.endpoint}", querystring={"limit": limit, "sort[id]": "desc"})
     
-    def create_product(self, ean13 : str, hs_code : str , is_pack : bool , lenght : int, weight : int , width : int,  height : int, location : str, title : str,\
-                    supplier : str | None , user_ref : int , product_additionnal_fields_to_add : list[dict] , picture_url : str , total_physical_stock : int):
+    def get_product_by_id(self, product_id):
+        if self.client.running == False:
+            print("Please run client with valid token before refreshing")
+            return
+        else:
+            product_id = str(product_id)
+            product = self.get(f"{self.endpoint}/{product_id}", querystring=None)['product']
+            product_object = ProductObject(product)
+            return product_object
         
-        payload = {
-            "ean13": ean13,
-            "hs_code": hs_code,
-            "is_pack": is_pack,
-            "lenght": lenght,
-            "weight": weight,
-            "width": width,
-            "height": height,
-            "location": location,
-            "title": title,
-            "supplier": supplier,
-            "user_ref": user_ref,
-            "product_additionnal_fields_to_add": product_additionnal_fields_to_add,
-            "picture_url": picture_url,
-            "total_physical_stock": total_physical_stock
-        }
-        
+class ProductObject():
+    def __init__(self, response):
+        self.__dict__.update(response)
     
-        return self.post(self.endpoint, payload)
-
-    def delete_product(self, product_id : int) -> dict:
-        '''Delete product by product id'''
-        return self.delete(f"{self.endpoint}/{product_id}")
-
-    def update_product(self, product_id, asin = None, cdiscount_price = None, client_ref = None, eco_tax_cents = None, hs_code = None, is_pack = None, location = None,\
-                    parent_source = None, parent_source_ref = None, physical_stock = None, picture_url = None, source = None, source_ref = None, supplier = None,\
-                     user_ref = None , weight = None , width = None, height = None , lenght = None, title = None):
-        '''Update product by product id'''
-
-        payload = {}
-        for key, value in locals().items():
-            if key != "product_id" or key != "self" and value is not None:
-                payload[key] = value
-                
-        
-        return self.patch(f"{self.endpoint}/{product_id}", payload)
-
+    def __setattr__(self, name, value):
+        if name == "id":
+            print("You can't change the id of an order")
+        else:
+            self.__dict__[name] = value       
