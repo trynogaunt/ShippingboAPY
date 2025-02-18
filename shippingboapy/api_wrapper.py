@@ -3,12 +3,12 @@ import logging
 
 
 class APIWrapper:
-    def __init__(self, client, headers):
+    def __init__(self, client):
         self.base_url = "https://app.shippingbo.com"
 
         self.session = requests.Session()
-        self.headers = headers
-        self.session.headers.update(headers)
+        self.headers = client.build_headers()
+        self.session.headers.update(self.headers)
         self.client = client
 
         logging.basicConfig(level=logging.INFO)

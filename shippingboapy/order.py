@@ -2,8 +2,8 @@ from .api_wrapper import APIWrapper
 from datetime import datetime
 
 class Order(APIWrapper):
-    def __init__(self,client, headers):
-        super().__init__(client, headers)
+    def __init__(self,client):
+        super().__init__(client)
         self.endpoint = 'orders'
         self.client = client
     

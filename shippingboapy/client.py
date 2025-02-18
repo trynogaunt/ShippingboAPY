@@ -21,12 +21,6 @@ class Client:
         self.refresh_token = None
         self.running = False
         self.order = None
-
-    def build_headers(self):
-        """
-        Construit les headers pour les requêtes
-        """
-        return {'Accept': 'application/json', 'X-API-VERSION': f'{self.api_version}', 'X-API-APP-ID': f'{self.app_id}', 'Authorization': f'Bearer {self.access_token}'}
         
     def refreshing_token(self):
         """
@@ -57,49 +51,47 @@ class Client:
                 self.refresh_token = response.json().get("refresh_token")
         return self.access_token , self.refresh_token
 
-    def run(self, token):
+    def run(self, token, refresh_token=None, access_token=None):
         """
-        Lance l'authentification
+        Connecte le client à l'API
         """
-        url = f"https://oauth.shippingbo.com/oauth/token"
-        headers = {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-        payload = {
-            "grant_type": "authorization_code",
-            "client_id": self.client_id,
-            "client_secret": self.client_secret,
-            "code": token,
-            "redirect_uri": self.redirect_uri
-        }
+        self.access_token = token
+        self.refresh_token = refresh_token
+        if self.access_token is (None or '') or self.refresh_token is (None or ''):
+            url = f"https://oauth.shippingbo.com/oauth/token"
+            headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+            payload = {
+                "grant_type": "authorization_code",
+                "client_id": self.client_id,
+                "client_secret": self.client_secret,
+                "code": token,
+                "redirect_uri": self.redirect_uri
+            }
 
-        response = requests.post(url=url, json=payload, headers=headers)
-
-        match response.status_code:
-            case 200:
-                self.access_token = response.json().get("access_token")
-                self.refresh_token = response.json().get("refresh_token")
-                self.token_type = response.json().get("token_type")
-                self.headers = self.build_headers()
-                self.order = Order(self, self.headers)
-                self.product = Product(self, self.headers)
-                print("Authentification réussie")
-                self.running = True
-                return self.access_token , self.refresh_token
-            case 400:
-                print("Requête invalide")
-            case 403:
-                print("Interdit")
-            case 401:
-                print("Non autorisé")
-            case 500:
-                print("Erreur interne du serveur")
-            case 404:
-                print("Ressource non trouvée")
-            case _:
-                print("Authentification échouée")
-                print(response.json())       
+            response = requests.post(url=url, json=payload, headers=headers)
+            match response.status_code:
+                case 200:
+                    self.access_token = response.json().get("access_token")
+                    print("Access token: ", self.access_token)
+                    self.refresh_token = response.json().get("refresh_token")
+                    print("Refresh token: ", response.json().get("refresh_token"))
+                    self.order = Order(self)
+                    self.product = Product(self)
+                case 401:
+                    print("Invalid token")
+                    exit()
+                case 500:
+                    print("Internal server error")
+                    exit()
+        else:
+           
+            self.order = Order(self)
+            self.product = Product(self)
+            self.running = True
+              
 
     def authenticated(self):
         """

@@ -1,8 +1,8 @@
 from .api_wrapper import APIWrapper
 
 class Product(APIWrapper):
-    def __init__(self,client, headers):
-        super().__init__(client, headers)
+    def __init__(self,client):
+        super().__init__(client)
         self.endpoint = 'products'
         self.client = client
     
