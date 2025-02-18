@@ -1,5 +1,4 @@
 from .api_wrapper import APIWrapper
-from .product import Product
 from datetime import datetime
 
 class Order(APIWrapper):
@@ -30,9 +29,6 @@ class Order(APIWrapper):
 class OrderObject():
     def __init__(self, response):
         self.__dict__.update(response)
-        new_mapped_products = []
-        for product in self.mapped_products:
-            new_mapped_products.append(Product(product['id']))
     
     def __setattr__(self, name, value):
         if name == "id":

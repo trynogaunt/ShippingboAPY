@@ -1,5 +1,6 @@
 import requests
 from .order import Order
+from .product import Product
 
 class Client:
     def __init__(self, app_id : int , api_version : int , client_id : str , client_secret : str , redirect_uri : str):
@@ -54,6 +55,7 @@ class Client:
             case 200:
                 self.access_token = response.json().get("access_token")
                 self.refresh_token = response.json().get("refresh_token")
+        return self.access_token , self.refresh_token
 
     def run(self, token):
         """
@@ -81,6 +83,7 @@ class Client:
                 self.token_type = response.json().get("token_type")
                 self.headers = self.build_headers()
                 self.order = Order(self, self.headers)
+                self.product = Product(self, self.headers)
                 print("Authentification réussie")
                 self.running = True
             case 400:
@@ -105,5 +108,46 @@ class Client:
         """
         return self.running
 
+    def get_app_id(self):
+        """
+        Retourne l'ID de l'application
+        """
+        return self.app_id
+    
+    def get_api_version(self):
+        """
+        Retourne la version de l'API
+        """
+        return self.api_version 
+    
+    def get_client_id(self):
+        """
+        Retourne l'ID du client
+        """
+        return self.client_id
+    
+    def get_client_secret(self):
+        """
+        Retourne le secret du client
+        """
+        return self.client_secret
+    
+    def get_redirect_uri(self):
+        """
+        Retourne l'URI de redirection
+        """
+        return self.redirect_uri
+
+    def get_access_token(self):
+        """
+        Retourne le token d'accès
+        """
+        return self.access_token
+    
+    def get_refresh_token(self):
+        """
+        Retourne le token de rafraîchissement
+        """
+        return self.refresh_token
 
     

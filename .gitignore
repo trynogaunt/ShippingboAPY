@@ -8,3 +8,8 @@ pyproject.toml
 src/shippingboapy/config.toml
 src/config.toml
 src\config.toml
+setup.py
+__pycache__/*
+shippingboapy.egg-info/*
+*.pyc
+shippingboapy/__pycache__/*

@@ -3,7 +3,7 @@ from .api_wrapper import APIWrapper
 class Product(APIWrapper):
     def __init__(self,client, headers):
         super().__init__(client, headers)
-        self.endpoint = 'orders'
+        self.endpoint = 'products'
         self.client = client
     
     def get_products(self, limit=10):
