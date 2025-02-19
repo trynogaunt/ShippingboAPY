@@ -14,3 +14,4 @@ shippingboapy.egg-info/*
 *.pyc
 shippingboapy/__pycache__/*
 .pyrc
+test_api.py

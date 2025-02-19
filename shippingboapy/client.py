@@ -20,7 +20,20 @@ class Client:
         self.access_token = None
         self.refresh_token = None
         self.running = False
-        self.order = None
+
+    @property
+    def order(self):
+        """
+        Retourne l'objet Order
+        """
+        return Order(self, self.access_token)   
+
+    @property
+    def product(self):
+        """
+        Retourne l'objet Product
+        """
+        return Product(self, self.access_token)
         
     def refreshing_token(self):
         """
@@ -49,13 +62,15 @@ class Client:
             case 200:
                 self.access_token = response.json().get("access_token")
                 self.refresh_token = response.json().get("refresh_token")
-        return self.access_token , self.refresh_token
+                print("Access token: ", self.access_token)
+                print("Refresh token: ", self.refresh_token)
+                return self.access_token , self.refresh_token
 
     def run(self, token, refresh_token=None, access_token=None):
         """
         Connecte le client à l'API
         """
-        self.access_token = token
+        self.access_token = access_token
         self.refresh_token = refresh_token
         if self.access_token is (None or '') or self.refresh_token is (None or ''):
             url = f"https://oauth.shippingbo.com/oauth/token"
@@ -75,11 +90,7 @@ class Client:
             match response.status_code:
                 case 200:
                     self.access_token = response.json().get("access_token")
-                    print("Access token: ", self.access_token)
                     self.refresh_token = response.json().get("refresh_token")
-                    print("Refresh token: ", response.json().get("refresh_token"))
-                    self.order = Order(self)
-                    self.product = Product(self)
                 case 401:
                     print("Invalid token")
                     exit()
@@ -87,9 +98,8 @@ class Client:
                     print("Internal server error")
                     exit()
         else:
-           
-            self.order = Order(self)
-            self.product = Product(self)
+            self.access_token = access_token
+            self.refresh_token = refresh_token
             self.running = True
               
 
@@ -98,6 +108,7 @@ class Client:
         Vérifie si le client est authentifié
         """
         return self.running
+
 
     def get_app_id(self):
         """
