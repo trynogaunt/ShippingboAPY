@@ -72,7 +72,7 @@ class Client:
         """
         self.access_token = access_token
         self.refresh_token = refresh_token
-        if self.access_token is (None or '') or self.refresh_token is (None or ''):
+        if self.access_token is None  or self.refresh_token is None :
             url = f"https://oauth.shippingbo.com/oauth/token"
             headers = {
                 "Content-Type": "application/json",
@@ -87,10 +87,13 @@ class Client:
             }
 
             response = requests.post(url=url, json=payload, headers=headers)
+            print(response.status_code)
             match response.status_code:
                 case 200:
+                    print("Connected to the API")
                     self.access_token = response.json().get("access_token")
                     self.refresh_token = response.json().get("refresh_token")
+                    self.running = True
                 case 401:
                     print("Invalid token")
                     exit()

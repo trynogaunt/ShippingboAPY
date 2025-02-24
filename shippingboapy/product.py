@@ -19,13 +19,13 @@ class Product(APIWrapper):
                 case 200:
                     return ProductObject(response.json()['product'])
                 case 404:
-                    raise Exception("Product not found")
+                    raise Exception(f"{response.status_code} Product not found")
                 case 403:
-                    raise Exception("Forbidden")
+                    raise Exception(f"{response.status_code} Forbidden")
                 case 401:
-                    raise Exception("Unauthorized")
+                    raise Exception(f"{response.status_code} Unauthorized")
                 case _:
-                    raise Exception("An error occured")
+                    raise Exception(f"{response.status_code} An error occured")
     def build_headers(self):
         self.headers = {
             "Accept": "application/json",

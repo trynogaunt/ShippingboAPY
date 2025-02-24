@@ -15,3 +15,6 @@ shippingboapy.egg-info/*
 shippingboapy/__pycache__/*
 .pyrc
 test_api.py
+access_token.txt
+refresh_token.txt
+test.py

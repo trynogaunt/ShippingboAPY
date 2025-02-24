@@ -8,12 +8,35 @@ class Order(APIWrapper):
         self.client = client
         self.access_token = token
     
-    def get_orders(self, limit=10):
+    def get_orders(self, limit:int=100, offset:int=0, tags:str="", shipped_at:str="", source_ref:str="", state:str="", sort:str="asc"):
         if self.client.running == False:
             print("Please run client with valid token before refreshing")
             return
         else:
-            return self.get(endpoint=f"{self.endpoint}", querystring={"limit": limit, "sort[id]": "desc"})
+            querystring = {
+                "limit": limit,
+                "sort['created_at']": sort
+                }
+            if offset != 0:
+                querystring["offset"] = offset
+            if tags != "":
+                querystring["search[joins][order_tags][value__eq]"] = tags
+            if shipped_at != "":
+                querystring["search[shipped_at__gt][]"] = shipped_at
+            if source_ref != "":
+                querystring["search[source_ref__eq]"] = source_ref
+            if state != "":
+                querystring["search[state__eq][]"] = state
+            
+            headers = self.build_headers()
+            url = self.build_url(endpoint=self.endpoint)
+            print(f"request: {url}?{querystring}")
+            response = self.get(url, headers, querystring)
+            order_list = []
+            for order in response.json()['orders']:
+                order_list.append(OrderObject(order))
+            return order_list 
+            
      
         
     def get_order_by_id(self, order_id):
@@ -51,15 +74,15 @@ class Order(APIWrapper):
             return f"{self.base_url}/{endpoint}/{id}"
         return f"{self.base_url}/{endpoint}"
     
-    
 
 class OrderObject():
     def __init__(self, response):
         self.__dict__.update(response)
     
     def __setattr__(self, name, value):
-        if name == "id":
-            print("You can't change the id of an order")
-        else:
-            self.__dict__[name] = value   
+        self.__dict__[name] = value  
+    
+    @property
+    def get_id(self):
+        return self.id
    
