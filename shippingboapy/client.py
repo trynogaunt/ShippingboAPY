@@ -66,7 +66,13 @@ class Client:
 
     def run(self, token, refresh_token=None, access_token=None):
         """
-        Connecte le client à l'API
+        Connect the script to the API
+        Args:
+            token (str): The unique token given from admin dev dashboard
+            refresh_token (str): The token used to refreshing access token
+            access_token (str): The token used to access the API (limited in time)
+        Notes:
+            If the access_token and refresh_token are not given, the script will connect to the API with the token given from the admin dev dashboard
         """
         self.access_token = access_token
         self.refresh_token = refresh_token

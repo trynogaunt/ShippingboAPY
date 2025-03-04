@@ -1,6 +1,15 @@
 from .api_wrapper import APIWrapper
 from .exceptions import *
 
+class ProductObject():
+    def __init__(self, response):
+        self.__dict__.update(response)
+    
+    def __setattr__(self, name, value):
+        if name == "id":
+            print("You can't change the id of an order")
+        else:
+            self.__dict__[name] = value      
 class Product(APIWrapper):
     def __init__(self,client, token):
         super().__init__(client)
@@ -8,7 +17,7 @@ class Product(APIWrapper):
         self.client = client
         self.access_token = token
         
-    def get_products(self, limit:str="10", is_pack:bool=False, ean13:str=None, offset:str=None, updated_at:str=None, user_ref:str=None, sort_id:int=None, sort_updated_at:int="asc"):
+    def get_products(self, limit:str="10", is_pack:bool=False, ean13:str=None, offset:str=None, updated_at:str=None, user_ref:str=None, sort_id:int=None, sort_updated_at:int="asc") -> list[ProductObject]:
         """
         Retrieve the list of products.
         Args:
@@ -88,12 +97,4 @@ class Product(APIWrapper):
             return f"{self.base_url}/{endpoint}/{id}"
         return f"{self.base_url}/{endpoint}"
      
-class ProductObject():
-    def __init__(self, response):
-        self.__dict__.update(response)
-    
-    def __setattr__(self, name, value):
-        if name == "id":
-            print("You can't change the id of an order")
-        else:
-            self.__dict__[name] = value       
+ 
