@@ -32,10 +32,20 @@ class Order(APIWrapper):
             url = self.build_url(endpoint=self.endpoint)
             print(f"request: {url}?{querystring}")
             response = self.get(url, headers, querystring)
-            order_list = []
-            for order in response.json()['orders']:
-                order_list.append(OrderObject(order))
-            return order_list 
+            match response.status_code:
+                case 200:
+                    order_list = []
+                    for order in response.json()['orders']:
+                        order_list.append(OrderObject(order))
+                    return order_list
+                case 404:
+                    raise Exception("Order not found")
+                case 403:
+                    raise Exception("Forbidden")
+                case 401:
+                    raise Exception("Unauthorized")
+                case _:
+                    raise Exception("An error occured")
             
      
         

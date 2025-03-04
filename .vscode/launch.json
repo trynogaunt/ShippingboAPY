@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+          "type": "debugpy",
+          "request": "launch",
+          "name": "Launch Program",
+          "program": "${workspaceFolder}/${input:programName}"
+        }
+      ],
+      "inputs": [
+        {
+          "type": "pickString",
+          "id": "programName",
+          "description": "Select the Python file to debug",
+          "options": [
+            "single_request_test.py",
+            "test.py"
+          ]
+        }
+      ]
+}

@@ -62,8 +62,6 @@ class Client:
             case 200:
                 self.access_token = response.json().get("access_token")
                 self.refresh_token = response.json().get("refresh_token")
-                print("Access token: ", self.access_token)
-                print("Refresh token: ", self.refresh_token)
                 return self.access_token , self.refresh_token
 
     def run(self, token, refresh_token=None, access_token=None):
@@ -87,7 +85,6 @@ class Client:
             }
 
             response = requests.post(url=url, json=payload, headers=headers)
-            print(response.status_code)
             match response.status_code:
                 case 200:
                     print("Connected to the API")
