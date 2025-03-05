@@ -1,6 +1,17 @@
 from .api_wrapper import APIWrapper
 from datetime import datetime
 
+
+class OrderObject():
+    def __init__(self, response):
+        self.__dict__.update(response)
+    
+    def __setattr__(self, name, value):
+        self.__dict__[name] = value  
+    
+    @property
+    def get_id(self):
+        return self.id
 class Order(APIWrapper):
     def __init__(self,client, token):
         super().__init__(client)
@@ -8,7 +19,7 @@ class Order(APIWrapper):
         self.client = client
         self.access_token = token
     
-    def get_orders(self, limit:int=100, offset:int=0, tags:str="", shipped_at:str="", source_ref:str="", state:str="", sort:str="asc"):
+    def get_orders(self, limit:int=100, offset:int=0, tags:str="", shipped_at:str="", source_ref:str="", state:str="", sort:str="asc") -> list[OrderObject]:
         if self.client.running == False:
             print("Please run client with valid token before refreshing")
             return
@@ -85,14 +96,4 @@ class Order(APIWrapper):
         return f"{self.base_url}/{endpoint}"
     
 
-class OrderObject():
-    def __init__(self, response):
-        self.__dict__.update(response)
-    
-    def __setattr__(self, name, value):
-        self.__dict__[name] = value  
-    
-    @property
-    def get_id(self):
-        return self.id
    

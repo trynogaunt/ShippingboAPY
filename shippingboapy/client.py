@@ -22,22 +22,22 @@ class Client:
         self.running = False
 
     @property
-    def order(self):
+    def order(self) -> Order:
         """
-        Retourne l'objet Order
+        Return the Order object as a property
         """
         return Order(self, self.access_token)   
 
     @property
     def product(self):
         """
-        Retourne l'objet Product
+        Return the Product object as a property
         """
         return Product(self, self.access_token)
         
     def refreshing_token(self):
         """
-        Rafraîchit le token
+        Refresh the access token and the refresh token if they are not None
         """
         
         if self.refresh_token is None or self.access_token is None:
@@ -111,50 +111,50 @@ class Client:
 
     def authenticated(self):
         """
-        Vérifie si le client est authentifié
+        Return True if the client is authenticated
         """
         return self.running
 
 
     def get_app_id(self):
         """
-        Retourne l'ID de l'application
+        Return the app ID
         """
         return self.app_id
     
     def get_api_version(self):
         """
-        Retourne la version de l'API
+        Return the API version
         """
         return self.api_version 
     
     def get_client_id(self):
         """
-        Retourne l'ID du client
+        Return the client ID
         """
         return self.client_id
     
     def get_client_secret(self):
         """
-        Retourne le secret du client
+        Return the client secret
         """
         return self.client_secret
     
     def get_redirect_uri(self):
         """
-        Retourne l'URI de redirection
+        Return the redirect URI
         """
         return self.redirect_uri
 
     def get_access_token(self):
         """
-        Retourne le token d'accès
+        Return the access token
         """
         return self.access_token
     
     def get_refresh_token(self):
         """
-        Retourne le token de rafraîchissement
+        Return the refresh token
         """
         return self.refresh_token
 

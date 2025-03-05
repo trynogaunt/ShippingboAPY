@@ -3,6 +3,11 @@ import requests
 
 class APIWrapper:
     def __init__(self, client):
+        """
+        Construct a new instance of the APIWrapper class.
+        Args:
+            client (Client): The client instance to use for the API wrapper.
+        """
         self.base_url = "https://app.shippingbo.com"
         self.client = client
 
