@@ -103,6 +103,12 @@ class Client:
                 case 500:
                     print("Internal server error")
                     exit()
+                case 403:
+                    print("Forbidden")
+                    exit()
+                case _:
+                    print(response.s)
+                    exit()
         else:
             self.access_token = access_token
             self.refresh_token = refresh_token

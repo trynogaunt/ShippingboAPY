@@ -18,3 +18,5 @@ test_api.py
 access_token.txt
 refresh_token.txt
 test.py
+token.txt
+.vscode/launch.json
