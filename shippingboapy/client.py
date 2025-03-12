@@ -1,5 +1,6 @@
 import requests
 from .order import Order
+from .order import OrderObject
 from .product import Product
 
 class Client:
