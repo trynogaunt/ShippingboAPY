@@ -15,5 +15,3 @@ class KitComponent(AbstractModel):
     '''
     def __init__(self, response):
         super().__init__(response, wrapper_key="kit_component")
-        print("KitComponent class initialized.")
-    

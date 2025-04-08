@@ -8,7 +8,7 @@ class AbstractModel(ABC):
         """Initialize the model with keyword arguments."""
         self.__attributes = []
 
-        data = response.get(wrapper_key) if wrapper_key else response
+        data = response.get(wrapper_key) if response.get(wrapper_key) else response
         if data:
             for key, value in data.items():
                 attr_name = f"__{key}"

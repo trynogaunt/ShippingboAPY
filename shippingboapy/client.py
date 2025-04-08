@@ -1,5 +1,6 @@
 from shippingboapy.controllers.kit_component_controller import KitComponentController
 from shippingboapy.controllers.product_controller import ProductController
+from shippingboapy.controllers.order_controller import OrderController
 import requests
 
 class Client:
@@ -39,6 +40,7 @@ class Client:
         # Initialize controllers for different API resources
         self.kit_component = None
         self.product = None
+        self.order = None
         
     def authenticate(self, auth_code=None, refresh_token=None, access_token=None):
             """
@@ -152,3 +154,4 @@ class Client:
             """
             self.kit_component = KitComponentController(self)
             self.product = ProductController(self)
+            self.order = OrderController(self)

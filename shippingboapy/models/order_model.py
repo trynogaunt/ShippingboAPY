@@ -1,6 +1,6 @@
 from .abstract_model import AbstractModel
 
-class Product(AbstractModel):
+class Order(AbstractModel):
     """
     Product class to represent a product in the ShippingBo API.
     
@@ -13,4 +13,4 @@ class Product(AbstractModel):
         __attributs (list): List of attributes of the Product dynamically generated with JSON.
     """
     def __init__(self, response):
-        super().__init__(response, wrapper_key="product")
+        super().__init__(response, wrapper_key="order")
