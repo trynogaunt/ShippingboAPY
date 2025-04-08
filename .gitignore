@@ -21,3 +21,8 @@ test.py
 token.txt
 .vscode/launch.json
 .vscode/launch.json
+shippingboapy/__pycache__/address.cpython-313.pyc
+shippingboapy/__pycache__/client.cpython-313.pyc
+shippingboapy/__pycache__/order.cpython-313.pyc
+shippingboapy/__pycache__/product.cpython-313.pyc
+.vscode/launch.json
