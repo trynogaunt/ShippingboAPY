@@ -1,7 +1,4 @@
-
-from .abstract_model import AbstractModel
-
-class KitComponent(AbstractModel):
+class KitComponent:
     '''
     KitComponent class to represent a component of a kit in the ShippingBo API.
     
@@ -14,4 +11,9 @@ class KitComponent(AbstractModel):
         __attributs (list): List of attributes of the KitComponent dynamically generated with JSON.
     '''
     def __init__(self, response):
-        super().__init__(response, wrapper_key="kit_component")
+        self.__attributes = []
+        for key, value in response.items():
+            self.__attributes.append(key)
+            setattr(self, key, value)
+    def __repr__(self):
+        return f"<{self.__class__.__name__}>"

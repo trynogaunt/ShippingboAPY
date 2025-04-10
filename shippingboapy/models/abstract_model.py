@@ -1,4 +1,6 @@
 from abc import ABC
+from .order_item_product_mapping_model import OrderItemProductMapping
+from .kit_component_model import KitComponent
 import difflib
 
 class AbstractModel(ABC):
@@ -7,11 +9,16 @@ class AbstractModel(ABC):
     def __init__(self, response , wrapper_key=None):
         """Initialize the model with keyword arguments."""
         self.__attributes = []
-
         data = response.get(wrapper_key) if response.get(wrapper_key) else response
         if data:
             for key, value in data.items():
                 attr_name = f"__{key}"
+                if key == "additional_references" and isinstance(value, list):
+                    value = [OrderItemProductMapping(item) for item in value]
+
+                if key == "kit_components" and isinstance(value, list):
+                    value = [KitComponent(item) for item in value]
+
                 if not hasattr(self, attr_name):
                     # If the attribute doesn't exist, create it dynamically
                     setattr(self, attr_name, value)

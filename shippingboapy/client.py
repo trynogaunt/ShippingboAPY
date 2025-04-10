@@ -50,18 +50,17 @@ class Client:
             """
             # If an authorization code is provided and no access token, use it to get an access token
             if auth_code and not access_token and not refresh_token:
-                print(self._get_access_token(auth_code))
+                self._get_access_token(auth_code)
+                self._initialize_controllers()
             else:
                 # If no authorization code is provided, check if we have a refresh token
                 if refresh_token:
                     self.refresh_token = refresh_token
                     self.refresh_authentication()
+                    self._initialize_controllers()
                 # If no refresh token is available, raise an exception
                 else:
                     raise Exception("No authorization code or refresh token provided.")
-            if self.access_token and self.refresh_token:
-                print("Access token and refresh token are already set.")
-                self._initialize_controllers()
         
     def _get_access_token(self, auth_code):
             '''
