@@ -2,6 +2,9 @@ from abc import ABC
 from .order_item_product_mapping_model import OrderItemProductMapping
 from .kit_component_model import KitComponent
 from .product_additional_fields_model import ProductAdditionalFields
+from .pack_component_model import PackComponent
+from .product_instructions_files_model import ProductInstructionsFiles
+from .address_model import Address
 import difflib
 
 class AbstractModel(ABC):
@@ -22,6 +25,18 @@ class AbstractModel(ABC):
                 
                 if key == "product_additional_fields" and isinstance(value, list):
                     value = [ProductAdditionalFields(item) for item in value]
+
+                if key == "pack_components" and isinstance(value, list):
+                    value = [PackComponent(item) for item in value]
+                
+                if key == "product_instructions_files" and isinstance(value, list):
+                    value = [ProductInstructionsFiles(item) for item in value]
+                
+                if key == "billing_address" or key == "shipping_address" and isinstance(value, dict):
+                    if value is None:
+                        value = None
+                    else:
+                        value = Address(value)
 
                 if not hasattr(self, attr_name):
                     # If the attribute doesn't exist, create it dynamically
