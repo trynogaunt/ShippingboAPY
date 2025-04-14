@@ -4,6 +4,7 @@ from .kit_component_model import KitComponent
 from .product_additional_fields_model import ProductAdditionalFields
 from .pack_component_model import PackComponent
 from .product_instructions_files_model import ProductInstructionsFiles
+from .shipments_model import Shipments
 from .address_model import Address
 import difflib
 
@@ -37,6 +38,12 @@ class AbstractModel(ABC):
                         value = None
                     else:
                         value = Address(value)
+                
+                if key == "shipments" and isinstance(value, list):
+                    if value is None:
+                        value = None
+                    else:
+                        value = [Shipments(item) for item in value]
 
                 if not hasattr(self, attr_name):
                     # If the attribute doesn't exist, create it dynamically
