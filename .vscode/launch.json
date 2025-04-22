@@ -17,8 +17,7 @@
           "id": "programName",
           "description": "Select the Python file to debug",
           "options": [
-            "single_request_test.py",
-            "test.py"
+            "tests/test_client.py"
           ]
         }
       ]
