@@ -4,7 +4,6 @@ dist/shippinboapi-0.0.1-py3-none-any.whl
 dist/shippinboapi-0.0.1.tar.gz
 dist/*
 tests/*
-pyproject.toml
 src/shippingboapy/config.toml
 src/config.toml
 src\config.toml
@@ -27,3 +26,4 @@ shippingboapy/__pycache__/order.cpython-313.pyc
 shippingboapy/__pycache__/product.cpython-313.pyc
 .vscode/launch.json
 .vscode/launch.json
+.gitignore
