@@ -65,3 +65,16 @@ class AbstractController:
         else:
             response = requests.get(url, headers=headers)
         return self._process_reponse(response)
+    
+    def _patch(self, endpoint, data):
+        """
+        Send a PATCH request to the specified endpoint.
+
+        :param endpoint: The API endpoint to send the request to.
+        :param data: The data to include in the request body.
+        :return: The response from the API.
+        """
+        url = f"{self.base_url}/{endpoint}"
+        headers = self._build_headers()
+        response = requests.patch(url, headers=headers, json=data)
+        return self._process_reponse(response)

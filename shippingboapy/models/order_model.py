@@ -1,4 +1,3 @@
-from .abstract_model import AbstractModel
 from .address_model import Address
 import datetime
 from datetime import datetime as dt
