@@ -1,6 +1,7 @@
 from .abstract_controller import AbstractController
 from ..models.product_model import Product
 
+
 class ProductController(AbstractController):
     def __init__(self, api_client):
         super().__init__(api_client)

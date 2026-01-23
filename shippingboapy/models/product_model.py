@@ -1,8 +1,8 @@
 from datetime import datetime as dt
 
-class AdditionnalReferences:
+class AdditionalReferences:
     """
-    AdditionnalReferences class to represent additional references in the ShippingBo API.
+    AdditionalReferences class to represent additional references in the ShippingBo API.
     
     This class is used to manage the attributes and methods related to additional references.
     Additional references are used to manage the additional references in the ShippingBo API.
@@ -10,7 +10,7 @@ class AdditionnalReferences:
     Attributes:
         __token (str): The token used for authentication.
         __client (Client): The client instance to use for the API wrapper.
-        __attributs (list): List of attributes of the AdditionnalReferences dynamically generated with JSON.
+        __attributs (list): List of attributes of the AdditionalReferences dynamically generated with JSON.
     """
     def __init__(self, response):
         self.__attributes = []
@@ -99,6 +99,7 @@ class ProductInstructionsFiles:
             for key, value in data.items():
                 self.__attributes.append(key)
                 setattr(self, key, value)
+
 class Product:
     """
     Product class to represent a product in the ShippingBo API.
@@ -130,7 +131,7 @@ class Product:
                         value = [KitComponents(item) for item in value]
                     if key == "pack_components":
                         value = [PackComponents(item) for item in value]
-                    if key == "additionnal_references":
-                        value = [AdditionnalReferences(item) for item in value]
+                    if key == "additional_references":
+                        value = [AdditionalReferences(item) for item in value]
                 self.__attributes.append(key)
                 setattr(self, key, value)

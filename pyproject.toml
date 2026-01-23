@@ -7,3 +7,6 @@ name = "shippingboapy"
 version = "0.1.0"
 description = "API project"
 authors = [{name = "Tryno"}]
+
+[tool.setuptools.packages.find]
+where = ["."]

@@ -1,5 +1,5 @@
 from .abstract_controller import AbstractController
-from ..models.kit_component_model import KitComponent
+#from .models.kit_component_model import KitComponent
 
 class KitComponentController(AbstractController):
     def __init__(self, client):
