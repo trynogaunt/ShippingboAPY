@@ -1,2 +1,56 @@
+[build-system]
+    requires = ["setuptools"]
+    build-backend = "setuptools.build_meta"
+
+[project]
+    name = "shippingbo-apy"
+    version = "0.1.0"
+    requires-python = ">=3.10"
+    dependencies = [
+        "httpx>=0.28.1",
+        "pydantic>=2.12.5",
+        "pydantic-settings>=2.13.5",
+    ]
+
+    authors = [
+        { name = "Tryno", email = "trynogaunt@gmail.com" }
+    ]
+
+    maintainers = [
+        { name = "Tryno", email = "trynogaunt@gmail.com" }
+    ]
+
+    description = "A Python client for the Shippingbo API."
+
+    readme = { file = "README.md", content-type = "text/markdown" }
+
+    keywords = [
+        "shippingbo",
+        "api",
+        "client",
+        "python",
+    ]
+
+    classifiers = [
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Developers",
+        "Topic :: Software Development :: Libraries",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+    ]
+[project.optional-dependencies]
+    dev = [
+        "pytest",
+        "pytest-cov",
+        "pytest-asyncio",
+        "black",
+        "isort",
+        "mypy",
+        "pre-commit",
+    ]
+
 [tool.pytest.ini_options]
-pythonpath = ["."]
+    pythonpath = ["."]
