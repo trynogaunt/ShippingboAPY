@@ -1,15 +1,25 @@
 import httpx
 from config import ShippingBoConfig
-from auth import TokenData
+from auth import TokenData, get_token
+from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError
 
 class Client:
-    def __init__(self, access_token: str, 
-                 refresh_token: str,
-                 app_id: str = None,
-                 api_version: str = None,
-                 client_id: str = None,
-                 client_secret: str = None,
-                 ):
+    def __init__(self, access_token: str | None = None, 
+                 refresh_token: str | None = None,
+                 app_id: str = "",
+                 api_version: str  = "",
+                 client_id: str = "",
+                 client_secret: str  = ""):
+        
+        if not app_id:
+            raise AuthenticationError("app_id is required")
+        if not api_version:
+            raise AuthenticationError("api_version is required")
+        if not client_id:
+            raise AuthenticationError("client_id is required")
+        if not client_secret:
+            raise AuthenticationError("client_secret is required")
+        
         self.config = ShippingBoConfig(
             app_id=app_id,
             api_version=api_version,
@@ -40,6 +50,20 @@ class Client:
             self.config.auth_url = auth_url
         if api_url is not None:
             self.config.api_url = api_url
+    
+    @classmethod
+    async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, redirect_uri: str | None = None, headers: dict | None = None):
+        config = ShippingBoConfig(app_id=app_id, api_version=api_version, client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri)
+        session = httpx.AsyncClient(timeout=config.timeout)
+        token = await get_token(auth_code, session, config, headers)
+        return cls(
+            access_token=token.access_token,
+            refresh_token=token.refresh_token,
+            app_id=config.app_id,
+            api_version=config.api_version,
+            client_id=config.client_id,
+            client_secret=config.client_secret
+        )
             
     async def close(self):
         await self.session.aclose()
