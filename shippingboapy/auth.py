@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from shippingboapy.config import ShippingBoConfig
 import httpx
 import time
-from shippingboapy.exceptions import *
+from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError
 
 @dataclass
 class TokenData:
@@ -11,10 +11,12 @@ class TokenData:
     expires_in: int
     refresh_token: str
     scope: str
-    created_at: int
+    created_at: int | None
     
 def is_token_expired(token_data: TokenData) -> bool:
     """Check if the token has expired."""
+    if token_data.created_at is None:
+        return True
     current_time = int(time.time())
     return current_time >= token_data.created_at + token_data.expires_in
 
@@ -80,7 +82,8 @@ async def refresh_token(refresh_token: str,
         'grant_type': 'refresh_token',
         'refresh_token': refresh_token,
         'client_id': config.client_id,
-        'client_secret': config.client_secret
+        'client_secret': config.client_secret,
+        'redirect_uri': config.redirect_uri
     }
     
     response = await session.post(config.auth_url, json=payload, headers=headers)
