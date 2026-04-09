@@ -44,16 +44,20 @@ async def get_token(auth_code: str, session: httpx.AsyncClient, config: Shipping
     }
     
     response = await session.post(config.auth_url, json=payload, headers=headers)
+
     if response.status_code == 200:
         token_data = response.json()
-        return TokenData(
+    
+        token = TokenData(
             access_token=token_data['access_token'],
             token_type=token_data['token_type'],
             expires_in=token_data['expires_in'],
             refresh_token=token_data['refresh_token'],
             scope=token_data['scope'],
-            created_at=int(time.time())
+            created_at= token_data.get('created_at', int(time.time()))
         )
+    
+        return token
     else:
         if response.status_code == 400:
             raise BadRequestError(f"Bad request: {response.status_code} - {response.text}")

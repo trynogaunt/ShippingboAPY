@@ -1,6 +1,6 @@
 import httpx
-from config import ShippingBoConfig
-from auth import TokenData, get_token
+from shippingboapy.config import ShippingBoConfig
+from shippingboapy.auth import TokenData, get_token
 from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError
 
 class Client:
@@ -36,6 +36,9 @@ class Client:
         )
         self.session = httpx.AsyncClient(timeout=self.config.timeout)
 
+    def _set_token(self, token_data: TokenData):
+        self.token = token_data
+    
     def set_config(self, timeout: int = None, max_retries: int = None, retry_backoff_factor: float = None, redirect_uri: str = None, auth_url: str = None, api_url: str = None):
         if timeout is not None:
             self.config.timeout = timeout
@@ -57,7 +60,7 @@ class Client:
         async with httpx.AsyncClient(timeout=config.timeout) as session:
             token = await get_token(auth_code, session, config, headers)
         
-        return cls(
+        cls = cls(
             access_token=token.access_token,
             refresh_token=token.refresh_token,
             app_id=config.app_id,
@@ -65,7 +68,9 @@ class Client:
             client_id=config.client_id,
             client_secret=config.client_secret
         )
-            
+        cls._set_token(token)
+        return cls
+    
     async def close(self):
         await self.session.aclose()
     
