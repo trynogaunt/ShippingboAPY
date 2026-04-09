@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional, Literal
 
 class ProductStocksInformations(BaseModel):
@@ -88,10 +88,23 @@ class Product(BaseModel):
     stock_volume_in_m3: Optional[float] = Field(..., description="unit_volume * stock / 10^9")
     supplier: Optional[str] = Field(..., description="The supplier of the product")
     supplier_products_ids: Optional[List[int]] = Field(..., description="This a reference to the supplier products, you can request each of them and look at the physical stock and available stock if you need the information")
-    tax_rate: Optional[float] = Field(..., description="The tax rate for the product, in percentage")
+    tax_rate: Optional[float] = Field(..., description="The tax rate for the product, in percentage", gt=0)
     title: Optional[str] = Field(..., description="The title of the product.")
     total_physical_stock: Optional[int] = Field(..., description="Only for OMS: total physical stock computed from suppliers")
     unit_volume: Optional[int] = Field(..., description="The unit volume of the product in cubic millimeters, height * length * width")
     user_ref: str = Field(..., description="The main reference of the product, usually useful to match product reference if orders")
     weight: Optional[int] = Field(..., description="The weight of the product in grams.")
     width: Optional[int] = Field(..., description="The width of the product in millimeters.")
+    
+    @field_validator("stock_volume_in_m3", mode="before")
+    @classmethod
+    def round_to_2_decimal(cls, v, values):
+        if v is not None:
+            return round(v, 2)
+        return v
+    
+    model_config = {
+        "extra": "forbid",
+        "populate_by_name": True,
+        "validate_assignment": True,
+    }
