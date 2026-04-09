@@ -44,3 +44,7 @@ class RateLimitError(APIRequestError):
 class ServerError(APIRequestError):
     """Raised when the server encounters an error."""
     pass
+
+class UnexpectedError(APIRequestError):
+    """Raised when an unexpected error occurs."""
+    pass

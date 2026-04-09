@@ -1,7 +1,9 @@
 import httpx
 from shippingboapy.config import ShippingBoConfig
 from shippingboapy.auth import TokenData, get_token, refresh_token
-from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError
+import asyncio
+from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError, UnexpectedError, ForbiddenError, NotFoundError
+from shippingboapy.resources.product import ProductRessource
 
 class Client:
     def __init__(self, access_token: str | None = None, 
@@ -35,6 +37,7 @@ class Client:
             created_at = None
         )
         self.session = httpx.AsyncClient(timeout=self.config.timeout)
+        self.products = ProductRessource(self)
 
     def _set_token(self, token_data: TokenData):
         self.token = token_data
@@ -58,8 +61,15 @@ class Client:
         if self.token is None or self.token.access_token is None:
             raise AuthenticationError("Access token is missing. Please authenticate first.")
         
-        url = f"{self.config.api_url}/{endpoint}"
-        headers = {"Authorization": f"Bearer {self.token.access_token}"}
+        url = f"{self.config.api_url.rstrip('/')}/{endpoint.lstrip('/')}"
+        headers = {
+            "Authorization": f"Bearer {self.token.access_token}",
+            "X-API-VERSION": self.config.api_version,
+            "X-API-APP-ID": self.config.app_id,
+            "Accept": "application/json",
+        }
+        headers.update(kwargs.pop("headers", {}))
+        
         
         
         response = await self.session.request(method, url, headers=headers, **kwargs)
@@ -77,13 +87,21 @@ class Client:
                             raise TokenRefreshError("Failed to refresh token.")
                     except Exception:
                         sleep_time = self.config.retry_backoff_factor * (2 ** (_retry - 1))
-                        await httpx.AsyncClient().sleep(sleep_time)
+                        await asyncio.sleep(sleep_time)
                         return await self._request(method, endpoint, _retry=_retry + 1, **kwargs)
                     
         elif response.status_code == 400:
-            raise BadRequestError(f"Bad request: {response.text}")
+            raise BadRequestError(response.status_code, f"Bad request: {response.text}")
         
-        return response
+        elif response.status_code == 403:
+            raise ForbiddenError(response.status_code, f"Forbidden access: {response.text}")
+        
+        elif response.status_code == 404:
+            raise NotFoundError(response.status_code, f"Resource not found: {response.text}")
+        else:
+            raise UnexpectedError(response.status_code, f"Unexpected error: {response.text}")
+        
+        return response.json()
     
     @classmethod
     async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, redirect_uri: str | None = None, headers: dict | None = None):
