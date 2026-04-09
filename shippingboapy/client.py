@@ -1,6 +1,6 @@
 import httpx
 from shippingboapy.config import ShippingBoConfig
-from shippingboapy.auth import TokenData, get_token
+from shippingboapy.auth import TokenData, get_token, refresh_token
 from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError
 
 class Client:
@@ -53,6 +53,37 @@ class Client:
             self.config.auth_url = auth_url
         if api_url is not None:
             self.config.api_url = api_url
+    
+    async def _request(self, method: str, endpoint: str, _retry: int = 0, **kwargs) -> dict:
+        if self.token is None or self.token.access_token is None:
+            raise AuthenticationError("Access token is missing. Please authenticate first.")
+        
+        url = f"{self.config.api_url}/{endpoint}"
+        headers = {"Authorization": f"Bearer {self.token.access_token}"}
+        
+        
+        response = await self.session.request(method, url, headers=headers, **kwargs)
+        
+        if response.status_code == 401:
+            if self.token and self.token.refresh_token:
+                if _retry < self.config.max_retries:
+                    try:
+                        new_token = await refresh_token(self.token.refresh_token, self.session, self.config)
+                        if new_token:
+                            self._set_token(new_token)
+                            headers["Authorization"] = f"Bearer {new_token.access_token}"
+                            response = await self.session.request(method, url, headers=headers, **kwargs)
+                        else:
+                            raise TokenRefreshError("Failed to refresh token.")
+                    except Exception:
+                        sleep_time = self.config.retry_backoff_factor * (2 ** (_retry - 1))
+                        await httpx.AsyncClient().sleep(sleep_time)
+                        return await self._request(method, endpoint, _retry=_retry + 1, **kwargs)
+                    
+        elif response.status_code == 400:
+            raise BadRequestError(f"Bad request: {response.text}")
+        
+        return response
     
     @classmethod
     async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, redirect_uri: str | None = None, headers: dict | None = None):
