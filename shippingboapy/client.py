@@ -54,8 +54,9 @@ class Client:
     @classmethod
     async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, redirect_uri: str | None = None, headers: dict | None = None):
         config = ShippingBoConfig(app_id=app_id, api_version=api_version, client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri)
-        session = httpx.AsyncClient(timeout=config.timeout)
-        token = await get_token(auth_code, session, config, headers)
+        async with httpx.AsyncClient(timeout=config.timeout) as session:
+            token = await get_token(auth_code, session, config, headers)
+        
         return cls(
             access_token=token.access_token,
             refresh_token=token.refresh_token,
