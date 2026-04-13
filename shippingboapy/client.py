@@ -2,7 +2,7 @@ import httpx
 from shippingboapy.config import ShippingBoConfig
 from shippingboapy.auth import TokenData, get_token, refresh_token
 import asyncio
-from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError, UnexpectedError, ForbiddenError, NotFoundError
+from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError, UnexpectedError, ForbiddenError, NotFoundError, ServerError
 from shippingboapy.resources.product import ProductRessource
 
 class Client:
@@ -74,21 +74,13 @@ class Client:
         
         if response.status_code != 200:
             if response.status_code == 401:
-                if self.token and self.token.refresh_token:
-                    if _retry < self.config.max_retries:
-                        try:
-                            new_token = await refresh_token(self.token.refresh_token, self.session, self.config)
-                            if new_token:
-                                self._set_token(new_token)
-                                headers["Authorization"] = f"Bearer {new_token.access_token}"
-                                response = await self.session.request(method, url, headers=headers, params=params, **kwargs)
-                            else:
-                                raise TokenRefreshError("Failed to refresh token.")
-                        except Exception:
-                            sleep_time = self.config.retry_backoff_factor * (2 ** (_retry - 1))
-                            await asyncio.sleep(sleep_time)
-                            return await self._request(method, endpoint, _retry=_retry + 1, **kwargs)
-                        
+                if _retry == 0 and self.token and self.token.refresh_token:
+                    try:
+                        new_token = await refresh_token(self.token.refresh_token, self.session, self.config)
+                        self._set_token(new_token)
+                        return await self._request(method, endpoint, params=params, _retry=1, **kwargs)
+                    except Exception as e:
+                        raise TokenRefreshError(response.status_code, f"Token refresh failed: {str(e)}")
             elif response.status_code == 400:
                 raise BadRequestError(response.status_code, f"Bad request: {response.text}")
             
@@ -97,8 +89,17 @@ class Client:
                     
             elif response.status_code == 404:
                 raise NotFoundError(response.status_code, f"Resource not found: {response.text}")
+            
             elif response.status_code == 422:
                 raise BadRequestError(response.status_code, f"Unprocessable entity: {response.text}")
+            
+            elif response.status_code >= 500:
+                if _retry < self.config.max_retries:
+                    backoff_time = self.config.retry_backoff_factor * (2 ** _retry)
+                    await asyncio.sleep(backoff_time)
+                    return await self._request(method, endpoint, params=params, _retry=_retry + 1, **kwargs)
+                else:
+                    raise ServerError(response.status_code, f"Server error after {self.config.max_retries} retries: {response.text}")
             else:
                 raise UnexpectedError(response.status_code, f"Unexpected error: {response.text}")
             
