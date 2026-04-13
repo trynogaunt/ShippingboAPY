@@ -57,7 +57,7 @@ class Client:
         if api_url is not None:
             self.config.api_url = api_url
     
-    async def _request(self, method: str, endpoint: str, _retry: int = 0, **kwargs) -> dict:
+    async def _request(self, method: str, endpoint: str, params: dict | None = None, _retry: int = 0, **kwargs) -> dict:
         if self.token is None or self.token.access_token is None:
             raise AuthenticationError("Access token is missing. Please authenticate first.")
         
@@ -70,9 +70,7 @@ class Client:
         }
         headers.update(kwargs.pop("headers", {}))
         
-        
-        
-        response = await self.session.request(method, url, headers=headers, **kwargs)
+        response = await self.session.request(method, url, headers=headers, params=params, **kwargs)
         
         if response.status_code == 401:
             if self.token and self.token.refresh_token:
@@ -82,7 +80,7 @@ class Client:
                         if new_token:
                             self._set_token(new_token)
                             headers["Authorization"] = f"Bearer {new_token.access_token}"
-                            response = await self.session.request(method, url, headers=headers, **kwargs)
+                            response = await self.session.request(method, url, headers=headers, params=params, **kwargs)
                         else:
                             raise TokenRefreshError("Failed to refresh token.")
                     except Exception:
