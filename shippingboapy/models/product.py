@@ -22,10 +22,10 @@ class OrderItemProductMapping(BaseModel):
     product_value: str = Field(..., description="The value of the product field that is mapped to the order item, the Shippingbo id of the corresponding product.")
 
 class KitComponent(BaseModel):
-    id: int = Field(..., description="The unique identifier for the kit component.")
-    quantity: int = Field(..., description="The quantity of the component in the kit.")
-    kit_product_id: int = Field(..., description="The unique identifier for the kit product.")
-    product_id: int = Field(..., description="The unique identifier for the product that is a component of the kit.")
+    id: int | str = Field(..., description="The unique identifier for the kit component.")
+    quantity: int | str = Field(..., description="The quantity of the component in the kit.")
+    kit_product_id: int | str = Field(..., description="The unique identifier for the kit product.")
+    product_id: int | str = Field(..., description="The unique identifier for the product that is a component of the kit.")
     kit_stock_rule: Optional[str] = Field(..., description="How kit and their components stocks interact with each other. Can be: null: no interaction , 'kit_supply': the kit stock feeds the components stock") 
 
 class PackComponent(BaseModel):
@@ -57,7 +57,7 @@ class ProductInstructionsFile(BaseModel):
     language: str = Field(..., description="The language of the product instructions file.")
 
 class Product(BaseModel):
-    additonal_reference: Optional[List[OrderItemProductMapping]] = Field(..., description="The additional reference for the product.")
+    additonal_references: Optional[List[OrderItemProductMapping]] = Field(..., description="The additional reference for the product.")
     ean13: Optional[str] = Field(..., description="The EAN13 code for the product.")
     eco_tax_cents : Optional[int] = Field(..., description="The eco tax in cents for the product.")
     eco_tax_currency: Optional[str] = Field(..., description="The currency for the eco tax.")
