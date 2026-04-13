@@ -97,6 +97,8 @@ class Client:
                     
             elif response.status_code == 404:
                 raise NotFoundError(response.status_code, f"Resource not found: {response.text}")
+            elif response.status_code == 422:
+                raise BadRequestError(response.status_code, f"Unprocessable entity: {response.text}")
             else:
                 raise UnexpectedError(response.status_code, f"Unexpected error: {response.text}")
             

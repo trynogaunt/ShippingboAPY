@@ -1,7 +1,7 @@
 from __future__ import annotations
 from shippingboapy.exceptions import ValueError
 from typing import TYPE_CHECKING, Literal
-from shippingboapy.models.product import Product, ProductSummary
+from shippingboapy.models.product import Product, ProductSummary, ProductCreate
 if TYPE_CHECKING:
     from shippingboapy.client import Client
 
@@ -76,6 +76,24 @@ class ProductRessource:
         """
         
         data = await self.client._request("GET", f"/products/{product_id}", **kwargs)
+        
+        if data is None:
+            return None
+        
+        return Product(**data)
+    
+    async def create(self, product_create: ProductCreate, **kwargs) -> Product:
+        """
+        Create a new product in the Shippingbo account.
+
+        Args:
+            product_create (ProductCreate): The product creation data.
+
+        Returns:
+            Product: A Product object representing the details of the newly created product.
+        """
+        
+        data = await self.client._request("POST", "products", json=product_create.model_dump(exclude_none=True), **kwargs)
         
         if data is None:
             return None
