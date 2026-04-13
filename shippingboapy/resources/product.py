@@ -1,4 +1,5 @@
 from __future__ import annotations
+from shippingboapy.exceptions import ValueError
 from typing import TYPE_CHECKING, Literal
 from shippingboapy.models.product import Product
 if TYPE_CHECKING:
@@ -20,6 +21,10 @@ class ProductRessource:
 
         Args:
             is_pack (bool): Filter products by pack status.
+            limit (int): The maximum number of products to return.
+            offset (int): The number of products to skip before starting to collect the result set.
+            search (dict[str, str]): A dictionary of search parameters to filter the products.
+            sort (dict[Literal['id', 'updated_at'], str | int]): A dictionary specifying the sorting order of the results. The keys can be 'id' or 'updated_at', and the values can be 'asc' for ascending or null for descending.
 
         Returns:
             list[Product]: A list of Product objects representing the products in the Shippingbo account.
@@ -41,6 +46,14 @@ class ProductRessource:
         
         if sort:
             for key, value in sort.items():
+                if key == "id" and not isinstance(value, int):
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        raise ValueError(f"Invalid value for 'id' in sort: {value}. Expected an integer or a string that can be converted to an integer.")
+                else:
+                    value = str(value)
+                    
                 params[f"sort[{key}]"] = value
         
         

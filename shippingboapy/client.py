@@ -72,34 +72,35 @@ class Client:
         
         response = await self.session.request(method, url, headers=headers, params=params, **kwargs)
         
-        if response.status_code == 401:
-            if self.token and self.token.refresh_token:
-                if _retry < self.config.max_retries:
-                    try:
-                        new_token = await refresh_token(self.token.refresh_token, self.session, self.config)
-                        if new_token:
-                            self._set_token(new_token)
-                            headers["Authorization"] = f"Bearer {new_token.access_token}"
-                            response = await self.session.request(method, url, headers=headers, params=params, **kwargs)
-                        else:
-                            raise TokenRefreshError("Failed to refresh token.")
-                    except Exception:
-                        sleep_time = self.config.retry_backoff_factor * (2 ** (_retry - 1))
-                        await asyncio.sleep(sleep_time)
-                        return await self._request(method, endpoint, _retry=_retry + 1, **kwargs)
+        if response.status_code != 200:
+            if response.status_code == 401:
+                if self.token and self.token.refresh_token:
+                    if _retry < self.config.max_retries:
+                        try:
+                            new_token = await refresh_token(self.token.refresh_token, self.session, self.config)
+                            if new_token:
+                                self._set_token(new_token)
+                                headers["Authorization"] = f"Bearer {new_token.access_token}"
+                                response = await self.session.request(method, url, headers=headers, params=params, **kwargs)
+                            else:
+                                raise TokenRefreshError("Failed to refresh token.")
+                        except Exception:
+                            sleep_time = self.config.retry_backoff_factor * (2 ** (_retry - 1))
+                            await asyncio.sleep(sleep_time)
+                            return await self._request(method, endpoint, _retry=_retry + 1, **kwargs)
+                        
+            elif response.status_code == 400:
+                raise BadRequestError(response.status_code, f"Bad request: {response.text}")
+            
+            elif response.status_code == 403:
+                raise ForbiddenError(response.status_code, f"Forbidden access: {response.text}")
                     
-        elif response.status_code == 400:
-            raise BadRequestError(response.status_code, f"Bad request: {response.text}")
-        
-        elif response.status_code == 403:
-            raise ForbiddenError(response.status_code, f"Forbidden access: {response.text}")
-        
-        elif response.status_code == 404:
-            raise NotFoundError(response.status_code, f"Resource not found: {response.text}")
-        else:
-            raise UnexpectedError(response.status_code, f"Unexpected error: {response.text}")
-        
-        return response.json()
+            elif response.status_code == 404:
+                raise NotFoundError(response.status_code, f"Resource not found: {response.text}")
+            else:
+                raise UnexpectedError(response.status_code, f"Unexpected error: {response.text}")
+            
+            return response.json()
     
     @classmethod
     async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, redirect_uri: str | None = None, headers: dict | None = None):

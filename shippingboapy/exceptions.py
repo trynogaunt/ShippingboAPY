@@ -2,6 +2,10 @@ class ShippingboAPYException(Exception):
     """Base exception for ShippingboAPY."""
     pass
 
+class ValueError(ShippingboAPYException):
+    """Raised when an invalid value is provided."""
+    pass
+
 class AuthenticationError(ShippingboAPYException):
     """Raised when authentication fails."""
     pass
