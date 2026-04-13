@@ -1,7 +1,7 @@
 from __future__ import annotations
 from shippingboapy.exceptions import ValueError
 from typing import TYPE_CHECKING, Literal
-from shippingboapy.models.product import Product
+from shippingboapy.models.product import Product, ProductSummary
 if TYPE_CHECKING:
     from shippingboapy.client import Client
 
@@ -56,9 +56,13 @@ class ProductRessource:
                     
                 params[f"sort[{key}]"] = value
         
+        data = await self.client._request("GET", "products", params=params, **kwargs)
+       
+       
+        if data is None:
+            return []
         
-        data = await self.client._request("GET", "products", params=params)
-        return [Product(**item) for item in data.get("products", [])]
+        return [ProductSummary(**item) for item in data.get("products", [])]
     
     async def get(self, product_id: int, **kwargs) -> Product:
         """
@@ -70,5 +74,10 @@ class ProductRessource:
         Returns:
             Product: A Product object representing the details of the specified product.
         """
+        
         data = await self.client._request("GET", f"/products/{product_id}", **kwargs)
+        
+        if data is None:
+            return None
+        
         return Product(**data)

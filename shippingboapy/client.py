@@ -100,7 +100,7 @@ class Client:
             else:
                 raise UnexpectedError(response.status_code, f"Unexpected error: {response.text}")
             
-            return response.json()
+        return response.json()
     
     @classmethod
     async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, redirect_uri: str | None = None, headers: dict | None = None):
