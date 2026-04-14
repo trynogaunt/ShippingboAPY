@@ -32,7 +32,7 @@ pre-commit install
 
 ## Project Structure
 
-```
+```txt
 shippingboapy/
 ├── client.py          # Core Client class, _request(), OAuth handling
 ├── auth.py            # Token management (get_token, TokenData)
@@ -50,7 +50,7 @@ tests/
 
 Each resource lives in two places: a model file and a resource file.
 
-### 1. Create the model — `shippingboapy/models/<resource>.py`
+### 1. Create the model - `shippingboapy/models/<resource>.py`
 
 Use Pydantic v2 with these settings on every model:
 
@@ -71,7 +71,7 @@ class MyResource(BaseModel):
 Follow this naming convention:
 
 | Model | Purpose |
-|---|---|
+| --- | --- |
 | `MyResource` | Full response model (GET by id) |
 | `MyResourceSummary` | List response model (GET list) |
 | `MyResourceCreate` | POST payload |
@@ -80,7 +80,7 @@ Follow this naming convention:
 
 Only create the models you actually need — not all resources have every variant.
 
-### 2. Create the resource — `shippingboapy/resources/<resource>.py`
+### 2. Create the resource - `shippingboapy/resources/<resource>.py`
 
 ```python
 from __future__ import annotations
@@ -162,7 +162,7 @@ The Stoplight mock server has known issues on some endpoints. If you encounter a
 When this happens:
 
 - Add a comment in your test explaining the mock is broken for that endpoint.
-- Do not skip the test silently — mark it with `pytest.mark.xfail` and a reason.
+- Do not skip the test silently, mark it with `pytest.mark.xfail` and a reason.
 
 ```python
 @pytest.mark.xfail(reason="Stoplight mock returns 422 on this endpoint — mock config issue, not an SDK bug")
@@ -194,7 +194,7 @@ mypy shippingboapy
 4. Document broken mock endpoints with `xfail` rather than skipping.
 5. Open a PR with a clear description of what resource or fix you're adding.
 
-If you're implementing a resource listed in the ShippingBo API spec but haven't covered all its endpoints yet, that's fine — partial implementations are welcome as long as what's there is solid.
+If you're implementing a resource listed in the ShippingBo API spec but haven't covered all its endpoints yet, that's fine partial implementations are welcome as long as what's there is solid.
 
 ---
 
