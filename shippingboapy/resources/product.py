@@ -5,7 +5,7 @@ from shippingboapy.models.product import Product, ProductSummary, ProductCreate,
 if TYPE_CHECKING:
     from shippingboapy.client import Client
 
-class ProductRessource:
+class ProductResource:
     def __init__(self, client: Client):
         self.client = client
     
