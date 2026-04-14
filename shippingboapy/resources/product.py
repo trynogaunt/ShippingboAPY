@@ -1,7 +1,7 @@
 from __future__ import annotations
 from shippingboapy.exceptions import ValueError
 from typing import TYPE_CHECKING, Literal
-from shippingboapy.models.product import Product, ProductSummary, ProductCreate, ProductUpdateId, ProductUpdateKey
+from shippingboapy.models.product import Product, ProductSummary, ProductCreate, ProductUpdateId, ProductUpdateKey, ProductStocksInformations
 if TYPE_CHECKING:
     from shippingboapy.client import Client
 
@@ -153,3 +153,21 @@ class ProductRessource:
             return None
         
         return Product(**data)
+    
+    async def get_stocks_information(self, product_id: int, **kwargs) -> ProductStocksInformations | None:
+        """
+        Get the stock information of a specific product by its ID.
+
+        Args:
+            product_id (int): The unique identifier of the product to retrieve stock information for.
+
+        Returns:
+            ProductStocksInformations: An object containing the stock information of the specified product.
+        """
+        
+        data = await self.client._request("GET", f"/product_stocks/{product_id}", **kwargs)
+        
+        if data is None:
+            return None
+        
+        return ProductStocksInformations(**data)
