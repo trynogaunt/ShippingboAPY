@@ -99,3 +99,19 @@ class ProductRessource:
             return None
         
         return Product(**data)
+    
+    async def delete(self, product_id: int, **kwargs) -> bool:
+        """
+        Delete a specific product by its ID.
+
+        Args:
+            product_id (int): The unique identifier of the product to delete.
+
+        Returns:
+            bool: True if the product was successfully deleted, False otherwise.
+        """
+        
+        response = await self.client._request("DELETE", f"/products/{product_id}", **kwargs)
+        if response is None:
+            return False
+        return True
