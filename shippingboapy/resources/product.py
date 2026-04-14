@@ -116,7 +116,7 @@ class ProductRessource:
             return False
         return True
     
-    async def update_by_id(self, product_id: int, product_update: ProductUpdateId, **kwargs) -> Product:
+    async def update_by_id(self, product_id: int, product_update: ProductUpdateId, **kwargs) -> Product | None:
         """
         Update the details of a specific product by its ID.
 
@@ -128,14 +128,14 @@ class ProductRessource:
             Product: A Product object representing the details of the updated product.
         """
         
-        data = await self.client._request("PUT", f"/products/{product_id}", json=product_update.model_dump(exclude_none=True), **kwargs)
+        data = await self.client._request("PATCH", f"/products/{product_id}", json=product_update.model_dump(exclude_none=True), **kwargs)
         
         if data is None:
             return None
         
         return Product(**data)
     
-    async def update_by_key(self, key_name: str,value: str, product_update: ProductUpdateKey, **kwargs) -> Product:
+    async def update_by_key(self, key_name: Literal["user_ref", "ean13"],value: str, product_update: ProductUpdateKey, **kwargs) -> Product | None:
         """
         Update the details of a specific product by its key.
 
@@ -147,7 +147,7 @@ class ProductRessource:
             Product: A Product object representing the details of the updated product.
         """
         
-        data = await self.client._request("PUT", f"/products/key/{key_name}/{value}", json=product_update.model_dump(exclude_none=True), **kwargs)
+        data = await self.client._request("PATCH", f"/products/key/{key_name}/{value}", json=product_update.model_dump(exclude_none=True), **kwargs)
 
         if data is None:
             return None
