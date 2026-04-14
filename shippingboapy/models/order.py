@@ -53,7 +53,7 @@ class CarrierService(BaseModel):
 
 class OrderDocument(BaseModel):
     error_message: Optional[str] = Field(None, alias="error_message", description="The error message associated with the order document, if applicable.")
-    id: Optional[int] = Field(..., alias="id", description="The unique identifier of the order document.")
+    id: Optional[str] = Field(..., alias="id", description="The unique identifier of the order document.")
     email: Optional[str] = Field(None, alias="email", description="The email address associated with the order document, if applicable.")
     level: Optional[str] = Field(None, alias="level", description="The level of the order document (e.g., info, warning, error).")
     message: Optional[str] = Field(None, alias="message", description="The message content of the order document.")
@@ -145,7 +145,7 @@ class Order(BaseModel):
     earliest_shipped_at: Optional[str] = Field(None, alias="earliest_shipped", description="The earliest shipped date for the order.")
     external_computed_carrier_service: Optional[CarrierService] = Field(None, alias="external_computed_carrier_service", description="The carrier service computed by the external system for the order.")
     id: int = Field(..., alias="id", description="The unique identifier of the order.")
-    initial_order_id: Optional[str] = Field(None, alias="initial_order_id", description="The initial order ID from the external system, if applicable.")
+    initial_order_id: Optional[int] = Field(None, alias="initial_order_id", description="The initial order ID from the external system, if applicable.")
     latest_chosen_delivery_at: Optional[str] = Field(None, alias="latest_chosen_delivery", description="The latest delivery date chosen for the order.")
     latest_delivery_at: Optional[str] = Field(None, alias="latest_delivery", description="The latest delivery date for the order.")
     latest_shipped_at: Optional[str] = Field(None, alias="latest_shipped", description="The latest shipped date for the order.")

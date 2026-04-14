@@ -3,6 +3,7 @@ from shippingboapy.config import ShippingBoConfig
 import httpx
 import time
 from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError
+from typing import Callable
 
 @dataclass
 class TokenData:
@@ -70,7 +71,7 @@ async def refresh_token(refresh_token: str,
                         session: httpx.AsyncClient, 
                         config: ShippingBoConfig, 
                         headers: dict | None = None,
-                        on_refresh: callable | None = None) -> TokenData | None: 
+                        on_refresh: Callable[str, str] | None = None) -> TokenData | None: 
     """
     Refresh the access token using the refresh token.
     Args:
@@ -78,7 +79,7 @@ async def refresh_token(refresh_token: str,
         session (httpx.AsyncClient): The HTTP client session to use for making the request.
         config (ShippingBoConfig): The configuration object containing necessary parameters.
         headers (dict | None): Optional headers to include in the request.
-        on_refresh (callable | None): Optional callback function to be called after a successful token refresh. The function should accept a TokenData object as its argument.
+        on_refresh (Callable[[TokenData], None] | None): Optional callback function to be called after a successful token refresh. The function should accept a TokenData object as its argument.
     Returns:
         TokenData | None: The new token data if the refresh is successful, otherwise None.
     Raises:

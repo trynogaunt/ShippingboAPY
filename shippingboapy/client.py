@@ -3,7 +3,9 @@ from shippingboapy.config import ShippingBoConfig
 from shippingboapy.auth import TokenData, get_token, refresh_token
 import asyncio
 from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError, UnexpectedError, ForbiddenError, NotFoundError, ServerError
-from shippingboapy.resources.product import ProductRessource
+from shippingboapy.resources.product import ProductResource
+from shippingboapy.resources.order import OrderResource
+from typing import Callable
 
 class Client:
     def __init__(self, access_token: str | None = None, 
@@ -12,7 +14,7 @@ class Client:
                  api_version: str  = "",
                  client_id: str = "",
                  client_secret: str  = "",
-                 on_token_refresh: callable | None = None):
+                 on_token_refresh: Callable[[str, str], None] | None = None):
         
         if not app_id:
             raise AuthenticationError("app_id is required")
@@ -38,7 +40,8 @@ class Client:
             created_at = None
         )
         self.session = httpx.AsyncClient(timeout=self.config.timeout)
-        self.products = ProductRessource(self)
+        self.products = ProductResource(self)
+        self.orders = OrderResource(self)
 
     def _set_token(self, token_data: TokenData):
         self.token = token_data
