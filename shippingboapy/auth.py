@@ -69,7 +69,8 @@ async def get_token(auth_code: str, session: httpx.AsyncClient, config: Shipping
 async def refresh_token(refresh_token: str, 
                         session: httpx.AsyncClient, 
                         config: ShippingBoConfig, 
-                        headers: dict | None = None) -> TokenData | None: 
+                        headers: dict | None = None,
+                        on_refresh: callable | None = None) -> TokenData | None: 
     """
     Refresh the access token using the refresh token.
     Args:
@@ -77,6 +78,7 @@ async def refresh_token(refresh_token: str,
         session (httpx.AsyncClient): The HTTP client session to use for making the request.
         config (ShippingBoConfig): The configuration object containing necessary parameters.
         headers (dict | None): Optional headers to include in the request.
+        on_refresh (callable | None): Optional callback function to be called after a successful token refresh. The function should accept a TokenData object as its argument.
     Returns:
         TokenData | None: The new token data if the refresh is successful, otherwise None.
     Raises:
@@ -93,6 +95,15 @@ async def refresh_token(refresh_token: str,
     response = await session.post(config.auth_url, json=payload, headers=headers)
     if response.status_code == 200:
         token_data = response.json()
+        if on_refresh is not None and callable(on_refresh):
+            on_refresh(TokenData(
+                access_token=token_data['access_token'],
+                token_type=token_data['token_type'],
+                expires_in=token_data['expires_in'],
+                refresh_token=token_data['refresh_token'],
+                scope=token_data['scope'],
+                created_at=int(time.time())
+            ))
         return TokenData(
             access_token=token_data['access_token'],
             token_type=token_data['token_type'],

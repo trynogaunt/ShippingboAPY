@@ -124,6 +124,41 @@ client.token.refresh_token
 
 ---
 
+### Persisting refreshed tokens
+
+When tokens are refreshed automatically, you can hook into the refresh event to persist the new tokens:
+
+```python
+async def save_tokens(access_token: str, refresh_token: str):
+    # Persist to your database, file, or any storage
+    await db.save(access_token=access_token, refresh_token=refresh_token)
+
+client = Client(
+    access_token="your_access_token",
+    refresh_token="your_refresh_token",
+    ...,
+    on_token_refresh=save_tokens,
+)
+```
+
+Token storage is intentionally left to the caller — the SDK does not persist tokens itself.
+
+---
+
+## Available Resources
+
+| Resource | Status |
+| --- | --- |
+| Products | ✅ Available |
+| Orders | 🚧 Planned |
+| Shipments | 🚧 Planned |
+| Stock Variations | 🚧 Planned |
+| Suppliers | 🚧 Planned |
+
+Missing a resource? Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+---
+
 ## License
 
 MIT

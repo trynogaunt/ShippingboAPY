@@ -11,7 +11,8 @@ class Client:
                  app_id: str = "",
                  api_version: str  = "",
                  client_id: str = "",
-                 client_secret: str  = ""):
+                 client_secret: str  = "",
+                 on_token_refresh: callable | None = None):
         
         if not app_id:
             raise AuthenticationError("app_id is required")
@@ -76,7 +77,7 @@ class Client:
             if response.status_code == 401:
                 if _retry == 0 and self.token and self.token.refresh_token:
                     try:
-                        new_token = await refresh_token(self.token.refresh_token, self.session, self.config)
+                        new_token = await refresh_token(self.token.refresh_token, self.session, self.config, on_refresh=self.config.on_token_refresh)
                         self._set_token(new_token)
                         return await self._request(method, endpoint, params=params, _retry=1, **kwargs)
                     except Exception as e:
