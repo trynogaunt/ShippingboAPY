@@ -1,7 +1,7 @@
 from __future__ import annotations
 from shippingboapy.exceptions import ValueError
 from typing import TYPE_CHECKING, Literal
-from shippingboapy.models.product import Product, ProductSummary, ProductCreate
+from shippingboapy.models.product import Product, ProductSummary, ProductCreate, ProductUpdateId, ProductUpdateKey
 if TYPE_CHECKING:
     from shippingboapy.client import Client
 
@@ -115,3 +115,41 @@ class ProductRessource:
         if response is None:
             return False
         return True
+    
+    async def update_by_id(self, product_id: int, product_update: ProductUpdateId, **kwargs) -> Product:
+        """
+        Update the details of a specific product by its ID.
+
+        Args:
+            product_id (int): The unique identifier of the product to update.
+            product_update (ProductUpdateId): The product update data.
+
+        Returns:
+            Product: A Product object representing the details of the updated product.
+        """
+        
+        data = await self.client._request("PUT", f"/products/{product_id}", json=product_update.model_dump(exclude_none=True), **kwargs)
+        
+        if data is None:
+            return None
+        
+        return Product(**data)
+    
+    async def update_by_key(self, key_name: str,value: str, product_update: ProductUpdateKey, **kwargs) -> Product:
+        """
+        Update the details of a specific product by its key.
+
+        Args:
+            product_key (str): The unique key of the product to update.
+            product_update (ProductUpdateKey): The product update data.
+
+        Returns:
+            Product: A Product object representing the details of the updated product.
+        """
+        
+        data = await self.client._request("PUT", f"/products/key/{key_name}/{value}", json=product_update.model_dump(exclude_none=True), **kwargs)
+
+        if data is None:
+            return None
+        
+        return Product(**data)

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, field_validator
-from typing import List, Optional
+from typing import List, Optional, Literal
 
 class ProductStocksInformations(BaseModel):
     available_stock: int = Field(..., description="The available stock for the product.")
@@ -194,3 +194,46 @@ class ProductCreate(BaseModel):
     width: Optional[int] = Field(None, description="The width of the product in millimeters.")
     product_additional_fields_to_add: Optional[List[ProductAdditionalFieldToAdd]] = Field(None, description="The list of additional fields for the product.")
     product_barcodes_attributes: Optional[List[ProductBarcodeToAdd]] = Field(None, description="The list of barcodes for the product.")
+
+    model_config = {
+        "extra": "forbid",
+        "populate_by_name": True,
+        "validate_assignment": True,
+    }
+
+class ProductUpdateId(BaseModel):
+    asin: Optional[str] = Field(None, description="The ASIN code for the product.")
+    cdiscount_price: Optional[int] = Field(None, description="The price of the product on Cdiscount in cents.")
+    client_ref: Optional[str] = Field(None, description="An additional reference for the product, usually useful to match product reference if orders")
+    eco_tax_cents : Optional[int] = Field(None, description="The eco tax in cents for the product.")
+    hs_code: Optional[str] = Field(None, description="The HS code for the product, mandatory for CN23 generation.")
+    is_pack: Optional[bool] = Field(None, description="Whether the product is a pack or not.")
+    kit_stock_rule: Literal[None, "kit_supply"] = Field(None, description="How kit and their components stocks interact with each other. Can be: null: no interaction , 'kit_supply': the kit stock feeds the components stock")
+    location: Optional[str] = Field(None, description="Can be the location of the product in your warehouse")
+    parent_source: Optional[str] = Field(None, description="The source of the parent product, this is where the parent product comes from")
+    parent_source_ref: Optional[str] = Field(None, description="The reference on the source for the parent product")
+    picture_url: Optional[str] = Field(None, description="The URL of the product picture.")
+    source: Optional[str]  = Field(None, description="The source of the product, this is where the product comes from")
+    source_ref: Optional[str] = Field(None, description="The reference on the source")
+    spartoo_partnaire_ref: Optional[str] = Field(None, description="The spartoo partnaire reference for the product, this is useful to match product reference if orders")
+    supplier: Optional[str] = Field(None, description="The supplier of the product")
+    tax_rate: Optional[float] = Field(None, description="The tax rate for the product, in percentage", gt=-1000000000000000)
+    title: Optional[str] = Field(None, description="The title of the product.")
+    user_ref: Optional[str] = Field(None, description="The main reference of the product, usually useful to match product reference if orders")
+    weight: Optional[int] = Field(None, description="The weight of the product in grams.")
+    
+    model_config = {
+        "extra": "forbid",
+        "populate_by_name": True,
+        "validate_assignment": True,
+    }
+    
+class ProductUpdateKey(BaseModel):
+    physical_stock: Optional[int] = Field(None, description="The physical stock of the product, the stock will be recomputed with orders reserving stock")
+    stock: Optional[int] = Field(None, description="The stock of the product, this is the total stock of the product in all your warehouses, it is the sum of the available stock")
+    
+    model_config = {
+        "extra": "forbid",
+        "populate_by_name": True,
+        "validate_assignment": True,
+    }
