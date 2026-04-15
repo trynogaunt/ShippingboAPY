@@ -69,7 +69,24 @@ class OrderEvent(BaseModel):
     updated_at: Optional[str] = Field(None, alias="updated_at", description="The date and time when the order event was last updated.")
 
 class OrderItem(BaseModel):
-    id: Optional[int] = Field(..., alias="id", description="The unique identifier of the order item.")
+    id: int = Field(..., alias="id", description="The unique identifier of the order item.")
+    price_tax_included_cents: Optional[int] = Field(None, alias="price_tax_included_cents", description="The price of the order item including tax, in cents.")
+    price_tax_included_currency: Optional[str] = Field(None, alias="price_tax_included_currency", description="The currency of the price including tax for the order item.")
+    product_ean: Optional[str] = Field(None, alias="product_ean13", description="The EAN13 code of the product associated with the order item, if applicable.")
+    product_ref: Optional[str] = Field(None, alias="product_reference", description="The reference of the product associated with the order item, if applicable.")
+    product_source: Optional[str] = Field(None, alias="product_source", description="The source of the product information for the order item (e.g., user_ref, ean13).")
+    product_source_ref: Optional[str] = Field(None, alias="product_source_ref", description="The reference value of the product source for the order item (e.g., the user_ref or ean13 value).")
+    quantity: Optional[int] = Field(None, alias="quantity", description="The quantity of the product in the order item.")
+    source: Optional[str] = Field(None, alias="source", description="The source of the order item information (e.g., external system name).")
+    source_ref: Optional[str] = Field(None, alias="source_ref", description="The reference value of the source for the order item (e.g., the order item ID in the external system).")
+    tax_cents: Optional[int] = Field(None, alias="tax_cents", description="The tax amount for the order item, in cents.")
+    tax_currency: Optional[str] = Field(None, alias="tax_currency", description="The currency of the tax amount for the order item.")
+    title: Optional[str] = Field(None, alias="title", description="The title or name of the order item.")
+    computed_prices: Optional[dict] = Field(None, alias="computed_prices", description="The computed prices for the order item, containing details such as price breakdowns, discounts, etc.")
+    additional_content: Optional[dict] = Field(None, alias="additional_content", description="Additional content or information related to the order item, if applicable.")
+
+class OrderItemCreate(BaseModel):
+    id: Optional[int] = Field(None, alias="id", description="The unique identifier of the order item.")
     price_tax_included_cents: Optional[int] = Field(None, alias="price_tax_included_cents", description="The price of the order item including tax, in cents.")
     price_tax_included_currency: Optional[str] = Field(None, alias="price_tax_included_currency", description="The currency of the price including tax for the order item.")
     product_ean: Optional[str] = Field(None, alias="product_ean13", description="The EAN13 code of the product associated with the order item, if applicable.")
@@ -237,16 +254,16 @@ class OrderCreate(BaseModel):
     latest_delivery_at: Optional[str] = Field(None, alias="latest_delivery_at", description="The latest delivery date for the order, if applicable.")
     latest_shipped_at: Optional[str] = Field(None, alias="latest_shipped_at", description="The latest shipped date for the order, if applicable.")
     order_documents: Optional[List[OrderDocument]] = Field(None, alias="order_documents", description="The documents associated with the order, if applicable.")
-    order_items_attributes: List[OrderItem] = Field(..., alias="order_items_attributes", description="The items associated with the order, if applicable.")
-    origin: Optional[str] = Field(None, alias="origin", description="The origin of the order (e.g., external system name).")
-    origin_created_at: Optional[str] = Field(None, alias="origin_created_at", description="The date and time when the order was created in the external system, if applicable.")
-    origin_ref: Optional[str] = Field(None, alias="origin_ref", description="The reference of the order in the external system, if applicable.")
+    order_items_attributes: List[OrderItemCreate] = Field(..., alias="order_items_attributes", description="The items associated with the order, if applicable.")
+    origin: str = Field(..., alias="origin", description="The origin of the order (e.g., external system name).")
+    origin_created_at: str = Field(..., alias="origin_created_at", description="The date and time when the order was created in the external system, if applicable.")
+    origin_ref: str = Field(..., alias="origin_ref", description="The reference of the order in the external system, if applicable.")
     payment_medium: Optional[str] = Field(None, alias="payment_medium", description="The payment medium used for the order (e.g., credit card, PayPal, etc.).")
     relay_ref: Optional[str] = Field(None, alias="relay_ref", description="The reference of the relay for the order, if applicable.")
     shipped_at: Optional[str] = Field(None, alias="shipped_at", description="The date and time when the order was shipped, if applicable.")
-    shipping_address_id: Optional[int] = Field(None, alias="shipping_address_id", description="The unique identifier of the shipping address associated with the order, if applicable.")
-    source: Optional[str] = Field(None, alias="source", description="The source of the order (e.g., external system name).")
-    source_ref: Optional[str] = Field(None, alias="source_ref", description="The reference of the order in the source system, if applicable.")
+    shipping_address_id: int = Field(None, alias="shipping_address_id", description="The unique identifier of the shipping address associated with the order, if applicable.")
+    source: str = Field(None, alias="source", description="The source of the order (e.g., external system name).")
+    source_ref: str = Field(None, alias="source_ref", description="The reference of the order in the source system, if applicable.")
     tags_to_add: Optional[List[str]] = Field(None, alias="tags_to_add", description="The list of tags to add to the order, if applicable.")
     total_price_cents: Optional[int] = Field(None, alias="total_price_cents", description="The total price of the order in cents, including tax, if applicable.")
     total_price_currency: Optional[str] = Field(None, alias="total_price_currency", description="The currency of the total price for the order, if applicable.")
@@ -258,3 +275,19 @@ class OrderCreate(BaseModel):
     total_tax_currency: Optional[str] = Field(None, alias="total_tax_currency", description="The currency of the total tax amount for the order, if applicable.")
     total_weight: Optional[int] = Field(None, alias="total_weight", description="The total weight of the order in grams, if applicable.")
     order_events_attributes: Optional[List[OrderEvent]] = Field(None, alias="order_events_attributes", description="The attributes of the order events, if applicable.")
+    
+    model_config = {
+        "extra": "forbid",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
+
+class OrderCreated(Order):
+    billing_address_id: Optional[int] = Field(None, alias="billing_address_id", description="The unique identifier of the billing address associated with the order, if applicable.")
+    computed_prices: Optional[dict] = Field(None, alias="computed_prices", description="The computed prices for the order, containing details such as price breakdowns, discounts, etc.")
+    fullfilled_by_marketplace: Optional[bool] = Field(None, alias="fulfilled_by_marketplace", description="Indicates whether the order is fulfilled by the marketplace, if applicable.")
+    invoice_ref: Optional[int] = Field(None, alias="invoice_ref", description="The reference of the invoice for the order, if applicable.")
+    order_items_attributes: list = Field(..., alias="order_items_attributes", description="The items associated with the order, if applicable.")
+    preparation_order_at: Optional[str] = Field(None, alias="preparation_order_at", description="The date and time when the order is scheduled for preparation, if applicable.")
+    tags_to_add: Optional[List[str]] = Field(None, alias="tags_to_add", description="The list of tags to add to the order, if applicable.")
+    empty_key: Optional[str] = Field(None, alias="", description="An empty key to allow for additional fields in the order creation response, if applicable.") # Exist cause Shippingbo API need an empty key field

@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, List, Literal
-from shippingboapy.models.order import Order, OrderSummary
+from shippingboapy.models.order import Order, OrderSummary, OrderCreate,OrderCreated
 from shippingboapy.exceptions import ValueError
 from shippingboapy.models.filter import Filter, Operator
 if TYPE_CHECKING:
@@ -66,3 +66,23 @@ class OrderResource:
             return []
         
         return [OrderSummary(**item) for item in data]
+
+    async def create(self, order_create: OrderCreate, **kwargs) -> Order:
+        """
+        Create a new order in the Shippingbo account.
+
+        Args:
+            order_create (OrderCreate): An OrderCreate object containing the details of the order to create.
+        Returns:
+            Order: An Order object representing the details of the created order.
+        """
+        
+        if self.client.token.scope and "order" not in self.client.token.scope.split():
+            raise ValueError("The access token does not have the required 'order' scope to create an order.")
+        
+        data = await self.client._request("POST", "/orders", json=order_create.model_dump(exclude_none=True, by_alias=True), **kwargs)
+        
+        if data is None:
+            return None
+
+        return OrderCreated(**data)
