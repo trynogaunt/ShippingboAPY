@@ -275,6 +275,7 @@ class OrderCreate(BaseModel):
     total_tax_currency: Optional[str] = Field(None, alias="total_tax_currency", description="The currency of the total tax amount for the order, if applicable.")
     total_weight: Optional[int] = Field(None, alias="total_weight", description="The total weight of the order in grams, if applicable.")
     order_events_attributes: Optional[List[OrderEvent]] = Field(None, alias="order_events_attributes", description="The attributes of the order events, if applicable.")
+    empty_key: Optional[str] = Field(None, alias="", description="An empty key to allow for additional fields in the order creation request, if applicable.") # Exist cause Shippingbo API need an empty key field
     
     model_config = {
         "extra": "forbid",
@@ -291,3 +292,9 @@ class OrderCreated(Order):
     preparation_order_at: Optional[str] = Field(None, alias="preparation_order_at", description="The date and time when the order is scheduled for preparation, if applicable.")
     tags_to_add: Optional[List[str]] = Field(None, alias="tags_to_add", description="The list of tags to add to the order, if applicable.")
     empty_key: Optional[str] = Field(None, alias="", description="An empty key to allow for additional fields in the order creation response, if applicable.") # Exist cause Shippingbo API need an empty key field
+    
+    model_config = {
+        "extra": "forbid",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
