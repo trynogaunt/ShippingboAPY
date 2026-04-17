@@ -1,5 +1,5 @@
 import pytest
-from shippingboapy.models.order import Order, OrderSummary, OrderCreate, OrderItemCreate
+from shippingboapy.models.order import Order, OrderSummary, OrderCreate, OrderItemCreate, OrderDetails, OrderItemUpdate
 
 @pytest.mark.asyncio
 async def test_get_order(mock_client):
@@ -52,6 +52,69 @@ async def test_create_order(mock_client):
     
     order = await mock_client.orders.create(order_create, headers={"Prefer": "code=200, dynamic=true"})
     assert order is not None
-    assert isinstance(order, Order)
+    assert isinstance(order, OrderDetails)
     assert order.id is not None
     assert isinstance(order.id, int)
+
+@pytest.mark.asyncio
+async def test_update_order(mock_client):
+
+    updated_order = await mock_client.orders.update(order_id=123, state="updated", headers={"Prefer": "code=200, dynamic=true"})
+    
+    assert updated_order is not None
+    assert isinstance(updated_order, OrderDetails)
+    assert isinstance(updated_order.id, int)
+    assert isinstance(updated_order.state, str)
+
+@pytest.mark.asyncio
+async def test_recompute_mapped_products(mock_client):
+
+    recomputed_order = await mock_client.orders.recompute_mapped_products(order_id=123, headers={"Prefer": "code=200, dynamic=true"})
+    
+    assert recomputed_order is not None
+    assert isinstance(recomputed_order, OrderDetails)
+    assert isinstance(recomputed_order.id, int)
+
+@pytest.mark.asyncio
+async def test_remove_from_run(mock_client):
+
+    updated_order = await mock_client.orders.remove_from_run(order_id=123, destination_state="updated", headers={"Prefer": "code=200, dynamic=true"})
+    
+    assert updated_order is not None
+    assert isinstance(updated_order, OrderDetails)
+    assert isinstance(updated_order.id, int)
+    assert isinstance(updated_order.state, str)
+
+@pytest.mark.asyncio
+async def test_redispatch(mock_client):
+
+    result = await mock_client.orders.redispatch(order_id=123, headers={"Prefer": "code=200, dynamic=true"})
+    
+    assert result is True or result is False
+    assert isinstance(result, bool)
+    
+@pytest.mark.asyncio
+@pytest.mark.skip(reason="Need API behavior clarification")
+async def test_split_order(mock_client):
+
+    split_order = await mock_client.orders.split(order_id=123, split_items=[{"order_item_id": 456, "quantity": 1}], headers={"Prefer": "code=200, dynamic=true"})
+    
+    assert split_order is not None
+    assert isinstance(split_order, OrderDetails)
+    assert isinstance(split_order.id, int)
+    
+@pytest.mark.asyncio
+async def test_update_order_item(mock_client):
+
+    updated_order = await mock_client.orders.update_order_item(order_id=123, 
+                                                               order_items=[
+                                                                   OrderItemUpdate(id=456, 
+                                                                                   product_ean="1234567890123"),
+                                                                   OrderItemUpdate(id=789,
+                                                                                   title="Updated Item Title")
+                                                                   ], 
+                                                                headers={"Prefer": "code=200, dynamic=true"})
+    
+    assert updated_order is not None
+    assert isinstance(updated_order, OrderDetails)
+    assert isinstance(updated_order.id, int)

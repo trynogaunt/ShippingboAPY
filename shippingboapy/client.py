@@ -106,7 +106,9 @@ class Client:
                     raise ServerError(response.status_code, f"Server error after {self.config.max_retries} retries: {response.text}")
             else:
                 raise UnexpectedError(response.status_code, f"Unexpected error: {response.text}")
-            
+        if not response.content:
+            return {}
+        
         return response.json()
     
     @classmethod

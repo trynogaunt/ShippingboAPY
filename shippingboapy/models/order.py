@@ -68,23 +68,37 @@ class OrderEvent(BaseModel):
     payload: Optional[dict] = Field(None, alias="payload", description="The payload of the order event, containing additional details about the event.")
     updated_at: Optional[str] = Field(None, alias="updated_at", description="The date and time when the order event was last updated.")
 
-class OrderItem(BaseModel):
-    id: int = Field(..., alias="id", description="The unique identifier of the order item.")
-    price_tax_included_cents: Optional[int] = Field(None, alias="price_tax_included_cents", description="The price of the order item including tax, in cents.")
-    price_tax_included_currency: Optional[str] = Field(None, alias="price_tax_included_currency", description="The currency of the price including tax for the order item.")
-    product_ean: Optional[str] = Field(None, alias="product_ean13", description="The EAN13 code of the product associated with the order item, if applicable.")
+class OrderItemUpdate(BaseModel):
+    id: int = Field(..., alias="id", description="The unique identifier of the order item to update.")
+    product_ean: Optional[str] = Field(None, alias="product_ean", description="The EAN13 code of the product associated with the order item, if applicable.")
     product_ref: Optional[str] = Field(None, alias="product_reference", description="The reference of the product associated with the order item, if applicable.")
     product_source: Optional[str] = Field(None, alias="product_source", description="The source of the product information for the order item (e.g., user_ref, ean13).")
     product_source_ref: Optional[str] = Field(None, alias="product_source_ref", description="The reference value of the product source for the order item (e.g., the user_ref or ean13 value).")
     quantity: Optional[int] = Field(None, alias="quantity", description="The quantity of the product in the order item.")
+    title: Optional[str] = Field(None, alias="title", description="The title or name of the order item.")
+    stock_type_ref: Optional[str] = Field(None, alias="stock_type_ref", description="The stock type reference for the order item, if applicable.")
+    model_config = {
+        "extra": "forbid",
+        "populate_by_name": True,
+        "validate_assignment": True,
+    }
+
+class OrderItem(OrderItemUpdate):
+    price_tax_included_cents: Optional[int] = Field(None, alias="price_tax_included_cents", description="The price of the order item including tax, in cents.")
+    price_tax_included_currency: Optional[str] = Field(None, alias="price_tax_included_currency", description="The currency of the price including tax for the order item.")
     source: Optional[str] = Field(None, alias="source", description="The source of the order item information (e.g., external system name).")
     source_ref: Optional[str] = Field(None, alias="source_ref", description="The reference value of the source for the order item (e.g., the order item ID in the external system).")
     tax_cents: Optional[int] = Field(None, alias="tax_cents", description="The tax amount for the order item, in cents.")
     tax_currency: Optional[str] = Field(None, alias="tax_currency", description="The currency of the tax amount for the order item.")
-    title: Optional[str] = Field(None, alias="title", description="The title or name of the order item.")
     computed_prices: Optional[dict] = Field(None, alias="computed_prices", description="The computed prices for the order item, containing details such as price breakdowns, discounts, etc.")
     additional_content: Optional[dict] = Field(None, alias="additional_content", description="Additional content or information related to the order item, if applicable.")
-
+    
+    model_config = {
+        "extra": "forbid",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
+    
 class OrderItemCreate(BaseModel):
     id: Optional[int] = Field(None, alias="id", description="The unique identifier of the order item.")
     price_tax_included_cents: Optional[int] = Field(None, alias="price_tax_included_cents", description="The price of the order item including tax, in cents.")
@@ -283,7 +297,7 @@ class OrderCreate(BaseModel):
         "validate_assignment": True
     }
 
-class OrderCreated(Order):
+class OrderDetails(Order):
     billing_address_id: Optional[int] = Field(None, alias="billing_address_id", description="The unique identifier of the billing address associated with the order, if applicable.")
     computed_prices: Optional[dict] = Field(None, alias="computed_prices", description="The computed prices for the order, containing details such as price breakdowns, discounts, etc.")
     fullfilled_by_marketplace: Optional[bool] = Field(None, alias="fulfilled_by_marketplace", description="Indicates whether the order is fulfilled by the marketplace, if applicable.")
@@ -298,3 +312,16 @@ class OrderCreated(Order):
         "populate_by_name": True,
         "validate_assignment": True
     }
+
+class OrderAttribute(BaseModel):
+    state: str = Field(..., alias="state", description="The state of the order attribute (e.g., pending, processing, shipped, etc.).")
+class SuborderItem(BaseModel):
+    item_id: int = Field(..., alias="item_id", description="Id of the parent OrderItem.")
+    product_id: int = Field(..., alias="product_id", description="Id of the product associated with the suborder item.")
+    quantity: int = Field(..., alias="quantity", description="Quantity of the product in the suborder item.")
+    sku: str = Field(..., alias="sku", description="The SKU of the product associated with the suborder item.")
+    title: str = Field(..., alias="title", description="The title or name of the suborder item.")
+
+class SuborderNumber(BaseModel):
+    numberOfTheItem: SuborderItem = Field(..., alias="numberOfTheItem", description="The unique number of the suborder item, used for tracking and reference purposes.")
+    order_attributes: Optional[OrderAttribute] = Field(None, alias="order_attributes", description="The attributes of the order associated with the suborder item, if applicable.")
