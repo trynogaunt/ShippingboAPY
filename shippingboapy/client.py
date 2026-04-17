@@ -5,6 +5,7 @@ import asyncio
 from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError, UnexpectedError, ForbiddenError, NotFoundError, ServerError
 from shippingboapy.resources.product import ProductResource
 from shippingboapy.resources.order import OrderResource
+from shippingboapy.resources.order_tag import OrderTagResource
 from typing import Callable
 
 class Client:
@@ -40,9 +41,11 @@ class Client:
             created_at = None
         )
         self.session = httpx.AsyncClient(timeout=self.config.timeout)
+        
         self.products = ProductResource(self)
         self.orders = OrderResource(self)
-
+        self.order_tags = OrderTagResource(self)
+        
     def _set_token(self, token_data: TokenData):
         self.token = token_data
     
