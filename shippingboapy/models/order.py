@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
-
+from shippingboapy.models.tag import OrderTag
 
 class Address(BaseModel):
     apartement_number: Optional[str] = Field(None, alias="apartement_number", description="The number of the apartment, if applicable.")
@@ -115,11 +115,6 @@ class OrderItemCreate(BaseModel):
     title: Optional[str] = Field(None, alias="title", description="The title or name of the order item.")
     computed_prices: Optional[dict] = Field(None, alias="computed_prices", description="The computed prices for the order item, containing details such as price breakdowns, discounts, etc.")
     additional_content: Optional[dict] = Field(None, alias="additional_content", description="Additional content or information related to the order item, if applicable.")
-
-class OrderTag(BaseModel):
-    id: Optional[int] = Field(..., alias="id", description="The unique identifier of the order tag.")
-    oder_id: Optional[int] = Field(None, alias="order_id", description="The unique identifier of the order associated with the tag.")
-    value: Optional[str] = Field(None, alias="value", description="The value of the order tag.")
     
 class ItemShipmentSerialNumber(BaseModel):
     order_item_id: Optional[int] = Field(None, alias="order_item_id", description="The unique identifier of the order item associated with the shipment serial number.")
