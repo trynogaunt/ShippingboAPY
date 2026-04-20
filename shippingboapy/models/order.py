@@ -52,13 +52,17 @@ class CarrierService(BaseModel):
     name: Optional[str] = Field(None, alias="name", description="The name of the carrier service.")
     updated_at: Optional[str] = Field(None, alias="updated_at", description="The date and time when the carrier service was last updated.")
     
+
 class OrderEvent(BaseModel):
     created_at: Optional[str] = Field(None, alias="created_at", description="The date and time when the order event was created.")
+    email: Optional[str] = Field(None, alias="email", description="The email address associated with the order event, if applicable.")
     id: Optional[int] = Field(..., alias="id", description="The unique identifier of the order event.")
-    name: Optional[str] = Field(None, alias="name", description="The name of the order event.")
-    payload: Optional[dict] = Field(None, alias="payload", description="The payload of the order event, containing additional details about the event.")
+    level: Optional[str] = Field(None, alias="level", description="The level of the order event (e.g., info, warning, error).")
+    message: Optional[str] = Field(None, alias="message", description="The message content of the order event.")
+    order_id: Optional[int] = Field(None, alias="order_id", description="The unique identifier of the order associated with the order event.")
+    title: Optional[str] = Field(None, alias="title", description="The title of the order event.")
     updated_at: Optional[str] = Field(None, alias="updated_at", description="The date and time when the order event was last updated.")
-
+        
 class OrderItemUpdate(BaseModel):
     id: int = Field(..., alias="id", description="The unique identifier of the order item to update.")
     product_ean: Optional[str] = Field(None, alias="product_ean", description="The EAN13 code of the product associated with the order item, if applicable.")
