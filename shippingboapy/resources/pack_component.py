@@ -61,7 +61,7 @@ class PackComponentResource:
         
         return PackComponent(**data)
     
-    async def delete(self, pack_component_id: int, **kwargs) -> bool:
+    async def delete(self, pack_component_id: int, **kwargs) -> PackComponent:
         """
         Delete a specific pack component by its unique identifier.
 
@@ -75,6 +75,6 @@ class PackComponentResource:
         data = await self.client._request("DELETE", f"/pack_components/{pack_component_id}", **kwargs)
         
         if data is None:
-            return False
+            return None
         
-        return True
+        return PackComponent(**data)
