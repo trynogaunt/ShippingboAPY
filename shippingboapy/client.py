@@ -6,6 +6,7 @@ from shippingboapy.exceptions import BadRequestError, UnauthorizedError, Authent
 from shippingboapy.resources.product import ProductResource
 from shippingboapy.resources.order import OrderResource
 from shippingboapy.resources.order_tag import OrderTagResource
+from shippingboapy.resources.pack_component import PackComponentResource
 from typing import Callable
 
 class Client:
@@ -45,6 +46,7 @@ class Client:
         self.products = ProductResource(self)
         self.orders = OrderResource(self)
         self.order_tags = OrderTagResource(self)
+        self.pack_components = PackComponentResource(self)
         
     def _set_token(self, token_data: TokenData):
         self.token = token_data
