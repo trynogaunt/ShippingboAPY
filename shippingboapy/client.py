@@ -116,7 +116,10 @@ class Client:
         if not response.content:
             return {}
         
-        return response.json()
+        if response.headers.get("Content-Type", "").startswith("application/json"):
+            return response.json()
+        else:
+            return response.content
     
     @classmethod
     async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, redirect_uri: str | None = None, headers: dict | None = None):
