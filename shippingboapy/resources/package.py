@@ -1,5 +1,4 @@
 from __future__ import annotations
-from shippingboapy.exceptions import ValueError
 from typing import TYPE_CHECKING
 from shippingboapy.models.package import Package
 if TYPE_CHECKING:

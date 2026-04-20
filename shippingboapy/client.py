@@ -2,7 +2,7 @@ import httpx
 from shippingboapy.config import ShippingBoConfig
 from shippingboapy.auth import TokenData, get_token, refresh_token
 import asyncio
-from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError, UnexpectedError, ForbiddenError, NotFoundError, ServerError
+from shippingboapy.exceptions import BadRequestError, AuthenticationError, TokenRefreshError, UnexpectedError, ForbiddenError, NotFoundError, ServerError
 from shippingboapy.resources.product import ProductResource
 from shippingboapy.resources.order import OrderResource
 from shippingboapy.resources.order_tag import OrderTagResource
