@@ -105,7 +105,7 @@ class Client:
                 raise UnexpectedError(response.status_code, f"Unexpected error: {response.text}")
             
     
-    async def _request(self, method: str, endpoint: str, params: dict | None = None, _retry: int = 0, **kwargs) -> dict:
+    async def _raw_request(self, method: str, endpoint: str, params: dict | None = None,_retry: int = 0,**kwargs,) -> httpx.Response:
         if self.token is None or self.token.access_token is None:
             raise AuthenticationError("Access token is missing. Please authenticate first.")
         
@@ -114,95 +114,31 @@ class Client:
             "Authorization": f"Bearer {self.token.access_token}",
             "X-API-VERSION": self.config.api_version,
             "X-API-APP-ID": self.config.app_id,
-            "Accept": "application/json",
+            "Accept": "application/json",  
         }
         headers.update(kwargs.pop("headers", {}))
         
         response = await self.session.request(method, url, headers=headers, params=params, **kwargs)
         
-        if response.status_code != 200:
-            if response.status_code == 401:
-                if _retry == 0 and self.token and self.token.refresh_token:
-                    try:
-                        new_token = await refresh_token(self.token.refresh_token, self.session, self.config, on_refresh=self.config.on_token_refresh)
-                        self._set_token(new_token)
-                        return await self._request(method, endpoint, params=params, _retry=1, **kwargs)
-                    except Exception as e:
-                        raise TokenRefreshError(response.status_code, f"Token refresh failed: {str(e)}")
-            elif response.status_code == 400:
-                raise BadRequestError(response.status_code, f"Bad request: {response.text}")
-            
-            elif response.status_code == 403:
-                raise ForbiddenError(response.status_code, f"Forbidden access: {response.text}")
-                    
-            elif response.status_code == 404:
-                raise NotFoundError(response.status_code, f"Resource not found: {response.text}")
-            
-            elif response.status_code == 422:
-                raise BadRequestError(response.status_code, f"Unprocessable entity: {response.text}")
-            
-            elif response.status_code >= 500:
-                if _retry < self.config.max_retries:
-                    backoff_time = self.config.retry_backoff_factor * (2 ** _retry)
-                    await asyncio.sleep(backoff_time)
-                    return await self._request(method, endpoint, params=params, _retry=_retry + 1, **kwargs)
-                else:
-                    raise ServerError(response.status_code, f"Server error after {self.config.max_retries} retries: {response.text}")
-            else:
-                raise UnexpectedError(response.status_code, f"Unexpected error: {response.text}")
+        return await self._process_response(
+            response,
+            _retry=_retry,
+            request_func=lambda **kw: self._raw_request(method, endpoint, params, **kw),
+        )
+
+
+    async def _request(self, method: str, endpoint: str, **kwargs) -> dict | list:
+        response = await self._raw_request(method, endpoint, **kwargs)
         if not response.content:
             return {}
-        
         return response.json()
 
-    async def _download(self, method: str, endpoint: str, params: dict | None = None, _retry: int = 0, **kwargs) -> bytes:
-        if self.token is None or self.token.access_token is None:
-            raise AuthenticationError("Access token is missing. Please authenticate first.")
-        
-        url = f"{self.config.api_url.rstrip('/')}/{endpoint.lstrip('/')}"
-        headers = {
-            "Authorization": f"Bearer {self.token.access_token}",
-            "X-API-VERSION": self.config.api_version,
-            "X-API-APP-ID": self.config.app_id,
-            "Accept": "application/pdf, application/octet-stream, */*",
-        }
-        headers.update(kwargs.pop("headers", {}))
-        
-        response = await self.session.request(method, url, headers=headers, params=params, **kwargs)
-        
-        if response.status_code != 200:
-            if response.status_code == 401:
-                if _retry == 0 and self.token and self.token.refresh_token:
-                    try:
-                        new_token = await refresh_token(self.token.refresh_token, self.session, self.config, on_refresh=self.config.on_token_refresh)
-                        self._set_token(new_token)
-                        return await self._download(method, endpoint=endpoint, params=params, _retry=_retry + 1, **kwargs)
-                    except Exception as e:
-                        raise TokenRefreshError(response.status_code, f"Token refresh failed: {str(e)}")
-            elif response.status_code == 400:
-                raise BadRequestError(response.status_code, f"Bad request: {response.text}")
-            
-            elif response.status_code == 403:
-                raise ForbiddenError(response.status_code, f"Forbidden access: {response.text}")
-                    
-            elif response.status_code == 404:
-                raise NotFoundError(response.status_code, f"Resource not found: {response.text}")
-            
-            elif response.status_code == 422:
-                raise BadRequestError(response.status_code, f"Unprocessable entity: {response.text}")
-            
-            elif response.status_code >= 500:
-                if _retry < self.config.max_retries:
-                    backoff_time = self.config.retry_backoff_factor * (2 ** _retry)
-                    await asyncio.sleep(backoff_time)
-                    return await self._download(method, endpoint=endpoint, params=params, _retry=_retry + 1, **kwargs)
-                else:
-                    raise ServerError(response.status_code, f"Server error after {self.config.max_retries} retries: {response.text}")
-            else:
-                raise UnexpectedError(response.status_code, f"Unexpected error: {response.text}")
-        if not response.content:
-            return b""
-        return response.content
+
+    async def _download(self, method: str, endpoint: str, **kwargs) -> bytes:
+        kwargs.setdefault("headers", {})["Accept"] = "application/pdf, application/octet-stream, */*"
+        response = await self._raw_request(method, endpoint, **kwargs)
+        return response.content 
+       
     
     @classmethod
     async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, redirect_uri: str | None = None, headers: dict | None = None):
