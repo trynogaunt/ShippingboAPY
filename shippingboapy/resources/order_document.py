@@ -37,7 +37,7 @@ class OrderDocumentResource:
             bytes: The binary content of the order document file.
         """
         
-        data = await self.client._request("GET", f"/order_documents/{document_id}/file", **kwargs)
+        data = await self.client._download("GET", f"/order_documents/{document_id}/file", **kwargs)
         
         if data is None:
             return None

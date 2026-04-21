@@ -9,6 +9,7 @@ from shippingboapy.resources.order_tag import OrderTagResource
 from shippingboapy.resources.pack_component import PackComponentResource
 from shippingboapy.resources.package import PackageResource
 from shippingboapy.resources.order_document import OrderDocumentResource
+from shippingboapy.resources.address_label import AddressLabelResource
 from typing import Callable
 
 class Client:
@@ -51,7 +52,7 @@ class Client:
         self.pack_components = PackComponentResource(self)
         self.packages = PackageResource(self)
         self.order_documents = OrderDocumentResource(self)
-        
+        self.address_labels = AddressLabelResource(self)
         
     def _set_token(self, token_data: TokenData):
         self.token = token_data
@@ -70,6 +71,39 @@ class Client:
             self.config.auth_url = auth_url
         if api_url is not None:
             self.config.api_url = api_url
+    
+    async def _process_response(self, response: httpx.Response, _retry: int = 0, request_func: Callable = None, **kwargs) -> httpx.Response:
+        match response.status_code:
+            case 200:
+                return response
+            case 400:
+                raise BadRequestError(response.status_code, f"Bad request: {response.text}")
+            case 401:
+                if _retry == 0 and self.token and self.token.refresh_token and request_func is not None:
+                    try:
+                        new_token = await refresh_token(self.token.refresh_token, self.session, self.config, on_refresh=self.config.on_token_refresh)
+                        self._set_token(new_token)
+                        return await request_func(_retry=_retry + 1, **kwargs)
+                    except Exception as e:
+                        raise TokenRefreshError(response.status_code, f"Token refresh failed: {str(e)}")
+                else:
+                    raise AuthenticationError(response.status_code, f"Authentication failed: {response.text}")
+            case 403:
+                raise ForbiddenError(response.status_code, f"Forbidden access: {response.text}")
+            case 404:
+                raise NotFoundError(response.status_code, f"Resource not found: {response.text}")
+            case 422:
+                raise BadRequestError(response.status_code, f"Unprocessable entity: {response.text}")
+            case _ if response.status_code >= 500:
+                if _retry < self.config.max_retries and request_func is not None:
+                    backoff_time = self.config.retry_backoff_factor * (2 ** _retry)
+                    await asyncio.sleep(backoff_time)
+                    return await request_func(_retry=_retry + 1, **kwargs)
+                else:
+                    raise ServerError(response.status_code, f"Server error after {self.config.max_retries} retries: {response.text}")
+            case _:
+                raise UnexpectedError(response.status_code, f"Unexpected error: {response.text}")
+            
     
     async def _request(self, method: str, endpoint: str, params: dict | None = None, _retry: int = 0, **kwargs) -> dict:
         if self.token is None or self.token.access_token is None:
@@ -119,10 +153,56 @@ class Client:
         if not response.content:
             return {}
         
-        if response.headers.get("Content-Type", "").startswith("application/json"):
-            return response.json()
-        else:
-            return response.content
+        return response.json()
+
+    async def _download(self, method: str, endpoint: str, params: dict | None = None, _retry: int = 0, **kwargs) -> bytes:
+        if self.token is None or self.token.access_token is None:
+            raise AuthenticationError("Access token is missing. Please authenticate first.")
+        
+        url = f"{self.config.api_url.rstrip('/')}/{endpoint.lstrip('/')}"
+        headers = {
+            "Authorization": f"Bearer {self.token.access_token}",
+            "X-API-VERSION": self.config.api_version,
+            "X-API-APP-ID": self.config.app_id,
+            "Accept": "application/pdf, application/octet-stream, */*",
+        }
+        headers.update(kwargs.pop("headers", {}))
+        
+        response = await self.session.request(method, url, headers=headers, params=params, **kwargs)
+        
+        if response.status_code != 200:
+            if response.status_code == 401:
+                if _retry == 0 and self.token and self.token.refresh_token:
+                    try:
+                        new_token = await refresh_token(self.token.refresh_token, self.session, self.config, on_refresh=self.config.on_token_refresh)
+                        self._set_token(new_token)
+                        return await self._download(method, endpoint=endpoint, params=params, _retry=_retry + 1, **kwargs)
+                    except Exception as e:
+                        raise TokenRefreshError(response.status_code, f"Token refresh failed: {str(e)}")
+            elif response.status_code == 400:
+                raise BadRequestError(response.status_code, f"Bad request: {response.text}")
+            
+            elif response.status_code == 403:
+                raise ForbiddenError(response.status_code, f"Forbidden access: {response.text}")
+                    
+            elif response.status_code == 404:
+                raise NotFoundError(response.status_code, f"Resource not found: {response.text}")
+            
+            elif response.status_code == 422:
+                raise BadRequestError(response.status_code, f"Unprocessable entity: {response.text}")
+            
+            elif response.status_code >= 500:
+                if _retry < self.config.max_retries:
+                    backoff_time = self.config.retry_backoff_factor * (2 ** _retry)
+                    await asyncio.sleep(backoff_time)
+                    return await self._download(method, endpoint=endpoint, params=params, _retry=_retry + 1, **kwargs)
+                else:
+                    raise ServerError(response.status_code, f"Server error after {self.config.max_retries} retries: {response.text}")
+            else:
+                raise UnexpectedError(response.status_code, f"Unexpected error: {response.text}")
+        if not response.content:
+            return b""
+        return response.content
     
     @classmethod
     async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, redirect_uri: str | None = None, headers: dict | None = None):
