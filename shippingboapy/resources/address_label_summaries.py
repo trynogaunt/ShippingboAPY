@@ -8,7 +8,7 @@ class AddressLabelSummariesResource:
     def __init__(self, client: Client):
         self.client = client
 
-    def list(self, address_label_summaries_id: int) -> AddressLabelSummaries:
+    async def list(self) -> AddressLabelSummaries:
         """
         Retrieve the address label summaries by its unique identifier.
 
@@ -22,7 +22,8 @@ class AddressLabelSummariesResource:
             HTTPError: If the request to the API fails or returns an error status code.
             ValidationError: If the response data cannot be validated against the AddressLabelSummaries model.
         """
-        data = self.client._request("GET", "/address_label_summaries")
+        data = await self.client._request("GET", "/address_label_summaries")
         if data is None:
             return None
-        return [AddressLabelSummaries(**item) for item in data]
+        
+        return [AddressLabelSummaries(**item) for item in data.get("address_label_summaries", [])]

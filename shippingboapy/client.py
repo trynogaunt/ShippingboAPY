@@ -12,6 +12,8 @@ from shippingboapy.resources.order_document import OrderDocumentResource
 from shippingboapy.resources.address_label import AddressLabelResource
 from shippingboapy.resources.order_dispatch import OrderDispatchResource
 from shippingboapy.resources.order_event import OrderEventResource
+from shippingboapy.resources.address_label_summaries import AddressLabelSummariesResource
+
 from typing import Callable
 
 class Client:
@@ -57,6 +59,7 @@ class Client:
         self.address_labels = AddressLabelResource(self)
         self.order_dispatches = OrderDispatchResource(self)
         self.order_events = OrderEventResource(self)
+        self.address_label_summaries = AddressLabelSummariesResource(self)
         
         
     def _set_token(self, token_data: TokenData):

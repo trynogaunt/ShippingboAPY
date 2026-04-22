@@ -7,11 +7,12 @@ class AddressLabelObject(BaseModel):
     created_at: Optional[ShippingboDateTime] = Field(None, alias="created_at", description="The date and time when the address label object was created.")
     id: Optional[int] = Field(None, alias="id", description="The unique identifier of the address label object.")
     label_url: Optional[str] = Field(None, alias="label_url", description="The URL of the address label object, if applicable.")
-    shipped_at: Optional[ShippingboDateTime] = Field(None, alias="shipped_at", description="The date and time when the address label object was shipped, if applicable.")
+    shipped_at: Optional[str] = Field(None, alias="shipped_at", description="The date and time when the address label object was shipped, if applicable.")
     shipping_method_name: Optional[str] = Field(None, alias="shipping_method_name", description="The name of the shipping method associated with the address label object, if applicable.")
     shipping_ref: Optional[str] = Field(None, alias="shipping_ref", description="The reference of the shipping associated with the address label object, if applicable.")
     tracking_url: Optional[str] = Field(None, alias="tracking_url", description="The URL of the tracking information for the address label object, if applicable.")
     updated_at: Optional[ShippingboDateTime] = Field(None, alias="updated_at", description="The date and time when the address label object was last updated.")
+    insurance_provided: Optional[bool] = Field(None, alias="insurance_provided", description="Indicates whether insurance is provided for the address label object, if applicable.")
     
     model_config = {
         "extra": "forbid",
