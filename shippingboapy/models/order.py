@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from shippingboapy.models.tag import OrderTag
 from shippingboapy.models.order_document import OrderDocument
+from shippingboapy.models.order_event import OrderEvent
 
 class Address(BaseModel):
     apartement_number: Optional[str] = Field(None, alias="apartement_number", description="The number of the apartment, if applicable.")
@@ -51,17 +52,6 @@ class CarrierService(BaseModel):
     id: Optional[int] = Field(..., alias="id", description="The unique identifier of the carrier service.")
     name: Optional[str] = Field(None, alias="name", description="The name of the carrier service.")
     updated_at: Optional[str] = Field(None, alias="updated_at", description="The date and time when the carrier service was last updated.")
-    
-
-class OrderEvent(BaseModel):
-    created_at: Optional[str] = Field(None, alias="created_at", description="The date and time when the order event was created.")
-    email: Optional[str] = Field(None, alias="email", description="The email address associated with the order event, if applicable.")
-    id: Optional[int] = Field(..., alias="id", description="The unique identifier of the order event.")
-    level: Optional[str] = Field(None, alias="level", description="The level of the order event (e.g., info, warning, error).")
-    message: Optional[str] = Field(None, alias="message", description="The message content of the order event.")
-    order_id: Optional[int] = Field(None, alias="order_id", description="The unique identifier of the order associated with the order event.")
-    title: Optional[str] = Field(None, alias="title", description="The title of the order event.")
-    updated_at: Optional[str] = Field(None, alias="updated_at", description="The date and time when the order event was last updated.")
         
 class OrderItemUpdate(BaseModel):
     id: int = Field(..., alias="id", description="The unique identifier of the order item to update.")
