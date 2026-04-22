@@ -1,7 +1,7 @@
 import pytest
 from shippingboapy.models.product import Product, ProductSummary, ProductCreate, ProductStocksInformations
 
-#@pytest.mark.xfail(reason="Spotlight mock API expect body for GET /products/{id} endpoint, which is not standard. Need to find a better solution for testing this endpoint.")
+@pytest.mark.xfail(reason="Spotlight mock API expect body for GET /products/{id} endpoint, which is not standard. Need to find a better solution for testing this endpoint.")
 async def test_get_product(mock_client):
     product = await mock_client.products.get(product_id=123, headers={"Prefer": "code=200, dynamic=true"})
     assert product is not None
