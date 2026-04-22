@@ -37,7 +37,7 @@ class AddressLabelResource:
             bytes: The binary content of the address label file.
         """
         
-        data = await self.client._request("GET", f"/address_labels/{address_label_id}/file", **kwargs)
+        data = await self.client._download("GET", f"/address_labels/{address_label_id}/file", **kwargs)
         
         if data is None:
             return None

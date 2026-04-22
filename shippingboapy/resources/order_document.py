@@ -8,7 +8,7 @@ class OrderDocumentResource:
     def __init__(self, client: Client):
         self.client = client
     
-    async def get(self, document_id: str, **kwargs) -> OrderDocument:
+    async def get(self, document_id: int, **kwargs) -> OrderDocument:
         """
         Get the details of a specific order document by its ID.
 
@@ -26,7 +26,7 @@ class OrderDocumentResource:
         
         return OrderDocument(**data)
     
-    async def get_file(self, document_id: str, **kwargs) -> bytes:
+    async def get_file(self, document_id: int, **kwargs) -> bytes:
         """
         Get the file content of a specific order document by its ID.
 
@@ -44,7 +44,7 @@ class OrderDocumentResource:
         
         return data
     
-    async def create(self, order_document_create: OrderDocumentCreate, **kwargs) -> OrderDocument:
+    async def create(self, order_document_create: OrderDocumentCreate, **kwargs) -> bool:
         """
         Create a new order document for a specific order.
 
@@ -57,6 +57,6 @@ class OrderDocumentResource:
         data = await self.client._request("POST", "/order_documents", json=order_document_create.model_dump(exclude_none=True, by_alias=True), **kwargs)
         
         if data is None:
-            return None
+            return False
         
-        return OrderDocument(**data)
+        return True
