@@ -1,121 +1,121 @@
 # Roadmap — shippingboapy
 
-SDK Python async pour l'API ShippingBo. Ce document liste les fonctionnalités en cours, prévues, et les idées à explorer.
+Async Python SDK for the ShippingBo API. This document lists in-progress features, planned work, and ideas to explore.
 
 ---
 
-## ✅ v0.1 — Fondations (en cours)
+## v0.1 — Foundations (in progress)
 
 ### Architecture & client
-- [x] `Client` avec `@classmethod from_auth_code()`
-- [x] Support async context manager + `close()` explicite
-- [x] Centralisation des requêtes dans `_request()`
-- [x] Gestion des headers auth et config centralisée
-- [x] Construction d'URL robuste (strip/join pour éviter les doubles slashes)
-- [x] Pattern resource : instanciées dans `Client.__init__`, accessibles via `client.<resource>`
-- [x] `ShippingBoConfig` interne, non exposé aux appelants
+- [x] `Client` with `@classmethod from_auth_code()`
+- [x] Async context manager support + explicit `close()`
+- [x] Centralized requests through `_request()`
+- [x] Centralized auth header and config handling
+- [x] Robust URL construction (strip/join to avoid double slashes)
+- [x] Resource pattern: instantiated in `Client.__init__`, accessed via `client.<resource>`
+- [x] `ShippingBoConfig` kept internal, not exposed to callers
 
-### Authentification
+### Authentication
 - [x] OAuth authorization code flow
-- [x] Refresh token automatique sur 401
-- [x] Tracking d'expiration différé au premier 401
-- [x] Callback `on_token_refresh` pour persistance côté appelant
-- [x] Persistance des tokens out-of-scope (responsabilité de l'appelant)
+- [x] Automatic token refresh on 401
+- [x] Expiration tracking deferred to first 401
+- [x] `on_token_refresh` callback for caller-side persistence
+- [x] Token persistence out of scope (caller's responsibility)
 
-### Gestion d'erreurs & retry
-- [x] Mapping status codes → exceptions custom (`BadRequestError`, `AuthenticationError`, `ForbiddenError`, `NotFoundError`, `ServerError`, etc.)
-- [x] Retry manuel avec exponential backoff (pas de dépendance externe)
-- [x] Gestion des erreurs transport (429, 5xx)
-- [x] `_process_response()` centralisé avec `match/case`
+### Error handling & retries
+- [x] Status code → custom exception mapping (`BadRequestError`, `AuthenticationError`, `ForbiddenError`, `NotFoundError`, `ServerError`, etc.)
+- [x] Manual retry with exponential backoff (no external dependency)
+- [x] Transport error handling (429, 5xx)
+- [x] Centralized `_process_response()` using `match/case`
 
 ### Resources
-- [x] Order : `OrderBase`, `OrderSummary`, `Order`, `OrderCreate`, `OrderItemCreate`
-- [x] Filter model avec `to_param()` serialization
-- [x] `orders.list()` avec paramètres nommés (`search`, `tags`, `sort`)
-- [ ] Resource Products (en cours)
-- [ ] Résoudre le `ValidationError` lié à une clé vide dans la réponse API
+- [x] Order: `OrderBase`, `OrderSummary`, `Order`, `OrderCreate`, `OrderItemCreate`
+- [x] Filter model with `to_param()` serialization
+- [x] `orders.list()` with named parameters (`search`, `tags`, `sort`)
+- [ ] Products resource (in progress)
+- [ ] Resolve the `ValidationError` caused by an empty string key in the API response
 
-### Modèles
-- [x] Séparation response models / request payload models (`Order` vs `OrderCreate`)
-- [x] Héritage basé sur différences réelles (`OrderBase` partagé entre `Order` et `OrderSummary`)
-- [x] Config Pydantic v2 : `extra="forbid"`, `validate_assignment=True`, `populate_by_name=True`
+### Models
+- [x] Separate response models from request payload models (`Order` vs `OrderCreate`)
+- [x] Inheritance based on real field differences (`OrderBase` shared between `Order` and `OrderSummary`)
+- [x] Pydantic v2 config: `extra="forbid"`, `validate_assignment=True`, `populate_by_name=True`
 
 ### Tests
-- [x] Tests d'intégration contre Stoplight mock server
-- [x] `pytest` + `pytest-asyncio` en mode `auto`
-- [x] Fixtures `mock_config` dans `conftest.py`
-- [x] Contournement de l'artefact Stoplight sur `GET /products/{id}` (body requis)
+- [x] Integration tests against the Stoplight mock server
+- [x] `pytest` + `pytest-asyncio` in `auto` mode
+- [x] `mock_config` fixtures in `conftest.py`
+- [x] Workaround for the Stoplight artifact on `GET /products/{id}` (body required)
 
 ---
 
-## 🚧 v0.2 — Ergonomie & couverture API
+## v0.2 — Ergonomics & API coverage
 
-### Téléchargement de fichiers
-- [ ] Méthode `_download()` pour les endpoints binaires (étiquettes, exports)
-- [ ] Factorisation `_raw_request()` partagée entre `_request()` et `_download()`
-- [ ] Support header `Accept` override par kwargs
-- [ ] Resource AddressLabels avec `download()` → bytes
+### File downloads
+- [ ] `_download()` method for binary endpoints (shipping labels, exports)
+- [ ] Shared `_raw_request()` factored out of `_request()` and `_download()`
+- [ ] Support `Accept` header override via kwargs
+- [ ] AddressLabels resource with `download()` → bytes
 
-### Pagination automatique
-- [ ] Méthode `iter_all()` (ou `all()`) sur les resources listables
-- [ ] Async iterator qui gère offset/max_results sous le capot
-- [ ] Arrêt propre : page vide ou page partielle
-- [ ] Cohabitation avec `list()` (contrôle fin d'une page précise)
+### Automatic pagination
+- [ ] `iter_all()` (or `all()`) method on listable resources
+- [ ] Async iterator handling offset/max_results under the hood
+- [ ] Clean stopping: empty page or partial page
+- [ ] Coexistence with `list()` (fine-grained control over a specific page)
 
-### Amélioration du retry
-- [ ] Séparer les compteurs de retry auth et retry serveur (actuellement partagés)
-- [ ] `ValidationError` distincte pour 422 (vs `BadRequestError` pour 400)
-- [ ] Restreindre le `except Exception` autour du refresh token à des exceptions typées
-- [ ] Gérer proprement `response.text` sur les endpoints binaires (content-type check ou troncature)
+### Retry improvements
+- [ ] Separate counters for auth retries vs server retries (currently shared)
+- [ ] Dedicated `ValidationError` for 422 (distinct from `BadRequestError` for 400)
+- [ ] Narrow the `except Exception` around token refresh to typed exceptions
+- [ ] Handle `response.text` properly on binary endpoints (content-type check or truncation)
 
-### Nouvelles resources
-- [ ] Products (finalisation)
+### New resources
+- [ ] Products (finalization)
 - [ ] Shipments
 - [ ] Carriers
 - [ ] Stocks / Warehouses
 
 ---
 
-## 🔮 v0.3+ — Fonctionnalités avancées
+## v0.3+ — Advanced features
 
-### Streaming HTTP
-- [ ] Méthode `_stream()` pour les gros exports (AsyncIterator de bytes)
-- [ ] Gestion simplifiée des erreurs en mode stream
-- [ ] Documentation des limitations (pas de retry auth gracieux pendant le stream)
+### HTTP streaming
+- [ ] `_stream()` method for large exports (AsyncIterator of bytes)
+- [ ] Simplified error handling in streaming mode
+- [ ] Document limitations (no graceful auth retry during streaming)
 
 ### Rate limiting
-- [ ] Lecture et respect des headers `X-RateLimit-*` renvoyés par l'API
-- [ ] Throttling côté client pour éviter les 429
-- [ ] Configuration : mode strict vs best-effort
+- [ ] Read and honor `X-RateLimit-*` headers returned by the API
+- [ ] Client-side throttling to avoid 429s
+- [ ] Configuration: strict mode vs best-effort
 
 ### Webhooks
-- [ ] Helpers de vérification de signature
-- [ ] Parsing typé des payloads webhook
-- [ ] Modèles Pydantic pour chaque type d'événement
+- [ ] Signature verification helpers
+- [ ] Typed parsing of webhook payloads
+- [ ] Pydantic models for each event type
 
-### Observabilité
-- [ ] Hooks de logging structurés (request/response)
-- [ ] Support tracing (OpenTelemetry ?) optionnel
-- [ ] Métriques de base (nombre de requêtes, retries, refresh tokens)
-
----
-
-## 💡 Ideas / À discuter
-
-- **Support sync en plus de l'async** — via un wrapper `SyncClient` qui enveloppe les appels async, ou double API ? Valeur vs coût de maintenance à évaluer.
-- **CLI companion** — outil en ligne de commande pour explorer l'API rapidement (debug, scripts one-shot).
-- **Cache local** — mise en cache optionnelle des GET idempotents (produits, carriers...) avec invalidation.
-- **Batch / bulk operations** — si ShippingBo expose des endpoints batch, les exposer avec une ergonomie claire.
-- **Typed filters** — au-delà du `Filter` générique, des classes typées par resource (`OrderFilter`, `ProductFilter`) pour l'auto-complétion.
-- **Validation de la réponse Pydantic stricte vs permissive** — mode dev qui lève sur extra fields vs mode prod qui log.
+### Observability
+- [ ] Structured logging hooks (request/response)
+- [ ] Optional tracing support (OpenTelemetry?)
+- [ ] Basic metrics (request count, retries, token refreshes)
 
 ---
 
-## 📌 Notes techniques retenues
+## Ideas / To discuss
 
-- `httpx` pour le client HTTP async
-- Pydantic v2 pour les modèles
-- `pydantic-settings` pour la config
-- `json=payload` requis (pas `data=payload`) pour Stoplight
-- Tests en WSL / Windows Terminal
-- Pas de dépendance additionnelle pour le retry (pas de `tenacity` ou autre)
+- **Sync support alongside async** — via a `SyncClient` wrapper around async calls, or a dual API? Value vs. maintenance cost to assess.
+- **CLI companion** — a command-line tool to explore the API quickly (debugging, one-shot scripts).
+- **Local cache** — optional caching of idempotent GETs (products, carriers…) with invalidation.
+- **Batch / bulk operations** — if ShippingBo exposes batch endpoints, surface them with a clear ergonomics.
+- **Typed filters** — beyond the generic `Filter`, per-resource typed classes (`OrderFilter`, `ProductFilter`) for autocompletion.
+- **Strict vs permissive Pydantic response validation** — dev mode that raises on extra fields vs. prod mode that logs.
+
+---
+
+## Technical notes kept on record
+
+- `httpx` for the async HTTP client
+- Pydantic v2 for models
+- `pydantic-settings` for config
+- `json=payload` required (not `data=payload`) for Stoplight
+- Tests run under WSL / Windows Terminal
+- No additional dependency for retries (no `tenacity` or equivalent)
