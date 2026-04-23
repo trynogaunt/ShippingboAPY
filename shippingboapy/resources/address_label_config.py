@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, List
-from shippingboapy.models.address_label_config import AddressLabelConfig
+from shippingboapy.models.address_label_config import AddressLabelConfig, AddressLabelConfigDetails
 from shippingboapy.models.filter import Filter, Operator
 if TYPE_CHECKING:
     from shippingboapy.client import Client
@@ -17,7 +17,7 @@ class AddressLabelConfigResource:
             id (int): The unique identifier of the address label configuration to retrieve.
 
         Returns:
-            AddressLabelConfig: The address label configuration object corresponding to the provided ID.
+            AddressLabelConfigDetails: The address label configuration details object corresponding to the provided ID.
 
         Raises:
             HTTPError: If the request to the API fails or returns an error status code.
@@ -26,8 +26,8 @@ class AddressLabelConfigResource:
         data = await self.client._request("GET", f"/address_label_configs/{id}")
         if data is None:
             return None
-        
-        return AddressLabelConfig(**data.get("addressLabelConfig", {}))
+
+        return AddressLabelConfigDetails(**data.get("address_label_config", {}))
     
     async def list(self, 
                    limit: int=50, 
