@@ -1,6 +1,5 @@
 from pydantic import BaseModel, Field
 from typing import Optional
-from shippingboapy.models.types import ShippingboDateTime
 
 class ProviderConfig(BaseModel):
     id: int = Field(..., alias="id", description="The unique identifier of the provider configuration.")
