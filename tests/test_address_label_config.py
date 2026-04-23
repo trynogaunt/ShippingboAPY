@@ -15,3 +15,4 @@ async def test_get_address_label_config(mock_client):
 
     assert address_label_config is not None
     assert isinstance(address_label_config, AddressLabelConfigDetails)
+    

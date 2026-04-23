@@ -4,39 +4,9 @@ from shippingboapy.models.tag import OrderTag
 from shippingboapy.models.order_document import OrderDocument
 from shippingboapy.models.order_event import OrderEvent
 from shippingboapy.models.types import ShippingboDateTime
+from shippingboapy.models.address import Address
 
-class Address(BaseModel):
-    apartement_number: Optional[str] = Field(None, alias="apartement_number", description="The number of the apartment, if applicable.")
-    building: Optional[str] = Field(None, alias="building", description="The building name or number, if applicable.")
-    city: str = Field(..., alias="city", description="The city of the address.")
-    civility: Optional[str] = Field(None, alias="civilitity", description="The civility of the recipient (e.g., Mr, Ms, Company).")
-    company_name: Optional[str] = Field(None, alias="company_name", description="The name of the company, if applicable.")
-    country: str = Field(..., alias="country", description="The country of the address.")
-    created_at: Optional[ShippingboDateTime] = Field(None, alias="created_at", description="The date and time when the address was created.")
-    email: Optional[str] = Field(None, alias="email", description="The email address associated with the address.")
-    eori_importer: Optional[str] = Field(None, alias="eori_importer", description="The EORI number of the importer, if applicable.")
-    firstname: Optional[str] = Field(None, alias="firstname", description="The first name of the recipient.")
-    fullname: Optional[str] = Field(None, alias="fullname", description="The full name of the recipient.")
-    id: Optional[int] = Field(..., alias="id", description="The unique identifier of the address.")
-    instructions: Optional[str] = Field(None, alias="instructions", description="Special instructions for the delivery, if applicable.")
-    lastname: Optional[str] = Field(None, alias="lastname", description="The last name of the recipient.")
-    phone1: Optional[str] = Field(None, alias="phone", description="The phone number associated with the address.")
-    phone2: Optional[str] = Field(None, alias="phone2", description="An additional phone number associated with the address, if applicable.")
-    place_name: Optional[str] = Field(None, alias="place_name", description="The name of the place, if applicable.")
-    state: Optional[str] = Field(None, alias="state", description="The state or province of the address.")
-    street1: Optional[str] = Field(None, alias="street1", description="The first line of the street address.")
-    street2: Optional[str] = Field(None, alias="street2", description="The second line of the street address, if applicable.")
-    street3: Optional[str] = Field(None, alias="street3", description="The third line of the street address, if applicable.")
-    street4: Optional[str] = Field(None, alias="street4", description="The fourth line of the street address, if applicable.")
-    updated_at: Optional[ShippingboDateTime] = Field(None, alias="updated_at", description="The date and time when the address was last updated.")
-    vat_importer: Optional[str] = Field(None, alias="vat_importer", description="The VAT number of the importer, if applicable.")
-    zip: Optional[str] = Field(None, alias="zip", description="The postal code of the address.")
 
-    model_config = {
-        "extra": "allow",
-        "populate_by_name": True,
-        "validate_assignment": True
-    }   
 class CarrierConfig(BaseModel):
     service_code: Optional[str] = Field(None, alias="service_code", description="The code of the carrier service.")
     shipping_options: Optional[str] = Field(None, alias="shipping_options", description="Additional shipping options for the carrier service.")
