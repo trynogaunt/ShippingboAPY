@@ -7,7 +7,7 @@ class OrderTag(BaseModel):
     value: Optional[str] = Field(None, alias="value", description="The value of the order tag.")
 
     model_config = {
-         "extra": "forbid",
+         "extra": "allow",
          "validate_by_name": True,
          "validate_assignment": True
      }
@@ -17,7 +17,7 @@ class OrderTagCreate(BaseModel):
     value: str = Field(..., alias="value", description="The value of the order tag to create.")
 
     model_config = {
-         "extra": "forbid",
+         "extra": "allow",
          "validate_by_name": True,
          "validate_assignment": True
      }

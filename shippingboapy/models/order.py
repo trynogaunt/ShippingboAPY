@@ -31,12 +31,22 @@ class Address(BaseModel):
     updated_at: Optional[ShippingboDateTime] = Field(None, alias="updated_at", description="The date and time when the address was last updated.")
     vat_importer: Optional[str] = Field(None, alias="vat_importer", description="The VAT number of the importer, if applicable.")
     zip: Optional[str] = Field(None, alias="zip", description="The postal code of the address.")
-    
+
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }   
 class CarrierConfig(BaseModel):
     service_code: Optional[str] = Field(None, alias="service_code", description="The code of the carrier service.")
     shipping_options: Optional[str] = Field(None, alias="shipping_options", description="Additional shipping options for the carrier service.")
     tags_to_send: Optional[str] = Field(None, alias="tags_to_send", description="Tags to send to the carrier for the shipment.")
 
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
 class MappedProduct(BaseModel):
     created_at: Optional[ShippingboDateTime] = Field(None, alias="created_at", description="The date and time when the mapped product was created.")
     id: Optional[int] = Field(..., alias="id", description="The unique identifier of the mapped product.")
@@ -45,7 +55,12 @@ class MappedProduct(BaseModel):
     updated_at: Optional[ShippingboDateTime] = Field(None, alias="updated_at", description="The date and time when the mapped product was last updated.")
     quantity: Optional[int] = Field(None, alias="quantity", description="The quantity of the product in the order item.")
     product_user_ref: Optional[str] = Field(None, alias="product_user_ref", description="The user reference of the product in the external system, if applicable.")
-    
+
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }  
 class CarrierService(BaseModel):
     archived: Optional[bool] = Field(None, alias="archived", description="Indicates whether the carrier service is archived.")
     config: Optional[CarrierConfig] = Field(None, alias="config", description="The configuration details of the carrier service.")
@@ -53,7 +68,12 @@ class CarrierService(BaseModel):
     id: Optional[int] = Field(..., alias="id", description="The unique identifier of the carrier service.")
     name: Optional[str] = Field(None, alias="name", description="The name of the carrier service.")
     updated_at: Optional[ShippingboDateTime] = Field(None, alias="updated_at", description="The date and time when the carrier service was last updated.")
-        
+
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
 class OrderItemUpdate(BaseModel):
     id: int = Field(..., alias="id", description="The unique identifier of the order item to update.")
     product_ean: Optional[str] = Field(None, alias="product_ean", description="The EAN13 code of the product associated with the order item, if applicable.")
@@ -64,7 +84,7 @@ class OrderItemUpdate(BaseModel):
     title: Optional[str] = Field(None, alias="title", description="The title or name of the order item.")
     stock_type_ref: Optional[str] = Field(None, alias="stock_type_ref", description="The stock type reference for the order item, if applicable.")
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True,
     }
@@ -80,7 +100,7 @@ class OrderItem(OrderItemUpdate):
     additional_content: Optional[dict] = Field(None, alias="additional_content", description="Additional content or information related to the order item, if applicable.")
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True
     }
@@ -101,24 +121,43 @@ class OrderItemCreate(BaseModel):
     title: Optional[str] = Field(None, alias="title", description="The title or name of the order item.")
     computed_prices: Optional[dict] = Field(None, alias="computed_prices", description="The computed prices for the order item, containing details such as price breakdowns, discounts, etc.")
     additional_content: Optional[dict] = Field(None, alias="additional_content", description="Additional content or information related to the order item, if applicable.")
-    
+
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }  
 class ItemShipmentSerialNumber(BaseModel):
     order_item_id: Optional[int] = Field(None, alias="order_item_id", description="The unique identifier of the order item associated with the shipment serial number.")
     serial_number: Optional[str] = Field(None, alias="serial_number", description="The serial number of the item in the shipment, if applicable.")
 
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
 class OrderItemShipmentPickingHistory(BaseModel):
     batch_number: Optional[str] = Field(None, alias="batch_number", description="The batch number associated with the order item shipment picking history, if applicable.")
     id: Optional[int] = Field(..., alias="id", description="The unique identifier of the order item shipment picking history.")
     last_preparation_day: Optional[str] = Field(None, alias="last_preparation_day", description="The date and time of the last preparation for the order item shipment picking history, if applicable.")
     quantity: Optional[int] = Field(None, alias="quantity", description="The quantity associated with the order item shipment picking history.")
 
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
 class OrderItemShipment(BaseModel):
     item_quantity: Optional[int] = Field(None, alias="item_quantity", description="The quantity of the item in the shipment.")
     order_item_id: Optional[int] = Field(None, alias="order_item_id", description="The unique identifier of the order item associated with the shipment.")
     order_item_shipment_picking_histories: Optional[List[OrderItemShipmentPickingHistory]] = Field(None, alias="order_item_shipment_picking_histories", description="The picking histories of the order item shipment, if applicable.")
     comments: Optional[List[str]] = Field(None, alias="comments", description="Comments related to the order item shipment, if applicable.")
     
-    
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }   
 class Shipment(BaseModel):
     carrier_barcode: Optional[str] = Field(None, alias="carrier_barcode", description="The barcode provided by the carrier for the shipment, if applicable.")
     carrier_id: Optional[int] = Field(None, alias="carrier_id", description="The unique identifier of the carrier associated with the shipment, if applicable.")
@@ -146,6 +185,11 @@ class Shipment(BaseModel):
     width: Optional[int] = Field(None, alias="width_cm", description="The width of the shipment in centimeters, if applicable.")
     sscc_barcode: Optional[str] = Field(None, alias="sscc_barcode", description="The SSCC barcode for the shipment, if applicable.")
 
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
 class OrderBase(BaseModel):
     id: int = Field(..., alias="id")
     origin_ref: Optional[str] = Field(None, alias="origin_ref")
@@ -170,7 +214,7 @@ class OrderBase(BaseModel):
     total_discount_tax_included_cents: Optional[int] = Field(None, alias="total_discount_tax_included_cents")
 
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True,
     }
@@ -211,7 +255,7 @@ class Order(OrderBase):
     order_dispatch_id: Optional[int] = Field(None, alias="order_dispatch_id", description="The unique identifier of the order dispatch associated with the order, if applicable.")
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True
     }
@@ -233,7 +277,7 @@ class OrderSummary(OrderBase):
     total_weight: Optional[int] = Field(None, alias="total_weight", description="The total weight of the order in grams, if applicable.")
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True
     }
@@ -273,7 +317,7 @@ class OrderCreate(BaseModel):
     empty_key: Optional[str] = Field(None, alias="", description="An empty key to allow for additional fields in the order creation request, if applicable.") # Exist cause Shippingbo API need an empty key field
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True
     }
@@ -289,13 +333,19 @@ class OrderDetails(Order):
     empty_key: Optional[str] = Field(None, alias="", description="An empty key to allow for additional fields in the order creation response, if applicable.") # Exist cause Shippingbo API need an empty key field
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True
     }
 
 class OrderAttribute(BaseModel):
     state: str = Field(..., alias="state", description="The state of the order attribute (e.g., pending, processing, shipped, etc.).")
+
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
 class SuborderItem(BaseModel):
     item_id: int = Field(..., alias="item_id", description="Id of the parent OrderItem.")
     product_id: int = Field(..., alias="product_id", description="Id of the product associated with the suborder item.")
@@ -303,6 +353,17 @@ class SuborderItem(BaseModel):
     sku: str = Field(..., alias="sku", description="The SKU of the product associated with the suborder item.")
     title: str = Field(..., alias="title", description="The title or name of the suborder item.")
 
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
 class SuborderNumber(BaseModel):
     numberOfTheItem: SuborderItem = Field(..., alias="numberOfTheItem", description="The unique number of the suborder item, used for tracking and reference purposes.")
     order_attributes: Optional[OrderAttribute] = Field(None, alias="order_attributes", description="The attributes of the order associated with the suborder item, if applicable.")
+    
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }

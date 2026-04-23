@@ -8,5 +8,3 @@ async def test_list_address_label_configs(mock_client):
     assert isinstance(address_label_configs, list)
     for config in address_label_configs:
         assert isinstance(config, AddressLabelConfig)
-    
-    print("Address Label Configs:", address_label_configs[0])

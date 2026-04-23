@@ -13,6 +13,11 @@ class ProductStocksInformations(BaseModel):
     stock_in_transition: int = Field(..., description="The stock that is currently in transition.")
     theorical_physical_stock: int | None = Field(..., description="The theoretical physical stock for the product. Can be null if the product is stored in a WarehouseSlot. This value is computed from the available stock and the non-shipped orders (stock + non-shipped orders product quantities)")
 
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
 class OrderItemProductMapping(BaseModel):
     id: int = Field(..., description="The unique identifier for the order item product mapping.")
     matched_quantity: str = Field(..., description="The quantity of the product that has been matched to the order item.")
@@ -21,6 +26,11 @@ class OrderItemProductMapping(BaseModel):
     product_field: str = Field(..., description="The field of the product that is mapped to the order item, always id.")
     product_value: str = Field(..., description="The value of the product field that is mapped to the order item, the Shippingbo id of the corresponding product.")
 
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
 class KitComponent(BaseModel):
     id: int | str = Field(..., description="The unique identifier for the kit component.")
     quantity: int | str = Field(..., description="The quantity of the component in the kit.")
@@ -28,12 +38,22 @@ class KitComponent(BaseModel):
     product_id: int | str = Field(..., description="The unique identifier for the product that is a component of the kit.")
     kit_stock_rule: Optional[str] = Field(..., description="How kit and their components stocks interact with each other. Can be: null: no interaction , 'kit_supply': the kit stock feeds the components stock") 
 
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
 class PackComponent(BaseModel):
     component_product_id: int = Field(..., description="The unique identifier for the product that is a component of the pack.")
     quantity: int = Field(..., description="The quantity of the component in the pack.")
     id: int = Field(..., description="The unique identifier for the pack component.")
     pack_product_id: int = Field(..., description="The unique identifier for the pack product.")
-    
+ 
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }    
 class ProductAdditionalField(BaseModel):
     created_at: str = Field(..., description="The date and time when the additional field was created.")
     id: int = Field(..., description="The unique identifier for the additional field.")
@@ -42,20 +62,44 @@ class ProductAdditionalField(BaseModel):
     updated_at: str = Field(..., description="The date and time when the additional field was last updated.")
     value: str = Field(..., description="The value of the additional field.")
 
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
+    
 class ProductAdditionalFieldToAdd(BaseModel):
     key: str = Field(..., description="The key of the additional field.")
     value: str = Field(..., description="The value of the additional field.")
 
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
+    
 class ProductBarcodeToAdd(BaseModel):
     key: str = Field(..., description="The key of the barcode, can be 'ean13', 'upc' or 'isbn'")
     value: str = Field(..., description="The value of the barcode")
 
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
+    
 class ProductInstructionsFile(BaseModel):
     id: int = Field(..., description="The unique identifier for the product instructions file.")
     product_id: int = Field(..., description="The unique identifier for the product associated with the instructions file.")
     file_url: str = Field(..., description="The URL of the product instructions file.")
     language: str = Field(..., description="The language of the product instructions file.")
-
+    
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
+    
 class Product(BaseModel):
     additonal_references: Optional[List[OrderItemProductMapping]] = Field(..., description="The additional reference for the product.")
     ean13: Optional[str] = Field(..., description="The EAN13 code for the product.")
@@ -112,7 +156,7 @@ class Product(BaseModel):
         return v
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True,
     }
@@ -165,7 +209,7 @@ class ProductSummary(BaseModel):
     width: Optional[int] = Field(None, description="The width of the product in millimeters.")
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True,
     }
@@ -196,7 +240,7 @@ class ProductCreate(BaseModel):
     product_barcodes_attributes: Optional[List[ProductBarcodeToAdd]] = Field(None, description="The list of barcodes for the product.")
 
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True,
     }
@@ -223,7 +267,7 @@ class ProductUpdateId(BaseModel):
     weight: Optional[int] = Field(None, description="The weight of the product in grams.")
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True,
     }
@@ -233,7 +277,7 @@ class ProductUpdateKey(BaseModel):
     stock: Optional[int] = Field(None, description="The stock of the product, this is the total stock of the product in all your warehouses, it is the sum of the available stock")
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True,
     }

@@ -7,7 +7,7 @@ class PackComponentCreate(BaseModel):
     quantity: int = Field(..., alias="quantity", description="The quantity of the component product in the pack.")
     
     model_config = {
-         "extra": "forbid",
+         "extra": "allow",
          "validate_by_name": True,
          "validate_assignment": True
      }
@@ -16,7 +16,7 @@ class PackComponent(PackComponentCreate):
     id: Optional[int] = Field(..., alias="id", description="The unique identifier of the pack component.")
 
     model_config = {
-         "extra": "forbid",
+         "extra": "allow",
          "validate_by_name": True,
          "validate_assignment": True
      }

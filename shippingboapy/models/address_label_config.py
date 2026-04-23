@@ -6,7 +6,7 @@ class ProviderConfig(BaseModel):
     name: str = Field(..., alias="name", description="The name of the provider configuration.")
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True
     }
@@ -76,7 +76,7 @@ class AddressLabelConfig(BaseModel):
     implements_verifiable_connection: Optional[bool] = Field(None, alias="implements_verifiable_connection", description="Indicates whether the address label configuration implements verifiable connection features, if applicable.")
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True
     }

@@ -15,7 +15,7 @@ class AddressLabelObject(BaseModel):
     insurance_provided: Optional[bool] = Field(None, alias="insurance_provided", description="Indicates whether insurance is provided for the address label object, if applicable.")
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True
     }
@@ -27,7 +27,7 @@ class LabelCredential(BaseModel):
     updated_at: Optional[ShippingboDateTime] = Field(None, alias="updated_at", description="The date and time when the label credential was last updated.")
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True
     }
@@ -41,7 +41,7 @@ class LabelOfferOption(BaseModel):
     zip_prefix: Optional[str] = Field(None, alias="zip_prefix", description="The ZIP code prefix associated with the label offer option, if applicable.")
     
     model_config = {
-        "extra": "forbid",
+        "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True
     }
@@ -69,3 +69,9 @@ class AddressLabelSummaries(BaseModel):
     updated_at: Optional[ShippingboDateTime] = Field(None, alias="updated_at", description="The date and time when the address label summaries were last updated.")
     width: Optional[int] = Field(None, alias="width", description="The width of the package associated with the address label summaries, if applicable.")
     zip: Optional[str] = Field(None, alias="zip", description="The ZIP code associated with the address label summaries, if applicable.")
+    
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }   
