@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, Literal, List
 
 class ProviderConfig(BaseModel):
     id: int = Field(..., alias="id", description="The unique identifier of the provider configuration.")
@@ -74,6 +74,37 @@ class AddressLabelConfig(BaseModel):
     implements_return_config_creation: Optional[bool] = Field(None, alias="implements_return_config_creation", description="Indicates whether the address label configuration implements return config creation features, if applicable.")
     implements_sender_address: Optional[bool] = Field(None, alias="implements_sender_address", description="Indicates whether the address label configuration implements sender address features, if applicable.")
     implements_verifiable_connection: Optional[bool] = Field(None, alias="implements_verifiable_connection", description="Indicates whether the address label configuration implements verifiable connection features, if applicable.")
+    
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
+    
+class SubCategory(BaseModel):
+    name: str = Field(None, alias="name", description="The name of the sub-category associated with the field, if applicable.")
+    type: Literal["subCategory"] = Field(..., alias="type", description="The type of the sub-category associated with the field. Currently, only 'subCategory' is supported.")
+    fields: Optional[List[dict]] = Field(None, alias="fields", description="A dictionary containing additional fields and their values associated with the sub-category, if applicable.")
+    
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
+class Fields(BaseModel):
+    name: str = Field(None, alias="name", description="The name of the field associated with the address label configuration, if applicable.")
+    type: Literal["category"] = Field(..., alias="type", description="The type of the field associated with the address label configuration. Currently, only 'category' is supported.")
+    sub_categories: Optional[List[SubCategory]] = Field(None, alias="sub_categories", description="A list of sub-categories associated with the field, if applicable. This is relevant when the field type is 'category'.")
+    
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
+    
+class AddressLabelConfigDetails(AddressLabelConfig):
+    external: Optional[bool] = Field(None, alias="external", description="Indicates whether the address label configuration is external, if applicable.")
+    fields: Optional[List[Fields]] = Field(None, alias="fields", description="A list of fields associated with the address label configuration, if applicable.")
     
     model_config = {
         "extra": "allow",

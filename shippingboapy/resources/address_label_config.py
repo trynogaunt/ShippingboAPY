@@ -9,6 +9,26 @@ class AddressLabelConfigResource:
     def __init__(self, client: Client):
         self.client = client
 
+    async def get(self, id: int) -> AddressLabelConfig:
+        """
+        Retrieve a specific address label configuration by its unique identifier.
+
+        Args:
+            id (int): The unique identifier of the address label configuration to retrieve.
+
+        Returns:
+            AddressLabelConfig: The address label configuration object corresponding to the provided ID.
+
+        Raises:
+            HTTPError: If the request to the API fails or returns an error status code.
+            ValidationError: If the response data cannot be validated against the AddressLabelConfig model.
+        """
+        data = await self.client._request("GET", f"/address_label_configs/{id}")
+        if data is None:
+            return None
+        
+        return AddressLabelConfig(**data.get("addressLabelConfig", {}))
+    
     async def list(self, 
                    limit: int=50, 
                    offset: int=0, 

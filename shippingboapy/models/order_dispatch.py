@@ -9,3 +9,9 @@ class OrderDispatch(BaseModel):
     origin_ref: Optional[str] = Field(None, alias="origin_ref", description="The reference of the origin of the order dispatch, if applicable.")
     origin_created_at: Optional[str] = Field(None, alias="origin_created_at", description="The timestamp of when the order dispatch was created at the origin, if applicable.")
     supplier_orders: Optional[List[dict]] = Field(None, alias="supplier_orders", description="The list of supplier order IDs associated with the order dispatch, if applicable.")
+    
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
