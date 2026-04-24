@@ -37,3 +37,12 @@ class DangerousGoodProductInformation(DangerousGoodProductInformationCreate):
         "populate_by_name": True,
         "validate_assignment": True
     }
+    
+class DangerousGoodProductInformationUpdate(DangerousGoodProductInformationCreate):
+    pass
+
+    model_config = {
+        "extra": "forbid",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
