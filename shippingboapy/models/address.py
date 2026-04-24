@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Literal, List
+from typing import Optional
 from shippingboapy.models.types import ShippingboDateTime
 
 class Address(BaseModel):
