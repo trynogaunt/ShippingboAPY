@@ -20,6 +20,7 @@ from shippingboapy.resources.carrier import CarrierResource
 from shippingboapy.resources.client_order_origin import ClientOrderOriginResource
 from shippingboapy.resources.client_order_source import ClientOrderSourceResource
 from shippingboapy.resources.dangerous_good_product_informations import DangerousGoodProductInformationResource
+from shippingboapy.resources.kit_component import KitComponentResource
 
 from typing import Callable
 
@@ -74,6 +75,8 @@ class Client:
         self.client_order_origin = ClientOrderOriginResource(self)
         self.client_order_source = ClientOrderSourceResource(self)
         self.dangerous_good_product_informations = DangerousGoodProductInformationResource(self)
+        self.kit_components = KitComponentResource(self)
+        
     def _set_token(self, token_data: TokenData):
         self.token = token_data
     
@@ -147,7 +150,7 @@ class Client:
         )
 
 
-    async def _request(self, method: str, endpoint: str, **kwargs) -> dict | list:
+    async def _request(self, method: str, endpoint: str, **kwargs) -> dict:
         response = await self._raw_request(method, endpoint, **kwargs)
         if not response.content:
             return {}
