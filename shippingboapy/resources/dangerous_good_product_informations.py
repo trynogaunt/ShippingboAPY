@@ -23,14 +23,14 @@ class DangerousGoodProductInformationResource:
             HTTPError: If the request to the API fails or returns an error status code.
             ValidationError: If the response data cannot be validated against the DangerousGoodProductInformation model.
         """
-        data = await self.client._request("GET", f"/dangerous_good_product_informations/{dangerous_good_product_information_id}")
+        data = await self.client._request("GET", f"/dangerous_goods_product_informations/{dangerous_good_product_information_id}")
         
         if data is None:
             return None
 
         return DangerousGoodProductInformation(**data)  
     
-    async def list(self, search: List[tuple[str, str, str]]) -> list[DangerousGoodProductInformation]:
+    async def list(self, search: List[tuple[str, str, str]] = None) -> list[DangerousGoodProductInformation]:
         """
         Retrieve a list of dangerous good product informations based on search criteria.
 
@@ -51,7 +51,7 @@ class DangerousGoodProductInformationResource:
                 filter_obj = Filter(field=item[0], operator=Operator(item[1]), value=item[2])
                 params.setdefault("search", []).append(filter_obj.json(by_alias=True))
         
-        data = await self.client._request("GET", "/dangerous_good_product_informations", params=params)
+        data = await self.client._request("GET", "/dangerous_goods_product_informations", params=params)
         
         if data is None:
             return None
@@ -72,7 +72,7 @@ class DangerousGoodProductInformationResource:
             HTTPError: If the request to the API fails or returns an error status code.
             ValidationError: If the response data cannot be validated against the DangerousGoodProductInformation model.
         """
-        data = await self.client._request("POST", "/dangerous_good_product_informations", json=dangerous_good_product_information_create.model_dump(by_alias=True))
+        data = await self.client._request("POST", "/dangerous_goods_product_informations", json=dangerous_good_product_information_create.model_dump(by_alias=True))
         
         if data is None:
             return None
@@ -94,7 +94,7 @@ class DangerousGoodProductInformationResource:
             HTTPError: If the request to the API fails or returns an error status code.
             ValidationError: If the response data cannot be validated against the DangerousGoodProductInformation model.
         """
-        data = await self.client._request("PATCH", f"/dangerous_good_product_informations/{dangerous_good_product_information_id}", json=dangerous_good_product_information_update.model_dump(by_alias=True))
+        data = await self.client._request("PATCH", f"/dangerous_goods_product_informations/{dangerous_good_product_information_id}", json=dangerous_good_product_information_update.model_dump(by_alias=True))
         
         if data is None:
             return None
@@ -111,7 +111,7 @@ class DangerousGoodProductInformationResource:
         Raises:
             HTTPError: If the request to the API fails or returns an error status code.
         """
-        data = await self.client._request("DELETE", f"/dangerous_good_product_informations/{dangerous_good_product_information_id}")
+        data = await self.client._request("DELETE", f"/dangerous_goods_product_informations/{dangerous_good_product_information_id}")
         
         if data is None:
             return False
