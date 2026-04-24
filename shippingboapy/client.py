@@ -18,6 +18,7 @@ from shippingboapy.resources.address import AddressResource
 from shippingboapy.resources.background_job import BackgroundJobResource
 from shippingboapy.resources.carrier import CarrierResource
 from shippingboapy.resources.client_order_origin import ClientOrderOriginResource
+from shippingboapy.resources.client_order_source import ClientOrderSourceResource
 
 from typing import Callable
 
@@ -70,6 +71,7 @@ class Client:
         self.background_jobs = BackgroundJobResource(self)
         self.carrier = CarrierResource(self)
         self.client_order_origin = ClientOrderOriginResource(self)
+        self.client_order_source = ClientOrderSourceResource(self)
         
     def _set_token(self, token_data: TokenData):
         self.token = token_data
