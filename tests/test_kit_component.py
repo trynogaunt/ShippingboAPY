@@ -5,7 +5,7 @@ from shippingboapy.models.kit_component import KitComponentCreate, KitComponentU
 async def test_kit_component_create(mock_client):
     kit_component_create = KitComponentCreate(
         kit_product_id=1,
-        component_product_id=2,
+        product_id=2,
         quantity=3
     )
 

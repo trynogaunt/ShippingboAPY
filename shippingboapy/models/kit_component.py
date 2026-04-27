@@ -3,7 +3,7 @@ from typing import Optional
 
 class KitComponentCreate(BaseModel):
     kit_product_id: int = Field(..., description="ID of the kit product")
-    component_product_id: int = Field(..., description="ID of the component product")
+    product_id: int = Field(..., description="ID of the component product")
     quantity: int = Field(..., description="Quantity of the component in the kit")
     
     model_config = {
