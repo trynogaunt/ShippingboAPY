@@ -28,7 +28,7 @@ class AddressResource:
         if data is None:
             return None
 
-        return Address(**data)
+        return Address.model_validate(**data)
     
     async def list(self, 
                    limit: int=50, 
@@ -70,7 +70,7 @@ class AddressResource:
         
         if data is None:
             return None
-        return [Address(**item) for item in data.get("addresses", [])]
+        return [Address.model_validate(**item) for item in data.get("addresses", [])]
 
     async def create(self, address_create: AddressCreate) -> Address:
         """
@@ -92,7 +92,7 @@ class AddressResource:
         if data is None:
             return None
 
-        return Address(**data)
+        return Address.model_validate(**data)
     
     async def update(self, id: int, address_update: AddressUpdate) -> Address:
         """
@@ -115,4 +115,4 @@ class AddressResource:
         if data is None:
             return None
 
-        return Address(**data)
+        return Address.model_validate(**data)

@@ -27,4 +27,4 @@ class CarrierResource:
         if data is None:
             return None
 
-        return [Carrier(**item) for item in data]
+        return [Carrier.model_validate(**item) for item in data]

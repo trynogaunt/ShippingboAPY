@@ -62,7 +62,7 @@ class ProductResource:
         if data is None:
             return []
         
-        return [ProductSummary(**item) for item in data.get("products", [])]
+        return [ProductSummary.model_validate(**item) for item in data.get("products", [])]
     
     async def get(self, product_id: int, **kwargs) -> Product:
         """
@@ -80,7 +80,7 @@ class ProductResource:
         if data is None:
             return None
         
-        return Product(**data)
+        return Product.model_validate(**data)
     
     async def create(self, product_create: ProductCreate, **kwargs) -> Product:
         """
@@ -98,7 +98,7 @@ class ProductResource:
         if data is None:
             return None
         
-        return Product(**data)
+        return Product.model_validate(**data)
     
     async def delete(self, product_id: int, **kwargs) -> bool:
         """
@@ -133,7 +133,7 @@ class ProductResource:
         if data is None:
             return None
         
-        return Product(**data)
+        return Product.model_validate(**data)
     
     async def update_by_key(self, key_name: Literal["user_ref", "ean13"],value: str, product_update: ProductUpdateKey, **kwargs) -> Product | None:
         """
@@ -152,7 +152,7 @@ class ProductResource:
         if data is None:
             return None
         
-        return Product(**data)
+        return Product.model_validate(**data)
     
     async def get_stocks_information(self, product_id: int, **kwargs) -> ProductStocksInformations | None:
         """
@@ -170,4 +170,4 @@ class ProductResource:
         if data is None:
             return None
         
-        return ProductStocksInformations(**data)
+        return ProductStocksInformations.model_validate(**data)

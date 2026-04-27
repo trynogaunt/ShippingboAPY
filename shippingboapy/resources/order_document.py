@@ -24,7 +24,7 @@ class OrderDocumentResource:
         if data is None:
             return None
         
-        return OrderDocument(**data)
+        return OrderDocument.model_validate(**data)
     
     async def get_file(self, document_id: int, **kwargs) -> bytes:
         """

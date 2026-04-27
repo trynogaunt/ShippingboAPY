@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from shippingboapy.models.tag import OrderTag, OrderTagCreate
-from shippingboapy.exceptions import ValueError
 if TYPE_CHECKING:
     from shippingboapy.client import Client
     
@@ -24,7 +23,7 @@ class OrderTagResource:
         if data is None:
             return None
         
-        return OrderTag(**data)
+        return OrderTag.model_validate(**data)
 
     async def get(self, order_tag_id: int, **kwargs) -> OrderTag:
         """
@@ -42,7 +41,7 @@ class OrderTagResource:
         if data is None:
             return None
         
-        return OrderTag(**data)
+        return OrderTag.model_validate(**data)
     
     async def delete(self, order_tag_id: int, **kwargs) -> bool:
         """

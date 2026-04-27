@@ -24,7 +24,7 @@ class AddressLabelResource:
         if data is None:
             return None
         
-        return AddressLabel(**data)
+        return AddressLabel.model_validate(**data)
     
     async def get_file(self, address_label_id: int, **kwargs) -> bytes:
         """

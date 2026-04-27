@@ -27,4 +27,4 @@ class ClientOrderOriginResource:
         if data is None:
             return None
 
-        return ClientOrderOrigin(**data)
+        return ClientOrderOrigin.model_validate(**data)
