@@ -39,6 +39,8 @@ class AddressResource:
         """
         Retrieve a list of addresses.
         
+        .. deprecated:: 
+            The Shippingbo API marked this endpoint as deprecated. No another endpoint is available to retrieve the list of addresses. Waiting more information from Shippingbo about the future of this endpoint.
         Args:
             limit (int, optional): The maximum number of addresses to return. Defaults to 50.
             offset (int, optional): The number of addresses to skip before starting to collect the result set. Defaults to 0.
@@ -65,8 +67,8 @@ class AddressResource:
                 if isinstance(item[2], list):
                     for value in item[2]:
                         params.append((key, str(value)))
-                    else:
-                        params.append((key, str(item[2])))
+                else:
+                    params.append((key, str(item[2])))
         
         data = await self.client._request("GET", "/addresses", params=params)
         
