@@ -23,5 +23,5 @@ class PackageResource:
         if data is None:
             return None
         
-        return Package.model_validate(**data)
+        return Package.model_validate(data)
     

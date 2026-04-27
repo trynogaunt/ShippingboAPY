@@ -23,7 +23,7 @@ class PackComponentResource:
         if data is None:
             return None
         
-        return PackComponent.model_validate(**data)
+        return PackComponent.model_validate(data)
     
     async def get(self, pack_component_id: int, **kwargs) -> PackComponent:
         """
@@ -40,7 +40,7 @@ class PackComponentResource:
         if data is None:
             return None
         
-        return PackComponent.model_validate(**data)
+        return PackComponent.model_validate(data)
 
     async def update(self, pack_component_id: int, pack_component_update: PackComponent, **kwargs) -> PackComponent:
         """
@@ -58,7 +58,7 @@ class PackComponentResource:
         if data is None:
             return None
         
-        return PackComponent.model_validate(**data)
+        return PackComponent.model_validate(data)
     
     async def delete(self, pack_component_id: int, **kwargs) -> PackComponent:
         """
@@ -76,4 +76,4 @@ class PackComponentResource:
         if data is None:
             return None
         
-        return PackComponent.model_validate(**data)
+        return PackComponent.model_validate(data)
