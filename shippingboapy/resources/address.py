@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, List
 from shippingboapy.models.address import Address, AddressCreate, AddressUpdate
 from shippingboapy.models.filter import Filter, Operator
+from typing_extensions import deprecated
 if TYPE_CHECKING:
     from shippingboapy.client import Client
     
@@ -30,6 +31,7 @@ class AddressResource:
 
         return Address.model_validate(data)
     
+    @deprecated("The Shippingbo API marked this endpoint as deprecated. No another endpoint is available to retrieve the list of addresses. Waiting more information from Shippingbo about the future of this endpoint.")
     async def list(self, 
                    limit: int=50, 
                    offset: int=0,
