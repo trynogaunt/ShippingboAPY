@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from shippingboapy.models.services.logistician_service_config import LogisticianServiceConfig
+from shippingboapy.models.logistician_service_config import LogisticianServiceConfig
 if TYPE_CHECKING:
     from shippingboapy.client import Client
     

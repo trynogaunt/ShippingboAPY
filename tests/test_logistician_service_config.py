@@ -1,5 +1,5 @@
 import pytest
-from shippingboapy.models.services.logistician_service_config import LogisticianServiceConfig
+from shippingboapy.models.logistician_service_config import LogisticianServiceConfig
 
 @pytest.mark.asyncio
 async def test_get_logistician_service_config(mock_client):
