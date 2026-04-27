@@ -24,7 +24,7 @@ class OrderEventResource:
         if data is None:
             return None
         
-        return OrderEvent.model_validate(**data)
+        return OrderEvent.model_validate(data)
     
     async def create(self, order_event_create: OrderEventCreate, **kwargs) -> OrderEvent:
         """
@@ -42,4 +42,4 @@ class OrderEventResource:
         if data is None:
             return None
         
-        return OrderEvent.model_validate(**data)
+        return OrderEvent.model_validate(data)

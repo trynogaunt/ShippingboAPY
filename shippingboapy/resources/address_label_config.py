@@ -27,7 +27,7 @@ class AddressLabelConfigResource:
         if data is None:
             return None
 
-        return AddressLabelConfigDetails.model_validate(**data.get("address_label_config", {}))
+        return AddressLabelConfigDetails.model_validate(data.get("address_label_config", {}))
     
     async def list(self, 
                    limit: int=50, 
@@ -64,4 +64,4 @@ class AddressLabelConfigResource:
         if data is None:
             return []
         
-        return [AddressLabelConfig.model_validate(**item) for item in data.get("addressLabelConfigs", [])]
+        return [AddressLabelConfig.model_validate(item) for item in data.get("addressLabelConfigs", [])]

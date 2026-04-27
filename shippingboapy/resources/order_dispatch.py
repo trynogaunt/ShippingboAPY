@@ -24,4 +24,4 @@ class OrderDispatchResource:
         if data is None:
             return None
         
-        return OrderDispatch.model_validate(**data)
+        return OrderDispatch.model_validate(data)

@@ -27,4 +27,4 @@ class ClientOrderSourceResource:
         if data is None:
             return None
 
-        return ClientOrderSource.model_validate(**data)
+        return ClientOrderSource.model_validate(data)

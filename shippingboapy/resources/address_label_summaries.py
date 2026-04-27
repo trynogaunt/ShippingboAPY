@@ -26,4 +26,4 @@ class AddressLabelSummariesResource:
         if data is None:
             return None
         
-        return [AddressLabelSummaries.model_validate(**item) for item in data.get("address_label_summaries", [])]
+        return [AddressLabelSummaries.model_validate(item) for item in data.get("address_label_summaries", [])]

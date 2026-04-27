@@ -19,7 +19,7 @@ class KitComponentResource:
         if data is None:
             return None
         
-        return KitComponent.model_validate(**data.get("kit_component", {}))
+        return KitComponent.model_validate(data.get("kit_component", {}))
     
     async def get(self, kit_component_id: int) -> KitComponent:
         data = await self.client._request("GET", f"kit_components/{kit_component_id}")
@@ -27,7 +27,7 @@ class KitComponentResource:
         if data is None:
             return None
         
-        return KitComponent.model_validate(**data.get("kit_component", {}))
+        return KitComponent.model_validate(data.get("kit_component", {}))
     
     async def list(self, kit_product_id: int) -> list[KitComponent]:
         data = await self.client._request("GET", "kit_components", params={"kit_product_id": kit_product_id})      
@@ -35,7 +35,7 @@ class KitComponentResource:
         if data is None:
             return None
         
-        return [KitComponent.model_validate(**item) for item in data.get("kit_components", [])]
+        return [KitComponent.model_validate(item) for item in data.get("kit_components", [])]
     
     async def update(self, kit_component_id: int, kit_component_update: KitComponentUpdate) -> KitComponent:
         data = await self.client._request(
@@ -45,7 +45,7 @@ class KitComponentResource:
         )
         if data is None:
             return None 
-        return KitComponent.model_validate(**data.get("kit_component", {}))
+        return KitComponent.model_validate(data.get("kit_component", {}))
     
     async def delete(self, kit_component_id: int) -> None:
         data = await self.client._request(

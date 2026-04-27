@@ -23,7 +23,7 @@ class OrderTagResource:
         if data is None:
             return None
         
-        return OrderTag.model_validate(**data)
+        return OrderTag.model_validate(data)
 
     async def get(self, order_tag_id: int, **kwargs) -> OrderTag:
         """
@@ -41,7 +41,7 @@ class OrderTagResource:
         if data is None:
             return None
         
-        return OrderTag.model_validate(**data)
+        return OrderTag.model_validate(data)
     
     async def delete(self, order_tag_id: int, **kwargs) -> bool:
         """

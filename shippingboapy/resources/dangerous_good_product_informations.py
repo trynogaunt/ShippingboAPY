@@ -28,7 +28,7 @@ class DangerousGoodProductInformationResource:
         if data is None:
             return None
 
-        return DangerousGoodProductInformation.model_validate(**data)  
+        return DangerousGoodProductInformation.model_validate(data)  
     
     async def list(self, search: List[tuple[str, str, str]] = None) -> list[DangerousGoodProductInformation]:
         """
@@ -56,7 +56,7 @@ class DangerousGoodProductInformationResource:
         if data is None:
             return None
 
-        return [DangerousGoodProductInformation.model_validate(**item) for item in data]
+        return [DangerousGoodProductInformation.model_validate(item) for item in data]
     
     async def create(self, dangerous_good_product_information_create: DangerousGoodProductInformationCreate) -> DangerousGoodProductInformation:
         """
@@ -77,7 +77,7 @@ class DangerousGoodProductInformationResource:
         if data is None:
             return None
 
-        return DangerousGoodProductInformation.model_validate(**data)
+        return DangerousGoodProductInformation.model_validate(data)
     
     async def update(self, dangerous_good_product_information_id: int, dangerous_good_product_information_update: DangerousGoodProductInformationUpdate) -> DangerousGoodProductInformation:
         """
@@ -99,7 +99,7 @@ class DangerousGoodProductInformationResource:
         if data is None:
             return None
 
-        return DangerousGoodProductInformation.model_validate(**data)
+        return DangerousGoodProductInformation.model_validate(data)
     
     async def delete(self, dangerous_good_product_information_id: int) -> bool:
         """

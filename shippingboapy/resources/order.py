@@ -72,7 +72,7 @@ class OrderResource:
         if data is None:
             return []
         
-        return [OrderSummary.model_validate(**item) for item in data]
+        return [OrderSummary.model_validate(item) for item in data]
 
     async def create(self, order_create: OrderCreate, **kwargs) -> OrderDetails:
         """
@@ -92,7 +92,7 @@ class OrderResource:
         if data is None:
             return None
 
-        return OrderDetails.model_validate(**data)
+        return OrderDetails.model_validate(data)
 
     async def update(self, order_id: int, state: str, **kwargs) -> OrderDetails:
         """
@@ -110,7 +110,7 @@ class OrderResource:
         if data is None:
             return None
         
-        return OrderDetails.model_validate(**data)
+        return OrderDetails.model_validate(data)
     
     async def recompute_mapped_products(self, order_id: int, **kwargs) -> OrderDetails:
         """
@@ -128,7 +128,7 @@ class OrderResource:
         if data is None:
             return None
         
-        return OrderDetails.model_validate(**data)
+        return OrderDetails.model_validate(data)
 
     async def remove_from_run(self, order_id: int, destination_state: str, **kwargs) -> OrderDetails:
         """
@@ -146,7 +146,7 @@ class OrderResource:
         if data is None:
             return None
         
-        return OrderDetails.model_validate(**data)
+        return OrderDetails.model_validate(data)
 
     async def redispatch(self, order_id: int, **kwargs) -> bool:
         """
@@ -190,7 +190,7 @@ class OrderResource:
         if data is None:
             return None
         
-        return OrderDetails.model_validate(**data)
+        return OrderDetails.model_validate(data)
     
     async def update_order_item(self, order_id: int, order_items: List[OrderItemUpdate], **kwargs) -> OrderDetails:
         """
@@ -208,4 +208,4 @@ class OrderResource:
         if data is None:
             return None
         
-        return OrderDetails.model_validate(**data)
+        return OrderDetails.model_validate(data)
