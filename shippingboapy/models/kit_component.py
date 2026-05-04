@@ -23,7 +23,7 @@ class KitComponent(KitComponentCreate):
     }
     
 class KitComponentUpdate(BaseModel):
-    quantity: int = Field(None, description="Quantity of the component in the kit")
+    quantity: int = Field(..., description="Quantity of the component in the kit")
     
     model_config = {
         "extra": "forbid",

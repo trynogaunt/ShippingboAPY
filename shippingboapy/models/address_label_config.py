@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Literal, List
+from typing import Optional, Literal, List, Any
 
 class ProviderConfig(BaseModel):
     id: int = Field(..., alias="id", description="The unique identifier of the provider configuration.")
@@ -23,7 +23,7 @@ class AddressLabelConfig(BaseModel):
     label_credential_id: int = Field(..., alias="label_credential_id", description="The unique identifier of the label credential associated with the address label configuration, if applicable.")
     label_credential_name: str = Field(..., alias="label_credential_name", description="The name of the label credential associated with the address label configuration, if applicable.")
     custom_logo_url: Optional[str] = Field(None, alias="custom_logo_url", description="The URL of the custom logo associated with the address label configuration, if applicable.")
-    config: Optional[dict] = Field(None, alias="config", description="The configuration details of the address label configuration, if applicable.")
+    config: Optional[dict[Any, Any]] = Field(None, alias="config", description="The configuration details of the address label configuration, if applicable.")
     sender_address_id: Optional[int] = Field(None, alias="sender_address_id", description="The unique identifier of the sender address associated with the address label configuration, if applicable.")
     contract_address_id: Optional[int] = Field(None, alias="contract_address_id", description="The unique identifier of the contract address associated with the address label configuration, if applicable.")
     depositor_address_id: Optional[int] = Field(None, alias="depositor_address_id", description="The unique identifier of the depositor address associated with the address label configuration, if applicable.")
@@ -34,7 +34,7 @@ class AddressLabelConfig(BaseModel):
     logo_source_url: Optional[str] = Field(None, alias="logo_source_url", description="The URL of the logo source associated with the address label configuration, if applicable.")
     public_boolean_fields: Optional[list[str]] = Field(None, alias="public_boolean_fields", description="A list of public boolean fields associated with the address label configuration, if applicable.")
     public_list_fields: Optional[list[str]] = Field(None, alias="public_list_fields", description="A list of public list fields associated with the address label configuration, if applicable.")
-    credential_public_info: Optional[dict] = Field(None, alias="credential_public_info", description="A dictionary containing public information about the credentials associated with the address label configuration, if applicable.")
+    credential_public_info: Optional[dict[Any, Any]] = Field(None, alias="credential_public_info", description="A dictionary containing public information about the credentials associated with the address label configuration, if applicable.")
     connectable: Optional[bool] = Field(None, alias="connectable", description="Indicates whether the address label configuration is connectable to other configurations or services, if applicable.")
     created_at: str = Field(..., alias="created_at", description="The date and time when the address label configuration was created.")
     updated_at: str = Field(..., alias="updated_at", description="The date and time when the address label configuration was last updated.")
@@ -84,7 +84,7 @@ class AddressLabelConfig(BaseModel):
 class SubCategory(BaseModel):
     name: Optional[str] = Field(None, alias="name", description="The name of the sub-category associated with the field, if applicable.")
     type: Literal["subCategory"] = Field(..., alias="type", description="The type of the sub-category associated with the field. Currently, only 'subCategory' is supported.")
-    fields: Optional[List[dict]] = Field(None, alias="fields", description="A dictionary containing additional fields and their values associated with the sub-category, if applicable.")
+    fields: Optional[List[dict[Any, Any]]] = Field(None, alias="fields", description="A dictionary containing additional fields and their values associated with the sub-category, if applicable.")
     
     model_config = {
         "extra": "allow",

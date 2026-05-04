@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Literal, List
+from typing import Optional, Literal
 
 class DangerousGoodProductInformationCreate(BaseModel):
     category: str = Field(..., alias="category", description="The category of the dangerous good product.")
@@ -13,8 +13,8 @@ class DangerousGoodProductInformationCreate(BaseModel):
     label_code: str = Field(..., alias="label_code", description="The label code of the dangerous good product.")
     limited_quantity: Optional[bool] = Field(None, alias="limited_quantity", description="Indicates whether the dangerous good product is a limited quantity.")
     onu_code: str = Field(..., alias="onu_code", description="The ONU code of the dangerous good product.")
-    onu_description: str = Field(None, alias="onu_description", description="The ONU description of the dangerous good product.")
-    package_code_identification: str = Field(None, alias="package_code_identification", description="The package code identification of the dangerous good product.")
+    onu_description: Optional[str] = Field(None, alias="onu_description", description="The ONU description of the dangerous good product.")
+    package_code_identification: Optional[str] = Field(None, alias="package_code_identification", description="The package code identification of the dangerous good product.")
     packaging_group: str = Field(..., alias="packaging_group", description="The packaging group of the dangerous good product.")
     packaging_type: str = Field(..., alias="packaging_type", description="The packaging type of the dangerous good product.")
     product_description: str = Field(..., alias="product_description", description="The description of the dangerous good product.")
