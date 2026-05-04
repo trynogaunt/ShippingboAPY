@@ -23,7 +23,7 @@ class AddressLabelConfig(BaseModel):
     label_credential_id: int = Field(..., alias="label_credential_id", description="The unique identifier of the label credential associated with the address label configuration, if applicable.")
     label_credential_name: str = Field(..., alias="label_credential_name", description="The name of the label credential associated with the address label configuration, if applicable.")
     custom_logo_url: Optional[str] = Field(None, alias="custom_logo_url", description="The URL of the custom logo associated with the address label configuration, if applicable.")
-    config: dict = Field(None, alias="config", description="The configuration details of the address label configuration, if applicable.")
+    config: Optional[dict] = Field(None, alias="config", description="The configuration details of the address label configuration, if applicable.")
     sender_address_id: Optional[int] = Field(None, alias="sender_address_id", description="The unique identifier of the sender address associated with the address label configuration, if applicable.")
     contract_address_id: Optional[int] = Field(None, alias="contract_address_id", description="The unique identifier of the contract address associated with the address label configuration, if applicable.")
     depositor_address_id: Optional[int] = Field(None, alias="depositor_address_id", description="The unique identifier of the depositor address associated with the address label configuration, if applicable.")
@@ -82,7 +82,7 @@ class AddressLabelConfig(BaseModel):
     }
     
 class SubCategory(BaseModel):
-    name: str = Field(None, alias="name", description="The name of the sub-category associated with the field, if applicable.")
+    name: Optional[str] = Field(None, alias="name", description="The name of the sub-category associated with the field, if applicable.")
     type: Literal["subCategory"] = Field(..., alias="type", description="The type of the sub-category associated with the field. Currently, only 'subCategory' is supported.")
     fields: Optional[List[dict]] = Field(None, alias="fields", description="A dictionary containing additional fields and their values associated with the sub-category, if applicable.")
     
@@ -92,7 +92,7 @@ class SubCategory(BaseModel):
         "validate_assignment": True
     }
 class Fields(BaseModel):
-    name: str = Field(None, alias="name", description="The name of the field associated with the address label configuration, if applicable.")
+    name: Optional[str] = Field(None, alias="name", description="The name of the field associated with the address label configuration, if applicable.")
     type: Literal["category"] = Field(..., alias="type", description="The type of the field associated with the address label configuration. Currently, only 'category' is supported.")
     sub_categories: Optional[List[SubCategory]] = Field(None, alias="sub_categories", description="A list of sub-categories associated with the field, if applicable. This is relevant when the field type is 'category'.")
     

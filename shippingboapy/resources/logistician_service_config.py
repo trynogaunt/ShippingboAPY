@@ -8,7 +8,7 @@ class LogisticianServiceConfigResource:
     def __init__(self, client: Client):
         self.client = client
 
-    async def get(self, id: int) -> LogisticianServiceConfig:
+    async def get(self, id: int) -> LogisticianServiceConfig | None:
         """
         Retrieve a specific logistician service configuration by its unique identifier.
 
@@ -16,7 +16,7 @@ class LogisticianServiceConfigResource:
             id (int): The unique identifier of the logistician service configuration to retrieve.
 
         Returns:
-            LogisticianServiceConfig: The logistician service configuration object corresponding to the provided ID.
+            LogisticianServiceConfig | None: The logistician service configuration object corresponding to the provided ID, or None if not found.
 
         Raises:
             HTTPError: If the request to the API fails or returns an error status code.

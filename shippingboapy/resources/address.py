@@ -10,7 +10,7 @@ class AddressResource:
     def __init__(self, client: Client):
         self.client = client
 
-    async def get(self, id: int) -> Address:
+    async def get(self, id: int) -> Address | None:
         """
         Retrieve a specific address by its unique identifier.
 
@@ -18,7 +18,7 @@ class AddressResource:
             id (int): The unique identifier of the address to retrieve.
 
         Returns:
-            Address: The address object corresponding to the provided ID.
+            Address | None: The address object corresponding to the provided ID, or None if not found.
 
         Raises:
             HTTPError: If the request to the API fails or returns an error status code.
@@ -35,7 +35,7 @@ class AddressResource:
     async def list(self, 
                    limit: int=50, 
                    offset: int=0,
-                   search: List[tuple[str, str, str]] = None ) -> list[Address]:
+                   search: List[tuple[str, str, str]] | None = None ) -> list[Address] | None:
         """
         Retrieve a list of addresses.
         
@@ -47,13 +47,13 @@ class AddressResource:
             search (List[tuple[str, str, str]], optional): A list of search criteria tuples, where each tuple contains a field name, an operator, and a value for filtering the addresses. Defaults to None.
         
         Returns:
-            list[Address]: A list of address objects.
+            list[Address] | None: A list of address objects, or None if no addresses are found.
         Raises:
             HTTPError: If the request to the API fails or returns an error status code.
             ValidationError: If the response data cannot be validated against the Address model.
         """
         
-        params = {"limit": limit, 
+        params: dict[str, str | int] = {"limit": limit, 
                   "offset": offset}
         
         if search is not None:
@@ -66,9 +66,9 @@ class AddressResource:
                 
                 if isinstance(item[2], list):
                     for value in item[2]:
-                        params.append((key, str(value)))
+                        params[str(key)] = value
                 else:
-                    params.append((key, str(item[2])))
+                    params[str(key)] = item[2]  
         
         data = await self.client._request("GET", "/addresses", params=params)
         
@@ -78,7 +78,7 @@ class AddressResource:
         return[Address.model_validate(item) for item in data.get("addresses", [])]
         
 
-    async def create(self, address_create: AddressCreate) -> Address:
+    async def create(self, address_create: AddressCreate) -> Address | None:
         """
         Create a new address.
 
@@ -86,7 +86,7 @@ class AddressResource:
             address_create (AddressCreate): The address creation object containing the details of the address to be created.
 
         Returns:
-            Address: The newly created address object.
+            Address | None: The newly created address object, or None if the creation failed.
 
         Raises:
             HTTPError: If the request to the API fails or returns an error status code.
@@ -100,7 +100,7 @@ class AddressResource:
 
         return Address.model_validate(data)
     
-    async def update(self, id: int, address_update: AddressUpdate) -> Address:
+    async def update(self, id: int, address_update: AddressUpdate) -> Address | None:
         """
         Update an existing address.
 
@@ -109,7 +109,7 @@ class AddressResource:
             address_update (AddressUpdate): The address update object containing the updated details of the address.
 
         Returns:
-            Address: The updated address object.
+            Address | None: The updated address object, or None if the update failed.
 
         Raises:
             HTTPError: If the request to the API fails or returns an error status code.
