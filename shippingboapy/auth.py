@@ -3,12 +3,12 @@ from shippingboapy.config import ShippingBoConfig
 import httpx
 import time
 from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError
-from typing import Callable
+from typing import Callable, Any, Awaitable
 
 @dataclass
 class TokenData:
-    access_token: str
-    token_type: str
+    access_token: str | None
+    token_type: str | None
     expires_in: int
     refresh_token: str
     scope: str
@@ -21,14 +21,14 @@ def is_token_expired(token_data: TokenData) -> bool:
     current_time = int(time.time())
     return current_time >= token_data.created_at + token_data.expires_in
 
-async def get_token(auth_code: str, session: httpx.AsyncClient, config: ShippingBoConfig, headers: dict | None = None) -> TokenData | None:
+async def get_token(auth_code: str, session: httpx.AsyncClient, config: ShippingBoConfig, headers: dict[str, Any] | None = None) -> TokenData | None:
     """
     Get a valid access token, refreshing it if necessary.
     Args:
         auth_code (str): The authorization code to use for obtaining the access token.
         session (httpx.AsyncClient): The HTTP client session to use for making the request.
         config (ShippingBoConfig): The configuration object containing necessary parameters.
-        headers (dict | None): Optional headers to include in the request.
+        headers (dict[str, Any] | None): Optional headers to include in the request.
     Returns:
         TokenData | None: The token data if the request is successful, otherwise None.
     Raises:
@@ -61,27 +61,27 @@ async def get_token(auth_code: str, session: httpx.AsyncClient, config: Shipping
         return token
     else:
         if response.status_code == 400:
-            raise BadRequestError(f"Bad request: {response.status_code} - {response.text}")
+            raise BadRequestError(status_code=response.status_code, message=f"Bad request: {response.text}")
         elif response.status_code == 401:
-            raise UnauthorizedError(f"Unauthorized access: {response.status_code} - {response.text}")
+            raise UnauthorizedError(status_code=response.status_code, message=f"Unauthorized access: {response.text}")
         else:
             raise AuthenticationError(f"Failed to get token: {response.status_code} - {response.text}")
         
 async def refresh_token(refresh_token: str, 
                         session: httpx.AsyncClient, 
                         config: ShippingBoConfig, 
-                        headers: dict | None = None,
-                        on_refresh: Callable[str, str] | None = None) -> TokenData | None: 
+                        headers: dict[str, Any] | None = None,
+                        on_refresh: Callable[[TokenData], Awaitable[None]] | None = None) -> TokenData: 
     """
     Refresh the access token using the refresh token.
     Args:
         refresh_token (str): The refresh token to use for refreshing the access token.
         session (httpx.AsyncClient): The HTTP client session to use for making the request.
         config (ShippingBoConfig): The configuration object containing necessary parameters.
-        headers (dict | None): Optional headers to include in the request.
-        on_refresh (Callable[[TokenData], None] | None): Optional callback function to be called after a successful token refresh. The function should accept a TokenData object as its argument.
+        headers (dict[str, Any] | None): Optional headers to include in the request.
+        on_refresh (Callable[[TokenData], Awaitable[None]] | None): Optional callback function to be called after a successful token refresh. The function should accept a TokenData object as its argument.
     Returns:
-        TokenData | None: The new token data if the refresh is successful, otherwise None.
+        TokenData: The new token data if the refresh is successful.
     Raises:
         TokenRefreshError: If there is an error refreshing the token.
     """
@@ -97,7 +97,7 @@ async def refresh_token(refresh_token: str,
     if response.status_code == 200:
         token_data = response.json()
         if on_refresh is not None and callable(on_refresh):
-            on_refresh(TokenData(
+            await on_refresh(TokenData(
                 access_token=token_data['access_token'],
                 token_type=token_data['token_type'],
                 expires_in=token_data['expires_in'],

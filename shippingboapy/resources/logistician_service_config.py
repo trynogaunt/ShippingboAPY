@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     
 class LogisticianServiceConfigResource:
     def __init__(self, client: Client):
-        self.client = client
+        self.client: Client = client
 
     async def get(self, id: int) -> LogisticianServiceConfig | None:
         """
