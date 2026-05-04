@@ -14,12 +14,12 @@ class OrderDocument(BaseModel):
     }
 class OrderDocumentCreate(BaseModel):
     document_type: Optional[str] = Field(..., alias="document_type", description="The type of the order document to create (e.g., invoice, packing slip).")
-    language: str = Field(None, alias="language", description="The language to use for the order document, if applicable.")
-    order_id: int = Field(None, alias="order_id", description="The unique identifier of the order for which to create the document.")
+    language: str = Field(..., alias="language", description="The language to use for the order document, if applicable.")
+    order_id: int = Field(..., alias="order_id", description="The unique identifier of the order for which to create the document.")
     print_trigger: Any = Field(None, alias="print_trigger", description="The print trigger to use for the order document, if applicable.")
     duplicate_on_partial_orders: bool = Field(False, alias="duplicate_on_partial_orders", description="Whether to duplicate the order document on partial orders, if applicable.")
     type: Literal["OrderDocument::AdditionalFile", "OrderDocument::ExternalInvoice"] = Field(..., alias="type", description="The type of the order document to create (e.g., invoice, packing slip).")
-    uploaded_file_id: int = Field(None, alias="uploaded_file_id", description="The unique identifier of the uploaded file to associate with the order document, if applicable.")
+    uploaded_file_id: int = Field(..., alias="uploaded_file_id", description="The unique identifier of the uploaded file to associate with the order document, if applicable.")
     
     model_config = {
         "extra": "allow",

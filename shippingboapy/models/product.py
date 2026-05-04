@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, field_validator
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Any
 
 class ProductStocksInformations(BaseModel):
     available_stock: int = Field(..., description="The available stock for the product.")
@@ -150,7 +150,7 @@ class Product(BaseModel):
     
     @field_validator("stock_volume_in_m3", mode="before")
     @classmethod
-    def round_to_2_decimal(cls, v, values):
+    def round_to_2_decimal(cls, v: Optional[float], values: Any) -> Optional[float]:
         if v is not None:
             return round(v, 2)
         return v
@@ -216,7 +216,7 @@ class ProductSummary(BaseModel):
     
     @field_validator("stock_volume_in_m3", mode="before")
     @classmethod
-    def round_to_2_decimal(cls, v, values):
+    def round_to_2_decimal(cls, v: Optional[float], values : Any) -> Optional[float]:
         if v is not None:
             return round(v, 2)
         return v
