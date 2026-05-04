@@ -7,8 +7,8 @@ from typing import Callable, Any, Awaitable
 
 @dataclass
 class TokenData:
-    access_token: str | None
-    token_type: str | None
+    access_token: str
+    token_type: str
     expires_in: int
     refresh_token: str
     scope: str

@@ -32,8 +32,8 @@ class RetryableRequest(Protocol):
     async def __call__(self, _retry: int = 0, **kwargs: Any) -> httpx.Response: ...
 
 class Client:
-    def __init__(self, access_token: str | None = None, 
-                 refresh_token: str | None = None,
+    def __init__(self, access_token: str  = "", 
+                 refresh_token: str = "",
                  app_id: str = "",
                  api_version: str  = "",
                  client_id: str = "",
@@ -128,7 +128,8 @@ class Client:
             
     
     async def _raw_request(self, method: str, endpoint: str, params: dict[str, Any] | None = None, **kwargs: Any) -> httpx.Response:
-        if self.token is None or self.token.access_token is None:
+        
+        if self.token is None:
             raise AuthenticationError("Access token is missing. Please authenticate first.")
         
         url = f"{self.config.api_url.rstrip('/')}/{endpoint.lstrip('/')}"
@@ -179,11 +180,24 @@ class Client:
        
     
     @classmethod
-    async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, redirect_uri: str | None = None, headers: dict | None = None):
-        config = ShippingBoConfig(app_id=app_id, api_version=api_version, client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri)
+    async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, redirect_uri: str | None = None, headers: dict[str, Any] | None = None):
+        config_dict : dict[str, Any] = {
+            "app_id": app_id,
+            "api_version": api_version,
+            "client_id": client_id,
+            "client_secret": client_secret
+        }
+        
+        if redirect_uri is not None:
+            config_dict["redirect_uri"] = redirect_uri
+            
+        config = ShippingBoConfig(**config_dict)
         async with httpx.AsyncClient(timeout=config.timeout) as session:
             token = await get_token(auth_code, session, config, headers)
-        
+            
+        if token is None:
+            raise AuthenticationError("Failed to obtain access token with the provided authorization code.")
+            
         cls = cls(
             access_token=token.access_token,
             refresh_token=token.refresh_token,
@@ -201,6 +215,6 @@ class Client:
     async def __aenter__(self):
         return self
     
-    async def __aexit__(self,  *args):
+    async def __aexit__(self):
         await self.close()
 
