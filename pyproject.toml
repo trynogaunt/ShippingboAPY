@@ -60,6 +60,7 @@
     pythonVersion = "3.10"
     typeCheckingMode = "strict"
     venvPath = "."
+    venv = "venv"
     
 [[tool.pyright.executionEnvironments]]
 root = "shippingboapy/resources"

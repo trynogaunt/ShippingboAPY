@@ -6,3 +6,8 @@ __pycache__/
 *.env
 .pytest_cache/
 .vscode/
+shippingbo_apy.egg-info/dependency_links.txt
+shippingbo_apy.egg-info/top_level.txt
+shippingbo_apy.egg-info/requires.txt
+shippingbo_apy.egg-info/SOURCES.txt
+shippingbo_apy.egg-info/PKG-INFO
