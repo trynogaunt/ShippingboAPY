@@ -22,6 +22,7 @@ from shippingboapy.resources.client_order_source import ClientOrderSourceResourc
 from shippingboapy.resources.dangerous_good_product_informations import DangerousGoodProductInformationResource
 from shippingboapy.resources.kit_component import KitComponentResource
 from shippingboapy.resources.logistician_service_config import LogisticianServiceConfigResource
+from shippingboapy.resources.order_item_product_mapping import OrderItemProductMappingResource
 
 from typing import Callable, Awaitable, Any, Protocol
 
@@ -88,6 +89,7 @@ class Client:
         self.dangerous_good_product_informations = DangerousGoodProductInformationResource(self)
         self.kit_components = KitComponentResource(self)
         self.logistician_service_configs = LogisticianServiceConfigResource(self)
+        self.order_item_product_mappings = OrderItemProductMappingResource(self)
         
     def _set_token(self, token_data: TokenData):
         self.token = token_data
