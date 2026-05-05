@@ -180,7 +180,14 @@ class Client:
         response = await self._raw_request(method, endpoint, params, **kwargs)
         return response.content 
        
-    
+    async def refresh(self):
+        if self.token is None:
+            raise AuthenticationError("Access token is missing. Please authenticate first.")
+        try:
+            new_token : TokenData | None = await refresh_token(self.token.refresh_token, self.session, self.config, on_refresh=self.on_token_refresh)
+            self._set_token(new_token)
+        except Exception as e:
+            raise TokenRefreshError(f"Failed to refresh token: {str(e)}") from e
     @classmethod
     async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, redirect_uri: str | None = None, headers: dict[str, Any] | None = None):
         config_dict : dict[str, Any] = {
@@ -217,6 +224,6 @@ class Client:
     async def __aenter__(self):
         return self
     
-    async def __aexit__(self):
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
 
