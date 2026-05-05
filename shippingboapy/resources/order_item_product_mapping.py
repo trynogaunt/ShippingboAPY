@@ -57,7 +57,7 @@ class OrderItemProductMappingResource:
         
         return [OrderItemProductMapping.model_validate(item) for item in data]
 
-    async def delete(self, order_item_product_mapping_id: int, **kwargs) -> bool:
+    async def delete(self, **kwargs) -> bool:
         """
         Delete a specific order item product mapping by its ID.
 
@@ -68,6 +68,9 @@ class OrderItemProductMappingResource:
             bool: True if the deletion was successful, False otherwise.
         """
         
-        response = await self.client._request("DELETE", f"/order_item_product_mappings/{order_item_product_mapping_id}", **kwargs)
-        
-        return response is not None
+        try:
+            await self.client._request("DELETE", "/order_item_product_mappings", **kwargs)
+            return True
+        except Exception:
+            return False
+ 

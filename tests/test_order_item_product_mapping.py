@@ -4,7 +4,7 @@ from shippingboapy.models.order_item_product_mapping import OrderItemProductMapp
 @pytest.mark.asyncio
 async def test_create_order_item_product_mapping(mock_client):
     order_item_product_mapping_create = OrderItemProductMappingCreate(
-        matched_quantity=10,
+        matched_quantity=str(10),
         order_item_field="name",
         order_item_value="Test Item",
         product_field="sku",
@@ -30,6 +30,5 @@ async def test_list_order_item_product_mappings(mock_client):
 
 @pytest.mark.asyncio
 async def test_delete_order_item_product_mapping(mock_client):
-    order_item_product_mapping_id = 123
-    result = await mock_client.order_item_product_mappings.delete(order_item_product_mapping_id)
+    result = await mock_client.order_item_product_mappings.delete()
     assert result is True
