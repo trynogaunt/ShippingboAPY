@@ -53,8 +53,8 @@ class OrderResource:
                 if isinstance(item[2], list):
                     for value in item[2]:
                         params.append((key, str(value)))
-                    else:
-                        params.append((key, str(item[2])))
+                else:
+                    params.append((key, str(item[2])))
         
         if tags is not None:
             for tag in tags:

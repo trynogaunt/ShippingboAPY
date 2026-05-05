@@ -149,11 +149,11 @@ Token storage is intentionally left to the caller — the SDK does not persist t
 
 | Resource | Status |
 | --- | --- |
-| Products | ✅ Available |
-| Orders | 🚧 Planned |
-| Shipments | 🚧 Planned |
-| Stock Variations | 🚧 Planned |
-| Suppliers | 🚧 Planned |
+| Products | Available |
+| Orders | Available |
+| Shipments | Available |
+| Stock Variations | Planned |
+| Suppliers | Planned |
 
 Missing a resource? Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
 

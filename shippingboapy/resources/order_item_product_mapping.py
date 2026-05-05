@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional
+from shippingboapy.models.filter import Filter, Operator
 from shippingboapy.models.order_item_product_mapping import OrderItemProductMapping, OrderItemProductMappingCreate
 if TYPE_CHECKING:
     from shippingboapy.client import Client
@@ -44,12 +45,25 @@ class OrderItemProductMappingResource:
         
         return OrderItemProductMapping.model_validate(data)
     
-    async def list(self, **kwargs) -> list[OrderItemProductMapping]:
+    async def list(self, search: Optional[List[tuple[str,str, str]]] = None, **kwargs) -> list[OrderItemProductMapping]:
         """List all order item product mappings.
         Returns:
             list[OrderItemProductMapping]: A list of OrderItemProductMapping objects representing all order item product mappings.
         """
-        
+        params = []
+        if search is not None:
+            for item in search:
+                if len(item) != 3:
+                    raise ValueError("Each search item must be a tuple of (field, operator, value)")
+            
+            filter_obj = Filter(field=item[0], operator=Operator(item[1]), value=item[2])
+            key = f"search{filter_obj.to_params()}"
+            
+            if isinstance(item[2], list):
+                for value in item[2]:
+                    params.append((key, str(value)))
+            else:
+                params.append((key, str(item[2])))
         data = await self.client._request("GET", "/order_item_product_mappings", **kwargs)
         
         if data is None:
