@@ -2,7 +2,7 @@ class ShippingboAPYException(Exception):
     """Base exception for ShippingboAPY."""
     pass
 
-class ValueError(ShippingboAPYException):
+class ValueError(ValueError):
     """Raised when an invalid value is provided."""
     pass
 

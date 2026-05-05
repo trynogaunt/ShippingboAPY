@@ -3,7 +3,7 @@
     build-backend = "setuptools.build_meta"
 
 [project]
-    name = "shippingbo-apy"
+    name = "shippingboapy"
     version = "0.1.0"
     requires-python = ">=3.10"
     dependencies = [
@@ -40,7 +40,21 @@
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
+        "Framework :: AsyncIO",
+        "Typing :: Typed",
+        "Operating System :: OS Independent",
     ]
+
+    license = "MIT"
+    license-files = ["LICENSE"]
+
+[project.urls]
+    Homepage = "https://github.com/trynogaunt/ShippingboAPY"
+    Repository = "https://github.com/trynogaunt/ShippingboAPY"
+    Issues = "https://github.com/trynogaunt/ShippingboAPY/issues"
+
 [project.optional-dependencies]
     dev = [
         "pytest",
@@ -48,10 +62,13 @@
         "pytest-asyncio",
         "black",
         "isort",
-        "mypy",
         "pre-commit",
     ]
-
+    publish = [
+        "build",
+        "twine",
+    ]
+    
 [tool.pytest.ini_options]
     pythonpath = ["."]
     asyncio_mode = "auto"
@@ -65,3 +82,10 @@
 [[tool.pyright.executionEnvironments]]
 root = "shippingboapy/resources"
 reportPrivateUsage = "none"
+
+[tool.setuptools.packages.find]
+include = ["shippingboapy*"]
+exclude = ["tests*"]
+
+[tool.setuptools.package-data]
+shippingboapy = ["py.typed"]

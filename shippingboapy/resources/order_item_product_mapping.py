@@ -64,7 +64,7 @@ class OrderItemProductMappingResource:
                     params.append((key, str(value)))
             else:
                 params.append((key, str(item[2])))
-        data = await self.client._request("GET", "/order_item_product_mappings", **kwargs)
+        data = await self.client._request("GET", "/order_item_product_mappings", params=params, **kwargs)
         
         if data is None:
             return []

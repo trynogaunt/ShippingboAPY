@@ -1,6 +1,18 @@
-# Shippingboapy
+# shippingboapy
+
+[![PyPI version](https://img.shields.io/pypi/v/shippingboapy.svg)](https://pypi.org/project/shippingboapy/)
+[![Python versions](https://img.shields.io/pypi/pyversions/shippingboapy.svg)](https://pypi.org/project/shippingboapy/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 An async Python SDK for the [ShippingBo API](https://app.shippingbo.com).
+
+`shippingboapy` is a faithful, low-level wrapper around the ShippingBo REST API. The SDK structure mirrors the actual API endpoints rather than introducing ergonomic abstractions that hide them — inspired by the design of the Stripe and Anthropic Python SDKs.
+
+> ⚠️ **Alpha:** this SDK is in early development. The public API may change before v1.0.
+
+- 📦 [PyPI](https://pypi.org/project/shippingboapy/)
+- 🐙 [GitHub](https://github.com/Tryno/shippingboapy)
+- 🐛 [Issues](https://github.com/Tryno/shippingboapy/issues)
 
 ## Installation
 
@@ -55,6 +67,16 @@ async with Client(...) as client:
     products = await client.products.list()
 ```
 
+Or with explicit cleanup:
+
+```python
+client = Client(...)
+try:
+    products = await client.products.list()
+finally:
+    await client.close()
+```
+
 ### Configuration
 
 ```python
@@ -83,8 +105,8 @@ products = await client.products.list(
     limit=50,
     offset=0,
     is_pack=False,
-    search={"search[user_ref__eq]": "MY-REF"},
-    sort={"updated_at": "asc"},
+    search=[("user-ref", "eq", "123456")],
+    sort=[("updated_at": "asc")],
 )
 ```
 
@@ -113,20 +135,49 @@ product = await client.products.create(
 
 ---
 
+## Orders
+
+### List orders
+
+```python
+orders = await client.orders.list(limit=50)
+```
+
+### Get an order
+
+```python
+order = await client.orders.get(order_id=456)
+```
+
+### Create an order
+
+```python
+from shippingboapy import OrderCreate, OrderItemCreate
+
+order = await client.orders.create(
+    OrderCreate(
+        product_source= "product_src_str",
+        source="source"
+        title="Order Title"
+        ...
+    )
+)
+```
+
+---
+
 ## Token refresh
 
-Token refresh is handled automatically on `401` responses. If you need to persist the new tokens, you can access them after any request:
+Token refresh is handled automatically on `401` responses. After any request, the current tokens are accessible on the client:
 
 ```python
 client.token.access_token
 client.token.refresh_token
 ```
 
----
-
 ### Persisting refreshed tokens
 
-When tokens are refreshed automatically, you can hook into the refresh event to persist the new tokens:
+To persist tokens after an automatic refresh, register a callback at init:
 
 ```python
 async def save_tokens(access_token: str, refresh_token: str):
@@ -141,7 +192,40 @@ client = Client(
 )
 ```
 
-Token storage is intentionally left to the caller — the SDK does not persist tokens itself.
+Token storage is intentionally left to the caller, the SDK does not persist tokens itself.
+
+---
+
+## Error handling
+
+The SDK raises typed exceptions for predictable failure modes:
+
+```
+ShippingboAPYException
+├── AuthenticationError
+│   ├── TokenExpiredError
+│   └── TokenRefreshError
+└── APIRequestError          # exposes .status_code and .message
+    ├── BadRequestError      # 400
+    ├── UnauthorizedError    # 401
+    ├── ForbiddenError       # 403
+    ├── NotFoundError        # 404
+    ├── RateLimitError       # 429
+    ├── ServerError          # 5xx
+    └── UnexpectedError      # any other status
+```
+
+```python
+from shippingboapy import TokenRefreshError, ShippingBoAPIError
+
+try:
+    await client.products.get(product_id=123)
+except TokenRefreshError:
+    # Re-authenticate the user
+    ...
+except ShippingBoAPIError as e:
+    print(e.status_code, e.message)
+```
 
 ---
 
@@ -149,11 +233,14 @@ Token storage is intentionally left to the caller — the SDK does not persist t
 
 | Resource | Status |
 | --- | --- |
-| Products | Available |
-| Orders | Available |
-| Shipments | Available |
-| Stock Variations | Planned |
-| Suppliers | Planned |
+| Products | ✅ Available |
+| Orders | ✅ Available |
+| Addresses | ✅ Available |
+| Address Labels | ✅ Available |
+| Order Tags | ✅ Available |
+| Order Documents | ✅ Available |
+| Stock Variations | 🚧 Planned |
+| Suppliers | 🚧 Planned |
 
 Missing a resource? Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -161,4 +248,4 @@ Missing a resource? Contributions are welcome — see [CONTRIBUTING.md](CONTRIBU
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
