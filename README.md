@@ -9,10 +9,6 @@ An async Python SDK for the [ShippingBo API](https://app.shippingbo.com).
 `shippingboapy` is a faithful, low-level wrapper around the ShippingBo REST API. The SDK structure mirrors the actual API endpoints rather than introducing ergonomic abstractions that hide them.
 > ⚠️ **Alpha:** this SDK is in early development. The public API may change before v1.0.
 
-- 📦 [PyPI](https://pypi.org/project/shippingboapy/)
-- 🐙 [GitHub](https://github.com/trynogaunt/ShippingboAPY)
-- 🐛 [Issues](https://github.com/trynogaunt/ShippingboAPY/issues)
-
 ## Installation
 
 ```bash
