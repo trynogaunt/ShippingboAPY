@@ -1,12 +1,14 @@
 from __future__ import annotations
+from pydantic import TypeAdapter
 from typing import TYPE_CHECKING, List, Literal
-from shippingboapy.models.order import Order, OrderSummary, OrderCreate, OrderDetails, OrderItemCreate, OrderItemUpdate
+from shippingboapy.models.order import Order, OrderSummary, OrderCreate, OrderDetails, OrderItemCreate, OrderItemUpdate, OrderListItem, OrderObjectItem
 from shippingboapy.exceptions import ValueError
 from shippingboapy.models.filter import Filter, Operator
 if TYPE_CHECKING:
     from shippingboapy.client import Client
 
-
+_order_list_adpater = TypeAdapter(List[OrderListItem])
+_order_object_adapter = TypeAdapter(OrderObjectItem)
 class OrderResource:
     def __init__(self, client: Client):
         self.client = client
@@ -27,7 +29,7 @@ class OrderResource:
         if data is None:
             return None
         
-        return Order.model_validate(**data)
+        return _order_object_adapter.validate_python(data)
     
     async def list(self, 
                    limit: int = 50,  # The maximum number of orders to return in a single request. Default is 50 cause API limit.
@@ -72,7 +74,7 @@ class OrderResource:
         if data is None:
             return []
         
-        return [OrderSummary.model_validate(item) for item in data.get("orders", [])]
+        return _order_list_adpater.validate_python(data.get("orders", []))
 
     async def create(self, order_create: OrderCreate, **kwargs) -> OrderDetails:
         """

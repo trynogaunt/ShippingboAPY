@@ -1,10 +1,17 @@
-from pydantic import BaseModel, Field
-from typing import List, Optional, Any
+from pydantic import BaseModel, Field, Tag, Discriminator
+from typing import List, Optional, Any, Literal, Annotated, Union
 from shippingboapy.models.tag import OrderTag
 from shippingboapy.models.order_document import OrderDocument
 from shippingboapy.models.order_event import OrderEvent
 from shippingboapy.models.types import ShippingboDateTime
 from shippingboapy.models.address import Address
+
+def order_discriminator(v):
+    if isinstance(v, dict):
+        return "archived" if v.get("archived") is True else "active"
+    # cas revalidation depuis instance
+    return "archived" if isinstance(v, ArchivedOrder) else "active"
+
 
 
 class CarrierConfig(BaseModel):
@@ -223,13 +230,23 @@ class Order(OrderBase):
     total_without_tax_cents: Optional[float] = Field(None, alias="total_without_tax_cents", description="The total price of the order without tax in cents.")
     total_without_tax_currency: Optional[str] = Field(None, alias="total_without_tax_currency", description="The currency of the total price of the order without tax, if applicable.")
     order_dispatch_id: Optional[int] = Field(None, alias="order_dispatch_id", description="The unique identifier of the order dispatch associated with the order, if applicable.")
+    archived: Literal[False] = Field(False, alias="archived", description="Indicates that the order is not archived.")
     
     model_config = {
         "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True
     }
-    
+
+class ArchivedOrder(BaseModel):
+    id: int = Field(..., alias="id", description="The unique identifier of the archived order.")
+    archived: Literal[True] = Field(..., alias="archived", description="Indicates that the order is archived.")
+
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
 class OrderSummary(OrderBase):
     earliest_shipped_at: Optional[ShippingboDateTime] = Field(None, alias="earliest_shipped_at", description="The earliest shipped date for the order, if applicable.")
     latest_shipped_at: Optional[ShippingboDateTime] = Field(None, alias="latest_shipped_at", description="The latest shipped date for the order, if applicable.")
@@ -245,6 +262,7 @@ class OrderSummary(OrderBase):
     total_shipping_cents: Optional[int] = Field(None, alias="total_shipping_cents", description="The total shipping cost for the order in cents, if applicable.")
     total_shipping_tax_cents: Optional[int] = Field(None, alias="total_shipping_tax_cents", description="The total tax amount for the shipping cost of the order in cents, if applicable.")
     total_weight: Optional[int] = Field(None, alias="total_weight", description="The total weight of the order in grams, if applicable.")
+    archived: Literal[False] = Field(False, alias="archived", description="Indicates that the order is not archived.")
     
     model_config = {
         "extra": "allow",
@@ -337,3 +355,18 @@ class SuborderNumber(BaseModel):
         "populate_by_name": True,
         "validate_assignment": True
     }
+
+OrderListItem = Annotated[
+    Union[
+        Annotated[OrderSummary, Tag("active")],
+        Annotated[ArchivedOrder, Tag("archived")]
+    ],
+    Discriminator(order_discriminator)
+]
+OrderObjectItem = Annotated[
+    Union[
+        Annotated[OrderDetails, Tag("active")],
+        Annotated[ArchivedOrder, Tag("archived")]
+    ],
+    Discriminator(order_discriminator)
+]
