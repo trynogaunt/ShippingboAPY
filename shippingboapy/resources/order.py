@@ -72,7 +72,7 @@ class OrderResource:
         if data is None:
             return []
         
-        return [OrderSummary.model_validate(item) for item in data]
+        return [OrderSummary.model_validate(item) for item in data.get("orders", [])]
 
     async def create(self, order_create: OrderCreate, **kwargs) -> OrderDetails:
         """
