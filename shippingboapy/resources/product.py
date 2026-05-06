@@ -11,7 +11,7 @@ class ProductResource:
     
     async def list(self, 
                    is_pack: bool = False,
-                   limit: int = 0,
+                   limit: int = 50,
                    offset: int = 0,
                    search: dict[str, str] | None = None,
                    sort: dict[Literal['id', 'updated_at'], str | int] | None = None,
