@@ -74,7 +74,10 @@ class OrderResource:
         if data is None:
             return []
         
-        return _order_list_adpater.validate_python(data.get("orders", []))
+        if isinstance(data, dict) and "orders"  in data:
+            data = data.get("orders", [])
+        
+        return _order_list_adpater.validate_python(data)
 
     async def create(self, order_create: OrderCreate, **kwargs) -> OrderDetails:
         """
