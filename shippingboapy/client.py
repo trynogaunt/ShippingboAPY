@@ -93,6 +93,34 @@ class Client:
         
     def _set_token(self, token_data: TokenData):
         self.token = token_data
+        
+    def token_from_dict(self, token_dict: dict[str, Any]) -> bool:
+        
+        key_needed = ["access_token", "refresh_token", "expires_in", "token_type", "scope", "created_at"]
+        all_key_need = [True if k in token_dict else False for k in key_needed]
+        if not all(all_key_need):
+            missing_keys = [k for k, present in zip(key_needed, all_key_need) if not present]
+            raise ValueError(f"Missing keys in token dictionary: {', '.join(missing_keys)}")
+        
+        extra_keys = [k for k in token_dict.keys() if k not in key_needed]
+        if extra_keys:
+            print(f"Warning: Extra keys in token dictionary that will be ignored: {', '.join(extra_keys)}")
+        
+
+        token = TokenData(
+            access_token=token_dict.get("access_token", ""),
+            refresh_token=token_dict.get("refresh_token", ""),
+            token_type=token_dict.get("token_type", "Bearer"),
+            expires_in=token_dict.get("expires_in", 3600),
+            scope=token_dict.get("scope", ""),
+            created_at=token_dict.get("created_at")
+        )
+        
+        try:
+            self._set_token(token)
+            return True
+        except Exception as e:
+            raise ValueError(f"Failed to set token from dictionary: {str(e)}") from e
     
     def set_config(self, timeout: int | None = None, max_retries: int | None = None, retry_backoff_factor: float | None = None, redirect_uri: str | None = None, auth_url: str | None = None, api_url: str | None = None):
         if timeout is not None:

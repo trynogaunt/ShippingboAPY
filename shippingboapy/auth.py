@@ -4,6 +4,7 @@ import httpx
 import time
 from shippingboapy.exceptions import BadRequestError, UnauthorizedError, AuthenticationError, TokenRefreshError
 from typing import Callable, Any, Awaitable
+import inspect
 
 @dataclass
 class TokenData:
@@ -96,8 +97,8 @@ async def refresh_token(refresh_token: str,
     response = await session.post(config.auth_url, json=payload, headers=headers)
     if response.status_code == 200:
         token_data = response.json()
-        if on_refresh is not None and callable(on_refresh):
-            await on_refresh(TokenData(
+        if on_refresh is not None:
+            result = on_refresh(TokenData(
                 access_token=token_data['access_token'],
                 token_type=token_data['token_type'],
                 expires_in=token_data['expires_in'],
@@ -105,6 +106,9 @@ async def refresh_token(refresh_token: str,
                 scope=token_data['scope'],
                 created_at=int(time.time())
             ))
+            if inspect.isawaitable(result):
+                await result
+            
         return TokenData(
             access_token=token_data['access_token'],
             token_type=token_data['token_type'],

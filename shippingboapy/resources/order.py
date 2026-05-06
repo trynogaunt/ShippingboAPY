@@ -29,6 +29,9 @@ class OrderResource:
         if data is None:
             return None
         
+        if isinstance(data, dict) and "order" in data:
+            data = data.get("order", {})
+           
         return _order_object_adapter.validate_python(data)
     
     async def list(self, 

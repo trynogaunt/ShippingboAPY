@@ -315,7 +315,7 @@ class OrderDetails(Order):
     computed_prices: Optional[dict[Any, Any]] = Field(None, alias="computed_prices", description="The computed prices for the order, containing details such as price breakdowns, discounts, etc.")
     fullfilled_by_marketplace: Optional[bool] = Field(None, alias="fulfilled_by_marketplace", description="Indicates whether the order is fulfilled by the marketplace, if applicable.")
     invoice_ref: Optional[int] = Field(None, alias="invoice_ref", description="The reference of the invoice for the order, if applicable.")
-    order_items_attributes: list[Any] = Field(..., alias="order_items_attributes", description="The items associated with the order, if applicable.")
+    order_items: list[Any] = Field(..., alias="order_items", description="The items associated with the order, if applicable.")
     preparation_order_at: Optional[str] = Field(None, alias="preparation_order_at", description="The date and time when the order is scheduled for preparation, if applicable.")
     tags_to_add: Optional[List[str]] = Field(None, alias="tags_to_add", description="The list of tags to add to the order, if applicable.")
     empty_key: Optional[str] = Field(None, alias="", description="An empty key to allow for additional fields in the order creation response, if applicable.") # Exist cause Shippingbo API need an empty key field
