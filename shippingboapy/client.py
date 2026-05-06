@@ -86,7 +86,7 @@ class Client:
         self.carrier = CarrierResource(self)
         self.client_order_origin = ClientOrderOriginResource(self)
         self.client_order_source = ClientOrderSourceResource(self)
-        self.dangerous_good_product_informations = DangerousGoodProductInformationResource(self)
+        self.dangerous_goods_product_informations = DangerousGoodProductInformationResource(self)
         self.kit_components = KitComponentResource(self)
         self.logistician_service_configs = LogisticianServiceConfigResource(self)
         self.order_item_product_mappings = OrderItemProductMappingResource(self)

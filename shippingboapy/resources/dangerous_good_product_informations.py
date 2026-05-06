@@ -55,6 +55,9 @@ class DangerousGoodProductInformationResource:
         
         if data is None:
             return None
+        
+        if isinstance(data, dict) and "dangerous_goods_product_informations" in data:
+            data = data.get("dangerous_goods_product_informations", [])
 
         return [DangerousGoodProductInformation.model_validate(item) for item in data]
     
