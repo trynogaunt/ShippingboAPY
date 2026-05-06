@@ -356,6 +356,17 @@ class SuborderNumber(BaseModel):
         "validate_assignment": True
     }
 
+class Suborder(BaseModel):
+    id: int = Field(..., alias="id", description="The unique identifier of the suborder.")
+    state: str = Field(..., alias="state", description="The state of the suborder (e.g., pending, processing, shipped, etc.).")
+    total_quantity: int = Field(..., alias="total_quantity", description="The total quantity of items in the suborder.")
+
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
+
 OrderListItem = Annotated[
     Union[
         Annotated[OrderSummary, Tag("active")],

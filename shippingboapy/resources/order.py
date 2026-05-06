@@ -1,7 +1,7 @@
 from __future__ import annotations
 from pydantic import TypeAdapter
 from typing import TYPE_CHECKING, List, Literal
-from shippingboapy.models.order import Order, OrderSummary, OrderCreate, OrderDetails, OrderItemCreate, OrderItemUpdate, OrderListItem, OrderObjectItem
+from shippingboapy.models.order import Order, OrderSummary, OrderCreate, OrderDetails, OrderItemCreate, OrderItemUpdate, OrderListItem, OrderObjectItem, Suborder
 from shippingboapy.exceptions import ValueError
 from shippingboapy.models.filter import Filter, Operator
 if TYPE_CHECKING:
@@ -217,3 +217,24 @@ class OrderResource:
             return None
         
         return OrderDetails.model_validate(data)
+    
+    async def get_suborders(self, order_id: int, **kwargs) -> List[Suborder]:
+        """
+        Get the suborders of a specific order by its ID.
+
+        Args:
+            order_id (int): The unique identifier of the order to retrieve the suborders from.
+
+        Returns:
+            List[Suborder]: A list of Suborder objects representing the suborders of the specified order.
+        """
+        
+        data = await self.client._request("GET", f"/orders/{order_id}/suborders", **kwargs)
+        
+        if data is None:
+            return []
+        
+        if isinstance(data, dict) and "suborders" in data:
+            data = data.get("suborders", [])
+           
+        return [Suborder.model_validate(suborder) for suborder in data]
