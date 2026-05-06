@@ -80,6 +80,9 @@ class ProductResource:
         if data is None:
             return None
         
+        if isinstance(data, dict) and "product" in data:
+            data = data["product"]
+        
         return Product.model_validate(data)
     
     async def create(self, product_create: ProductCreate, **kwargs) -> Product:
