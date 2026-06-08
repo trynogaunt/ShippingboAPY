@@ -21,11 +21,27 @@ class Filter(BaseModel):
     field: str
     operator: Operator
     value: Any
-    _filter_array : list[str] = ["updated_at", "created_at", "shipped_at", "delivered_at"]
+    _filter_array : list[str] = ["updated_at", "created_at", "shipped_at", "delivered_at", "reason"]
 
     def to_params(self) -> str:
         filter_str = f"[{self.field}__{self.operator.value}]"
         if self.field in self._filter_array:        
             filter_str = filter_str + "[]"
         return filter_str
+
+class ProductVariationStockFilter(BaseModel):
+    field: str
+    operator: Operator
+    value: Any
+    _filter_array : list[str] = ["updated_at", "created_at", "shipped_at", "delivered_at", "reason"]
     
+    def to_params(self) -> str:
+        filter_str = f"[{self.field}__{self.operator.value}]"
+        
+        if self.field in ["ean13", "title", "user_ref"]:
+            filter_str = f"[joins][product]{filter_str}"
+        
+        if self.field in self._filter_array:
+            filter_str = f"{filter_str}[]"
+         
+        return filter_str

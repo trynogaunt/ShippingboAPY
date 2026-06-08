@@ -39,6 +39,7 @@ class Client:
                  api_version: str  = "",
                  client_id: str = "",
                  client_secret: str  = "",
+                 is_staging: bool = False,
                  on_token_refresh: OnTokenRefreshCallback | None = None):
         
         if not app_id:
@@ -52,6 +53,10 @@ class Client:
         
         self.on_token_refresh: Callable[[TokenData], Awaitable[None]] | None = on_token_refresh
         
+        self.is_staging = is_staging
+        if self.is_staging:
+            print("Warning: You are using the staging API URL. Make sure this is intentional.")
+            
         self.config = ShippingBoConfig(
             app_id=app_id,
             api_version=api_version,
@@ -162,7 +167,10 @@ class Client:
         if self.token is None:
             raise AuthenticationError("Access token is missing. Please authenticate first.")
         
-        url = f"{self.config.api_url.rstrip('/')}/{endpoint.lstrip('/')}"
+        if self.is_staging:
+            url = f"{self.config.staging_api_url.rstrip('/')}/{endpoint.lstrip('/')}"
+        else:
+            url = f"{self.config.api_url.rstrip('/')}/{endpoint.lstrip('/')}"
         extra_headers = kwargs.pop("headers", {})
         
         auth_attempts : int = 0
@@ -216,8 +224,9 @@ class Client:
             self._set_token(new_token)
         except Exception as e:
             raise TokenRefreshError(f"Failed to refresh token: {str(e)}") from e
+        
     @classmethod
-    async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, redirect_uri: str | None = None, headers: dict[str, Any] | None = None):
+    async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, is_staging: bool = False, redirect_uri: str | None = None, headers: dict[str, Any] | None = None, on_token_refresh: OnTokenRefreshCallback | None = None) -> "Client":
         config_dict : dict[str, Any] = {
             "app_id": app_id,
             "api_version": api_version,
@@ -241,9 +250,11 @@ class Client:
             app_id=config.app_id,
             api_version=config.api_version,
             client_id=config.client_id,
-            client_secret=config.client_secret
+            client_secret=config.client_secret,
+            is_staging=is_staging,
+            on_token_refresh=on_token_refresh
         )
-        cls._set_token(token)
+       
         return cls
     
     async def close(self):
