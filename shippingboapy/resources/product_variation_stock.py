@@ -11,7 +11,7 @@ class ProductVariationStockResource:
         self.client = client
     
     async def list(self,
-                   search: List[tuple[str,str,str]]) -> list[ProductStockVariation]:
+                   search: List[tuple[str,str,str]] = None) -> list[ProductStockVariation]:
         """
         Retrieve the stock variations for a specific product.
 

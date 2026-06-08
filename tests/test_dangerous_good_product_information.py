@@ -32,7 +32,7 @@ async def test_create_dangerous_good_product_information(mock_client):
     
 @pytest.mark.asyncio
 async def test_list_dangerous_good_product_informations(mock_client):
-    dangerous_good_product_informations = await mock_client.dangerous_good_product_informations.list()
+    dangerous_good_product_informations = await mock_client.dangerous_goods_product_informations.list()
     
     assert dangerous_good_product_informations is not None
     assert isinstance(dangerous_good_product_informations, list)
@@ -40,7 +40,7 @@ async def test_list_dangerous_good_product_informations(mock_client):
     
 @pytest.mark.asyncio
 async def test_get_dangerous_good_product_information(mock_client):
-    dangerous_good_product_information = await mock_client.dangerous_good_product_informations.get(1)
+    dangerous_good_product_information = await mock_client.dangerous_goods_product_informations.get(1)
     
     assert dangerous_good_product_information is not None
     assert isinstance(dangerous_good_product_information, DangerousGoodProductInformation)
@@ -72,7 +72,7 @@ async def test_update_dangerous_good_product_information(mock_client):
         quantity=5.0,
         product_description="Test Product Description"
     )
-    dangerous_good_product_information = await mock_client.dangerous_good_product_informations.update(1, dangerous_good_product_information_update)
+    dangerous_good_product_information = await mock_client.dangerous_goods_product_informations.update(1, dangerous_good_product_information_update)
     
     assert dangerous_good_product_information is not None
     assert isinstance(dangerous_good_product_information, DangerousGoodProductInformation)
@@ -81,6 +81,6 @@ async def test_update_dangerous_good_product_information(mock_client):
     assert isinstance(dangerous_good_product_information.packaging_group, str)
 
 async def test_delete_dangerous_good_product_information(mock_client):
-    result = await mock_client.dangerous_good_product_informations.delete(1)
+    result = await mock_client.dangerous_goods_product_informations.delete(1)
     
     assert result is True
