@@ -18,7 +18,8 @@ class Package(BaseModel):
     total_weight: Optional[int] = Field(None, alias="total_weight", description="The total weight of the package.")
     updated_at: Optional[str] = Field(None, alias="updated_at", description="The date and time when the package was last updated.")
     address_label_id: Optional[str] = Field(None, alias="address_label_id", description="The unique identifier of the address label associated with the package.")
-
+    sscc : Optional[str] = Field(None, alias="sscc", description="The Serial Shipping Container Code (SSCC) of the package.")
+    
     model_config = {
         "extra": "allow",
         "populate_by_name": True,
