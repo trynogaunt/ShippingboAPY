@@ -99,7 +99,7 @@ class OrderResource:
         
         if data is None:
             return None
-
+        print(data)
         return OrderDetails.model_validate(data)
 
     async def update(self, order_id: int, state: str, **kwargs) -> OrderDetails:

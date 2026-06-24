@@ -25,18 +25,18 @@ async def test_create_dangerous_good_product_information(mock_client):
         quantity=5.0,
         product_description="Test Product Description"
     )
-    dangerous_good_product_information = await mock_client.dangerous_good_product_informations.create(dangerous_good_product_information_create)
+    dangerous_good_product_information = await mock_client.dangerous_goods_product_informations.create(dangerous_good_product_information_create)
     assert dangerous_good_product_information is not None
     assert isinstance(dangerous_good_product_information, DangerousGoodProductInformation)
     assert isinstance(dangerous_good_product_information.id, int)
     
 @pytest.mark.asyncio
-async def test_list_dangerous_good_product_informations(mock_client):
-    dangerous_good_product_informations = await mock_client.dangerous_goods_product_informations.list()
+async def test_list_dangerous_goods_product_informations(mock_client):
+    dangerous_goods_product_informations = await mock_client.dangerous_goods_product_informations.list()
     
-    assert dangerous_good_product_informations is not None
-    assert isinstance(dangerous_good_product_informations, list)
-    assert all(isinstance(item, DangerousGoodProductInformation) for item in dangerous_good_product_informations)
+    assert dangerous_goods_product_informations is not None
+    assert isinstance(dangerous_goods_product_informations, list)
+    assert all(isinstance(item, DangerousGoodProductInformation) for item in dangerous_goods_product_informations)
     
 @pytest.mark.asyncio
 async def test_get_dangerous_good_product_information(mock_client):

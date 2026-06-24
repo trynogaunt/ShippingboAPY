@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, Tag, Discriminator
 from typing import List, Optional, Any, Literal, Annotated, Union
-from shippingboapy.models.tag import OrderTag
+from shippingboapy.models.order_tag import OrderTag
 from shippingboapy.models.order_document import OrderDocument
 from shippingboapy.models.order_event import OrderEvent
 from shippingboapy.models.types import ShippingboDateTime
@@ -24,6 +24,7 @@ class CarrierConfig(BaseModel):
         "populate_by_name": True,
         "validate_assignment": True
     }
+
 class MappedProduct(BaseModel):
     created_at: Optional[ShippingboDateTime] = Field(None, alias="created_at", description="The date and time when the mapped product was created.")
     id: Optional[int] = Field(..., alias="id", description="The unique identifier of the mapped product.")
@@ -38,6 +39,7 @@ class MappedProduct(BaseModel):
         "populate_by_name": True,
         "validate_assignment": True
     }  
+
 class CarrierService(BaseModel):
     archived: Optional[bool] = Field(None, alias="archived", description="Indicates whether the carrier service is archived.")
     config: Optional[CarrierConfig] = Field(None, alias="config", description="The configuration details of the carrier service.")
@@ -51,6 +53,7 @@ class CarrierService(BaseModel):
         "populate_by_name": True,
         "validate_assignment": True
     }
+
 class OrderItemUpdate(BaseModel):
     id: int = Field(..., alias="id", description="The unique identifier of the order item to update.")
     product_ean: Optional[str] = Field(None, alias="product_ean", description="The EAN13 code of the product associated with the order item, if applicable.")

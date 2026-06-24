@@ -1,5 +1,5 @@
 import pytest
-from shippingboapy.models.tag import OrderTag, OrderTagCreate
+from shippingboapy.models.order_tag import OrderTag, OrderTagCreate
 
 @pytest.mark.asyncio
 async def test_create_order_tag(mock_client):

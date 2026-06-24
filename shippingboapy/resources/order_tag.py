@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from shippingboapy.models.tag import OrderTag, OrderTagCreate
+from shippingboapy.models.order_tag import OrderTag, OrderTagCreate
 if TYPE_CHECKING:
     from shippingboapy.client import Client
     
