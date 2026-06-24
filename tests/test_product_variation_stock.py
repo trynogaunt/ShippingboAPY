@@ -6,6 +6,7 @@ async def test_list_product_variation_stock(mock_client):
     stock_variations = await mock_client.product_variation_stock.list()
     
     assert isinstance(stock_variations, list)
+
     for variation in stock_variations:
         assert isinstance(variation, ProductStockVariation)
         assert isinstance(variation.id, int)

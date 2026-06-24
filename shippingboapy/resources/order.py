@@ -102,7 +102,7 @@ class OrderResource:
         print(data)
         return OrderCreate.model_validate(data)
 
-    async def update(self, order_id: int, state: str, **kwargs) -> OrderDetails:
+    async def update(self, order_id: int, state: str, **kwargs) -> OrderSummary:
         """
         Update an existing order in the Shippingbo account.
 
@@ -118,9 +118,9 @@ class OrderResource:
         if data is None:
             return None
         
-        return OrderDetails.model_validate(data)
+        return OrderSummary.model_validate(data)
     
-    async def recompute_mapped_products(self, order_id: int, **kwargs) -> OrderDetails:
+    async def recompute_mapped_products(self, order_id: int, **kwargs) -> OrderSummary:
         """
         Recompute the mapped products of an existing order in the Shippingbo account.
 
@@ -128,7 +128,7 @@ class OrderResource:
             order_id (int): The unique identifier of the order to update.
             
         Returns:
-            OrderDetails: An OrderDetails object representing the details of the updated order.
+            OrderSummary: An OrderSummary object representing the details of the updated order.
         """
         
         data = await self.client._request("POST", f"/orders/{order_id}/recompute_mapped_products", **kwargs)
@@ -136,9 +136,9 @@ class OrderResource:
         if data is None:
             return None
         
-        return OrderDetails.model_validate(data)
+        return OrderSummary.model_validate(data)
 
-    async def remove_from_run(self, order_id: int, destination_state: str, **kwargs) -> OrderDetails:
+    async def remove_from_run(self, order_id: int, destination_state: str, **kwargs) -> OrderSummary:
         """
         Remove an order from a run in the Shippingbo account.
 
@@ -146,7 +146,7 @@ class OrderResource:
             order_id (int): The unique identifier of the order to remove from the run.
             destination_state (str): The state to set for the order after removing it from the run.
         Returns:
-            OrderDetails: An OrderDetails object representing the details of the updated order.
+            OrderSummary: An OrderSummary object representing the details of the updated order.
         """
         
         data = await self.client._request("PATCH", f"/orders/{order_id}/remove_from_run", json={"destination_state": destination_state}, **kwargs)
@@ -154,7 +154,7 @@ class OrderResource:
         if data is None:
             return None
         
-        return OrderDetails.model_validate(data)
+        return OrderSummary.model_validate(data)
 
     async def redispatch(self, order_id: int, **kwargs) -> bool:
         """
@@ -200,7 +200,7 @@ class OrderResource:
         
         return OrderDetails.model_validate(data)
     
-    async def update_order_item(self, order_id: int, order_items: List[OrderItemUpdate], **kwargs) -> OrderDetails:
+    async def update_order_item(self, order_id: int, order_items: List[OrderItemUpdate], **kwargs) -> OrderSummary:
         """
         Update the order items of an existing order in the Shippingbo account.
 
@@ -208,7 +208,7 @@ class OrderResource:
             order_id (int): The unique identifier of the order to update.
             order_items (List[OrderItemUpdate]): A list of OrderItemUpdate objects representing the order items to update.
         Returns:
-            OrderDetails: An OrderDetails object representing the details of the updated order.
+            OrderSummary: An OrderSummary object representing the details of the updated order.
         """
         
         data = await self.client._request("POST", f"/orders/{order_id}/update_order_items", json={"order_items": [order_item.model_dump(exclude_none=True, by_alias=True) for order_item in order_items]}, **kwargs)
@@ -216,7 +216,7 @@ class OrderResource:
         if data is None:
             return None
         
-        return OrderDetails.model_validate(data)
+        return OrderSummary.model_validate(data)
     
     async def get_suborders(self, order_id: int, **kwargs) -> List[Suborder]:
         """

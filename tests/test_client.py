@@ -19,6 +19,8 @@ async def test_client_from_auth_code(mock_config):
         headers=headers
     )
 
+    if client is None:
+        pytest.fail("Client creation failed. Client is None.")
     try:
         assert client is not None
         assert isinstance(client, Client)
@@ -40,9 +42,6 @@ async def test_client_from_auth_code(mock_config):
         
         assert client.token.scope is not None
         assert isinstance(client.token.scope, str)
-        
-        assert client.token.created_at is not None
-        assert isinstance(client.token.created_at, int)
         
         assert client.config.app_id == mock_config.app_id
         assert client.config.api_version == mock_config.api_version

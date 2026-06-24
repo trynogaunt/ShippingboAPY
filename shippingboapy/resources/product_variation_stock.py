@@ -21,7 +21,7 @@ class ProductVariationStockResource:
 
         params = []
         
-        if search is None:
+        if search is not None:
             for item in search:
                 if len(item) != 3:
                     raise ValueError(f"Invalid search item: {item}. Each search item must be a tuple of (field, operator, value).")

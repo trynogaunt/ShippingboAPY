@@ -19,7 +19,7 @@ class UserResource:
             User: A User object representing the details of the specified user.
         """
         
-        data = await self.client._request("GET", f"user/{user_id}", **kwargs)
+        data = await self.client._request("GET", f"users/{user_id}", **kwargs)
         
         if data is None:
             return None
