@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
-import 
 if TYPE_CHECKING:
     from shippingboapy.client import Client
 
