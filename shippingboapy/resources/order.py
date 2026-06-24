@@ -82,14 +82,14 @@ class OrderResource:
         
         return _order_list_adpater.validate_python(data)
 
-    async def create(self, order_create: OrderCreate, **kwargs) -> OrderDetails:
+    async def create(self, order_create: OrderCreate, **kwargs) -> OrderCreate:
         """
         Create a new order in the Shippingbo account.
 
         Args:
             order_create (OrderCreate): An OrderCreate object containing the details of the order to create.
         Returns:
-            OrderDetails: An OrderDetails object representing the details of the created order.
+            OrderCreate: An OrderCreate object representing the details of the created order.
         """
         
         if self.client.token.scope and "order" not in self.client.token.scope.split():
@@ -100,7 +100,7 @@ class OrderResource:
         if data is None:
             return None
         print(data)
-        return OrderDetails.model_validate(data)
+        return OrderCreate.model_validate(data)
 
     async def update(self, order_id: int, state: str, **kwargs) -> OrderDetails:
         """

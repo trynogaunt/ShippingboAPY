@@ -55,7 +55,7 @@ class CarrierService(BaseModel):
     }
 
 class OrderItemUpdate(BaseModel):
-    id: int = Field(..., alias="id", description="The unique identifier of the order item to update.")
+    id: float = Field(..., alias="id", description="The unique identifier of the order item to update.")
     product_ean: Optional[str] = Field(None, alias="product_ean", description="The EAN13 code of the product associated with the order item, if applicable.")
     product_ref: Optional[str] = Field(None, alias="product_reference", description="The reference of the product associated with the order item, if applicable.")
     product_source: Optional[str] = Field(None, alias="product_source", description="The source of the product information for the order item (e.g., user_ref, ean13).")
@@ -86,7 +86,7 @@ class OrderItem(OrderItemUpdate):
     }
     
 class OrderItemCreate(BaseModel):
-    id: Optional[int] = Field(None, alias="id", description="The unique identifier of the order item.")
+    id: Optional[float] = Field(None, alias="id", description="The unique identifier of the order item.") # Fuck off why id is a float
     price_tax_included_cents: Optional[int] = Field(None, alias="price_tax_included_cents", description="The price of the order item including tax, in cents.")
     price_tax_included_currency: Optional[str] = Field(None, alias="price_tax_included_currency", description="The currency of the price including tax for the order item.")
     product_ean: Optional[str] = Field(None, alias="product_ean13", description="The EAN13 code of the product associated with the order item, if applicable.")
