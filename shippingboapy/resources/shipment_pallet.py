@@ -19,7 +19,7 @@ class ShipmentPalletResource:
         Returns:
             Pallet: The shipment pallet object.
         """
-        data = await self.client._request("GET", f"shipment/pallets/{pallet_id}")
+        data = await self.client._request("GET", f"shipment_pallets/{pallet_id}")
         
         if data is None:
             return None
