@@ -1,8 +1,26 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from pypdf import PdfReader
+from pypdf.errors import PdfReadError
+import 
 if TYPE_CHECKING:
     from shippingboapy.client import Client
 
+def is_valid_pdf(file_path: str) -> bool:
+    """
+    Check if the provided file is a valid PDF.
+
+    Args:
+        file_path (str): The path to the file to check.
+    
+    Returns:
+        bool: True if the file is a valid PDF, False otherwise.
+    """
+    try:
+        PdfReader(file_path)
+        return True
+    except PdfReadError:
+        return False
 
 class BackgroundJobResource:
     def __init__(self, client: Client):
@@ -25,6 +43,8 @@ class BackgroundJobResource:
         
         if data is None:
             return None
-
-        return data
+        if is_valid_pdf(data):
+            return data
+        else:
+            raise ValueError(f"The file retrieved for background job ID {background_job_id} is not a valid PDF.")
     
