@@ -1,30 +1,7 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from shippingboapy.resources.base_resource import Gettable
 from shippingboapy.models.logistician_service_config import LogisticianServiceConfig
-if TYPE_CHECKING:
-    from shippingboapy.client import Client
     
-class LogisticianServiceConfigResource:
-    def __init__(self, client: Client):
-        self.client: Client = client
-
-    async def get(self, id: int) -> LogisticianServiceConfig | None:
-        """
-        Retrieve a specific logistician service configuration by its unique identifier.
-
-        Args:
-            id (int): The unique identifier of the logistician service configuration to retrieve.
-
-        Returns:
-            LogisticianServiceConfig | None: The logistician service configuration object corresponding to the provided ID, or None if not found.
-
-        Raises:
-            HTTPError: If the request to the API fails or returns an error status code.
-            ValidationError: If the response data cannot be validated against the LogisticianServiceConfig model.
-        """
-        data = await self.client._request("GET", f"/logistician_service_configs/matching_service/PredefinedLogistician::GenericLogistician/of/{id}")
-        
-        if data is None:
-            return None
-
-        return LogisticianServiceConfig.model_validate(data)
+class LogisticianServiceConfigResource(Gettable[LogisticianServiceConfig]):
+    _path = "logistician_service_configs/matching_service/PredefinedLogistician::GenericLogistician/of"
+    _model = LogisticianServiceConfig
