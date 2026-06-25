@@ -24,7 +24,7 @@ class ResellerResource:
         if isinstance(data, dict) and "resellers" in data:
             data = data["resellers"]
 
-        return [Reseller.model_validate(**reseller) for reseller in data]
+        return [Reseller.model_validate(reseller) for reseller in data]
 
     async def get(self, reseller_id: int) -> Reseller:
         """
@@ -44,4 +44,4 @@ class ResellerResource:
         if isinstance(data, dict) and "reseller" in data:
             data = data["reseller"]
         
-        return Reseller.model_validate(**data)
+        return Reseller.model_validate(data)
