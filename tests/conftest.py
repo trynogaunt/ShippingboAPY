@@ -4,6 +4,8 @@ from unittest.mock import patch
 from shippingboapy.config import ShippingBoConfig
 from shippingboapy.auth import TokenData
 from shippingboapy.client import Client
+from pypdf import PdfWriter
+import io
     
 @pytest.fixture
 def mock_config():
@@ -43,3 +45,12 @@ def mock_client(mock_config, mock_token_data):
         client_secret=mock_config.client_secret
     )
     yield client
+
+@pytest.fixture
+def minimal_pdf() -> bytes:
+    """PDF minimal réellement valide (passe pypdf sans warning)."""
+    writer = PdfWriter()
+    writer.add_blank_page(width=72, height=72)
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    return buffer.getvalue()

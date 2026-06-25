@@ -23,7 +23,7 @@ from shippingboapy.resources.dangerous_good_product_informations import Dangerou
 from shippingboapy.resources.kit_component import KitComponentResource
 from shippingboapy.resources.logistician_service_config import LogisticianServiceConfigResource
 from shippingboapy.resources.order_item_product_mapping import OrderItemProductMappingResource
-from shippingboapy.resources.product_variation_stock import ProductVariationStockResource
+from shippingboapy.resources.product_stock_variation import ProductVariationStockResource
 from shippingboapy.resources.user import UserResource
 from shippingboapy.resources.update_hook import UpdateHookResource
 from shippingboapy.resources.shipment_pallet import ShipmentPalletResource
@@ -103,7 +103,7 @@ class Client:
         self.users = UserResource(self)
         self.update_hooks = UpdateHookResource(self)
         self.shipment_pallets = ShipmentPalletResource(self)
-        
+
     def _set_token(self, token_data: TokenData):
         self.token = token_data
         
