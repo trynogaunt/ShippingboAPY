@@ -28,6 +28,7 @@ from shippingboapy.resources.user import UserResource
 from shippingboapy.resources.update_hook import UpdateHookResource
 from shippingboapy.resources.shipment_pallet import ShipmentPalletResource
 from shippingboapy.resources.reseller import ResellerResource
+from shippingboapy.resources.reseller_product import ResellerProductResource
 
 from typing import Callable, Awaitable, Any, Protocol
 
@@ -105,7 +106,8 @@ class Client:
         self.update_hooks = UpdateHookResource(self)
         self.shipment_pallets = ShipmentPalletResource(self)
         self.reseller = ResellerResource(self)
-
+        self.reseller_product = ResellerProductResource(self)
+        
     def _set_token(self, token_data: TokenData):
         self.token = token_data
         
