@@ -142,8 +142,15 @@ class Updatable(BaseResource, Generic[TUpdate, TRead]):
         Returns:
             TRead: The updated resource.
         """
-        raise NotImplementedError("The 'update' method must be implemented in the subclass.")
+        response = await self.client._request("PATCH", f"{self._path}/{resource_id}", json=data.model_dump(by_alias=True, exclude_none=True))     
 
+        if response is None:
+            raise ValueError(f"Resource with ID {resource_id} not found or could not be updated.")
+        
+        response = self._unwrap(response)
+
+        return cast(TRead, self._model.model_validate(response))
+        
 class Deletable(BaseResource):
     async def delete(self, resource_id: int | str) -> None:
         """
