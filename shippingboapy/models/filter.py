@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from enum import Enum
-from typing import Any
+from typing import ClassVar, Any
 class Operator(str, Enum):
     BLANK = "blank"
     EQUALS = "eq"
@@ -21,27 +21,16 @@ class Filter(BaseModel):
     field: str
     operator: Operator
     value: Any
-    _filter_array : list[str] = ["updated_at", "created_at", "shipped_at", "delivered_at", "reason"]
+    _ARRAY_FIELDS: ClassVar[list[str]] = ["updated_at", "created_at", "shipped_at", "delivered_at", "reason"]
+    _JOIN_FIELDS: ClassVar[dict[str, str]] = {}  # vide par défaut : pas de jointure
 
     def to_params(self) -> str:
-        filter_str = f"[{self.field}__{self.operator.value}]"
-        if self.field in self._filter_array:        
-            filter_str = filter_str + "[]"
-        return filter_str
+        key = f"[{self.field}__{self.operator.value}]"
+        if self.field in self._JOIN_FIELDS:
+            key = f"[joins][{self._JOIN_FIELDS[self.field]}]{key}"
+        if self.field in self._ARRAY_FIELDS:
+            key = f"{key}[]"
+        return key
 
-class ProductVariationStockFilter(BaseModel):
-    field: str
-    operator: Operator
-    value: Any
-    _filter_array : list[str] = ["updated_at", "created_at", "shipped_at", "delivered_at", "reason"]
-    
-    def to_params(self) -> str:
-        filter_str = f"[{self.field}__{self.operator.value}]"
-        
-        if self.field in ["ean13", "title", "user_ref"]:
-            filter_str = f"[joins][product]{filter_str}"
-        
-        if self.field in self._filter_array:
-            filter_str = f"{filter_str}[]"
-         
-        return filter_str
+class ProductVariationStockFilter(Filter):
+    _JOIN_FIELDS: ClassVar[dict[str, str]] = {"ean13": "product", "title": "product", "user_ref": "product"}
