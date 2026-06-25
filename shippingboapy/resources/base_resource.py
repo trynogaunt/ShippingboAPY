@@ -1,5 +1,10 @@
-from typing import TypeVar, Generic, ClassVar, cast
+from typing import TypeVar, Generic, ClassVar, cast, TYPE_CHECKING, Optional
 from pydantic import BaseModel
+
+if TYPE_CHECKING:
+    from shippingboapy.client import Client
+
+from shippingboapy.models.filter import Filter
 
 TRead = TypeVar("TRead", bound=BaseModel)
 TUpdate = TypeVar("TUpdate", bound=BaseModel)
@@ -10,7 +15,7 @@ class BaseResource:
     _path: ClassVar[str] 
     _model: ClassVar[type[BaseModel]]
     
-    def __init__(self, client):
+    def __init__(self, client: "Client"):
         self.client = client
     
     def _unwrap(self, response: object) -> object:
@@ -40,7 +45,7 @@ class Gettable(BaseResource, Generic[TRead]):
 
 class Listable(BaseResource, Generic[TSummary]):
     _list_model: ClassVar[type[BaseModel]]
-    
+
     async def list(self) -> list[TSummary]:
         """
         List all resources.
@@ -56,6 +61,53 @@ class Listable(BaseResource, Generic[TSummary]):
         response = self._unwrap(response)
 
         return [cast(TSummary, self._list_model.model_validate(item)) for item in response]
+
+class FilterableListable(Listable[TSummary], Generic[TSummary]):
+    async def list(self, search: Optional[list[Filter]] = None) -> list[TSummary]:
+        """
+        List all resources with optional filtering.
+
+        Args:
+            search (list[Filter], optional): A list of Filter objects representing the search criteria.
+
+        Returns:
+            list[TSummary]: A list of all lightweight resources that match the search criteria.
+        """
+        params = {}
+        
+        if search is not None:
+            for filter_obj in search:
+                key = f"search{filter_obj.to_params()}"
+                params[key] = str(filter_obj.value)
+        
+        response = await self.client._request("GET", self._path, params=params)
+
+        if response is None:
+            return []
+        
+        response = self._unwrap(response)
+
+        return [cast(TSummary, self._list_model.model_validate(item)) for item in response]
+
+class MandatoryFilterableListable(FilterableListable[TSummary], Generic[TSummary]):
+    _mandatory_filter : ClassVar[list[str]] = []
+
+    async def list(self, search: Optional[list[Filter]] = None) -> list[TSummary]:
+        """
+        List all resources with mandatory filtering.
+
+        Args:
+            search (list[Filter]): A list of Filter objects representing the mandatory search criteria, optional to clarify missing mandatory filters.
+
+        Returns:
+            list[TSummary]: A list of all lightweight resources that match the mandatory search criteria.
+        """
+        provided_filters = {filter_obj.field for filter_obj in search} if search is not None else set()
+        missing_filters = [f for f in self._mandatory_filter if f not in provided_filters]
+        if missing_filters:
+            raise ValueError(f"Filters for '{missing_filters}' must be provided for mandatory filtering.")
+
+        return await super().list(search=search)
 
 class Creatable(BaseResource, Generic[TCreate, TRead]):
     async def create(self, data: TCreate) -> TRead:

@@ -1,5 +1,5 @@
 from .client import Client
-from .filters import Filter, ProductVariationStockFilter, Operator
+from .models.filter import Filter, ProductVariationStockFilter, Operator
 
 
 __all__ = [
