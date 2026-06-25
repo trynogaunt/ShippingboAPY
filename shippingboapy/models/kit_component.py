@@ -2,8 +2,8 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 class KitComponentCreate(BaseModel):
-    kit_product_id: int = Field(..., description="ID of the kit product")
-    product_id: int = Field(..., description="ID of the component product")
+    kit_product_id: int | str = Field(..., description="ID of the kit product")
+    product_id: int | str = Field(..., description="ID of the component product")
     quantity: int = Field(..., description="Quantity of the component in the kit")
     
     model_config = {
@@ -13,7 +13,7 @@ class KitComponentCreate(BaseModel):
     }
 
 class KitComponent(KitComponentCreate):
-    id: int = Field(..., description="ID of the kit component")
+    id: int | str = Field(..., description="ID of the kit component")
     kit_stock_rule: Optional[str] = Field(None, description="Stock rule for the kit component")
     
     model_config = {
