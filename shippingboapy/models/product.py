@@ -31,18 +31,7 @@ class OrderItemProductMapping(BaseModel):
         "populate_by_name": True,
         "validate_assignment": True
     }
-class KitComponent(BaseModel):
-    id: int | str = Field(..., description="The unique identifier for the kit component.")
-    quantity: int | str = Field(..., description="The quantity of the component in the kit.")
-    kit_product_id: int | str = Field(..., description="The unique identifier for the kit product.")
-    product_id: int | str = Field(..., description="The unique identifier for the product that is a component of the kit.")
-    kit_stock_rule: Optional[str] = Field(..., description="How kit and their components stocks interact with each other. Can be: null: no interaction , 'kit_supply': the kit stock feeds the components stock") 
 
-    model_config = {
-        "extra": "allow",
-        "populate_by_name": True,
-        "validate_assignment": True
-    }
 class PackComponent(BaseModel):
     component_product_id: int = Field(..., description="The unique identifier for the product that is a component of the pack.")
     quantity: int = Field(..., description="The quantity of the component in the pack.")
