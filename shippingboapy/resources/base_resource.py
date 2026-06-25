@@ -6,6 +6,7 @@ if TYPE_CHECKING:
 
 from shippingboapy.models.filter import Filter
 
+
 TRead = TypeVar("TRead", bound=BaseModel)
 TUpdate = TypeVar("TUpdate", bound=BaseModel)
 TCreate = TypeVar("TCreate", bound=BaseModel)
@@ -153,4 +154,21 @@ class Deletable(BaseResource):
         """
         await self.client._request("DELETE", f"{self._path}/{resource_id}")
 
+class Downloadable(BaseResource):
+    async def get_file(self, resource_id: int | str) -> bytes:
+        """
+        Download a resource by its ID.
+
+        Args:
+            resource_id (int | str): The ID of the resource to download.
+
+        Returns:
+            bytes: The binary content of the downloaded resource.
+        """
+        response = await self.client._download("GET", f"{self._path}/{resource_id}/file")
+
+        if response is None:
+            raise ValueError(f"Resource with ID {resource_id} not found or could not be downloaded.")
+
+        return response
 
