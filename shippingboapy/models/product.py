@@ -43,7 +43,8 @@ class PackComponent(BaseModel):
         "extra": "allow",
         "populate_by_name": True,
         "validate_assignment": True
-    }    
+    }  
+      
 class ProductAdditionalField(BaseModel):
     created_at: str = Field(..., description="The date and time when the additional field was created.")
     id: int = Field(..., description="The unique identifier for the additional field.")
