@@ -59,6 +59,9 @@ class ResellerProductResource:
                 else:
                     params[str(key)] = item[2]
         
+        if key := "search[product_id__eq]" not in params:
+            raise ValueError("The search filter must include a 'product_id' filter.")
+        
         data = await self.client._request("GET", "reseller_products", params=params)
 
         if data is None:

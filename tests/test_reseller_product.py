@@ -3,7 +3,7 @@ from shippingboapy.models.reseller_product import ResellerProduct
 
 @pytest.mark.asyncio
 async def test_list_reseller_products(mock_client):
-    search_filters = [("reseller_id", "eq", 1)]
+    search_filters = [("product_id", "eq", 1)]
     reseller_products = await mock_client.reseller_product.list(search=search_filters)
     assert isinstance(reseller_products, list)
     for reseller_product in reseller_products:
