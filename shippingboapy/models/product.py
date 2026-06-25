@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional, Literal, Any
+from shippingboapy.models.kit_component import KitComponent
 
 class ProductStocksInformations(BaseModel):
     available_stock: int = Field(..., description="The available stock for the product.")
