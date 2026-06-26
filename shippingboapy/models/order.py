@@ -349,7 +349,7 @@ class SuborderItem(BaseModel):
         "populate_by_name": True,
         "validate_assignment": True
     }
-class SuborderNumber(BaseModel):
+class SuborderSplit(BaseModel):
     numberOfTheItem: SuborderItem = Field(..., alias="numberOfTheItem", description="The unique number of the suborder item, used for tracking and reference purposes.")
     order_attributes: Optional[OrderAttribute] = Field(None, alias="order_attributes", description="The attributes of the order associated with the suborder item, if applicable.")
     

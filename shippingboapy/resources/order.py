@@ -1,6 +1,6 @@
 from __future__ import annotations
 from shippingboapy.resources.base_resource import Gettable, Creatable, Updatable
-from shippingboapy.models.order import Order, OrderCreate, OrderSummary, ArchivedOrder
+from shippingboapy.models.order import Order, OrderCreate, OrderSummary, ArchivedOrder, SuborderSplit
 from shippingboapy.models.filter import Filter
 from typing import List, Optional, Literal
 
@@ -94,4 +94,17 @@ class OrderResource(Gettable[Order], Creatable[OrderCreate, Order], Updatable[Or
         if response is None:
             raise ValueError(f"Order with ID {order_id} not found or could not be redispatched.")
         
+    async def split(self, order_id: int, suborder: SuborderSplit) -> None:
+        """
+        Split a suborder.
+
+        Args:
+            suborder (SuborderSplit): The suborder to split.
         
+        Returns:
+            None
+        """
+        response = await self.client._request("POST", f"{self._path}/{order_id}/split_suborder", json=suborder.model_dump(by_alias=True, exclude_none=True))
+
+        if response is None:
+            raise ValueError(f"Suborder with number {suborder.numberOfTheItem} not found or could not be split.")
