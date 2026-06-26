@@ -1,6 +1,6 @@
 from __future__ import annotations
 from shippingboapy.resources.base_resource import Gettable, Creatable, Updatable
-from shippingboapy.models.order import Order, OrderCreate, OrderSummary, ArchivedOrder, SuborderSplit
+from shippingboapy.models.order import Order, OrderCreate, OrderSummary, ArchivedOrder, SuborderSplit, Suborder, OrderItemUpdate
 from shippingboapy.models.filter import Filter
 from typing import List, Optional, Literal
 
@@ -99,6 +99,7 @@ class OrderResource(Gettable[Order], Creatable[OrderCreate, Order], Updatable[Or
         Split a suborder.
 
         Args:
+            order_id (int): The ID of the order to split the suborder for.
             suborder (SuborderSplit): The suborder to split.
         
         Returns:
@@ -108,3 +109,64 @@ class OrderResource(Gettable[Order], Creatable[OrderCreate, Order], Updatable[Or
 
         if response is None:
             raise ValueError(f"Suborder with number {suborder.numberOfTheItem} not found or could not be split.")
+    
+    async def get_suborders(self, order_id: int) -> list[Suborder]:
+        """
+        Get all suborders for a given order.
+
+        Args:
+            order_id (int): The ID of the order to get suborders for.
+        
+        Returns:
+            list[Suborder]: A list of all suborders for the given order.
+        """
+
+        response = await self.client._request("GET", f"{self._path}/{order_id}/suborders")
+
+        if response is None:
+            return []
+        
+        response = self._unwrap(response)
+
+        return [Suborder.model_validate(item) for item in response]
+    
+    async def update_order_items(self, order_id: int | str, order_items: list[OrderItemUpdate]) -> Order:
+        """
+        Update the items of an order.
+
+        Args:
+            order_id (int | str): The ID of the order to update.
+            order_items (list[OrderItemUpdate]): A list of OrderItemUpdate objects representing the updated order items.
+        
+        Returns:
+            Order: The updated order.
+        """
+        response = await self.client._request("PATCH", f"{self._path}/{order_id}/update_order_items", json={"order_items": [item.model_dump(by_alias=True, exclude_none=True) for item in order_items]})
+
+        if response is None:
+            raise ValueError(f"Order with ID {order_id} not found or could not be updated.")
+        
+        response = self._unwrap(response)
+
+        return Order.model_validate(response)
+    
+    #TODO rework all order models
+    async def add_order_item(self, order_id: int | str, order_item: OrderItemUpdate) -> Order:
+        """
+        Add an item to an order.
+
+        Args:
+            order_id (int | str): The ID of the order to add the item to.
+            order_item (OrderItemUpdate): The OrderItemUpdate object representing the item to add.
+        
+        Returns:
+            Order: The updated order with the new item added.
+        """
+        response = await self.client._request("POST", f"{self._path}/{order_id}/add_order_item", json=order_item.model_dump(by_alias=True, exclude_none=True))
+
+        if response is None:
+            raise ValueError(f"Order with ID {order_id} not found or could not be updated.")
+        
+        response = self._unwrap(response)
+
+        return Order.model_validate(response)
