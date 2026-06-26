@@ -1,12 +1,12 @@
 from __future__ import annotations
 from shippingboapy.resources.base_resource import Gettable, Creatable, Updatable
-from shippingboapy.models.order import Order, OrderCreate, OrderUpdate, OrderSummary
+from shippingboapy.models.order import Order, OrderCreate, OrderSummary, ArchivedOrder
 from shippingboapy.models.filter import Filter
 from typing import List, Optional, Literal
 
 #TODO Finishing Order endpoint implementation, done until remove from run, all endpoint before are implemented, but not tested yet. Need to implement the rest of the endpoints and test all of them.
 
-class OrderResource(Gettable[Order], Creatable[OrderCreate, Order], Updatable[OrderUpdate, Order]):
+class OrderResource(Gettable[Order], Creatable[OrderCreate, Order], Updatable[Order, Order]):
     _path = "orders"
     _model = Order
     _list_model = OrderSummary
@@ -37,8 +37,8 @@ class OrderResource(Gettable[Order], Creatable[OrderCreate, Order], Updatable[Or
         
         response = self._unwrap(response)
 
-        return [OrderSummary.model_validate(item) for item in response]
-    
+        return [ArchivedOrder.model_validate(item) if item.get("archived") else OrderSummary.model_validate(item) for item in response]
+
     async def recompute(self, order_id: int | str) -> Order:
         """
         Recompute an order by its ID.
@@ -78,3 +78,20 @@ class OrderResource(Gettable[Order], Creatable[OrderCreate, Order], Updatable[Or
 
         return Order.model_validate(response)
  
+
+    async def redispatch(self, order_id: int | str) -> None:
+        """
+        Redispatch an order by its ID.
+
+        Args:
+            order_id (int | str): The ID of the order to redispatch.
+        
+        Returns:
+            Order: The order after being redispatched.
+        """
+        response = await self.client._request("POST", f"{self._path}/{order_id}/retry_order_dispatch")
+
+        if response is None:
+            raise ValueError(f"Order with ID {order_id} not found or could not be redispatched.")
+        
+        
