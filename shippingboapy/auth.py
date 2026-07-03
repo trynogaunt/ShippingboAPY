@@ -153,7 +153,7 @@ async def get_token_information(access_token: str, session: httpx.AsyncClient) -
     auth_headers = {}
     auth_headers['Authorization'] = f'Bearer {access_token}'
     
-    response = await session.get(headers=auth_headers)
+    response = await session.get(url="https://oauth.shippingbo.com/oauth/token/info", headers=auth_headers)
     
     if response.status_code == 200:
         return response.json()
