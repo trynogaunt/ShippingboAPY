@@ -4,5 +4,5 @@ from shippingboapy.models.pack_component import PackComponent, PackComponentCrea
     
 
 class PackComponentResource(Gettable[PackComponent], Updatable[PackComponent, PackComponent], Creatable[PackComponentCreate, PackComponent], Deletable):
-    _path = "pack-components"
+    _path = "pack_components"
     _model = PackComponent

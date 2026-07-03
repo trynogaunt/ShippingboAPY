@@ -15,6 +15,17 @@ class TokenData:
     scope: str
     created_at: int | None
 
+def token_to_dict(token_data: TokenData) -> dict[str, Any]:
+    """Convert TokenData to a dictionary."""
+    return {
+        "access_token": token_data.access_token,
+        "token_type": token_data.token_type,
+        "expires_in": token_data.expires_in,
+        "refresh_token": token_data.refresh_token,
+        "scope": token_data.scope,
+        "created_at": token_data.created_at
+    }
+
 async def get_remaining_token_lifetime(token_data: TokenData) -> int:
     """Time remaining before the token expires. Returns -1 if the token is unknown or expired."""
     if token_data.created_at is None or token_data.expires_in is None:

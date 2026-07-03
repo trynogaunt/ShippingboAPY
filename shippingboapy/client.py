@@ -86,7 +86,7 @@ class Client:
         self.products = ProductResource(self)
         self.orders = OrderResource(self)
         self.order_tags = OrderTagResource(self)
-        self.pack_components = PackComponentResource(self)
+        self.pack_component = PackComponentResource(self)
         self.packages = PackageResource(self)
         self.order_documents = OrderDocumentResource(self)
         self.address_labels = AddressLabelResource(self)
@@ -308,11 +308,7 @@ class Client:
             on_token_refresh=on_token_refresh
         )
 
-        if self.token and self.token.created_at is None:
-            token_info = await get_token_information(self.token.access_token, self.session)
-            self.token.expires_in = int(token_info.get("expires_in_seconds", 0)) if token_info else 0
-            self.token.scope = token_info.get("scopes", "") if token_info else ""
-            self.token.created_at = int(token_info.get("created_at", 0)) if token_info else 0
+        await self.refresh()  # Ensure the token is valid and up-to-date
 
         return self
 
