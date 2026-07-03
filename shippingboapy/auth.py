@@ -14,13 +14,28 @@ class TokenData:
     refresh_token: str
     scope: str
     created_at: int | None
+
+async def get_remaining_token_lifetime(token_data: TokenData) -> int:
+    """Time remaining before the token expires. Returns -1 if the token is unknown or expired."""
+    if token_data.created_at is None or token_data.expires_in is None:
+        return -1  # inconnu, à traiter comme expiré
+    now = int(time.time())
+    return (token_data.created_at + token_data.expires_in) - now
     
-def is_token_expired(token_data: TokenData) -> bool:
-    """Check if the token has expired."""
-    if token_data.created_at is None:
-        return True
-    current_time = int(time.time())
-    return current_time >= token_data.created_at + token_data.expires_in
+async def is_token_expired(token_data: TokenData, session: httpx.AsyncClient) -> bool:
+    """Check if the token has expired, en fetchant les métadonnées si besoin."""
+    
+    if token_data.created_at is None or token_data.expires_in is None:
+        token_info = await get_token_information(token_data.access_token, session)
+        if token_info:
+            scopes = token_info.get("scopes", [])
+            token_data.scope = " ".join(scopes) if isinstance(scopes, list) else str(scopes)
+            token_data.expires_in = int(token_info.get("expires_in_seconds", 0))
+            token_data.created_at = int(time.time())
+        else:
+            return True
+
+    return await get_remaining_token_lifetime(token_data) <= 0
 
 async def get_token(auth_code: str, session: httpx.AsyncClient, config: ShippingBoConfig, headers: dict[str, Any] | None = None) -> TokenData | None:
     """
@@ -119,3 +134,33 @@ async def refresh_token(refresh_token: str,
         )
     else:
         raise TokenRefreshError(f"Failed to refresh token: {response.status_code} - {response.text}")
+    
+async def get_token_information(access_token: str, session: httpx.AsyncClient) -> dict[str, Any]:
+    """
+    Get information about the access token.
+    Args:
+        access_token (str): The access token to get information about.
+        session (httpx.AsyncClient): The HTTP client session to use for making the request.
+        config (ShippingBoConfig): The configuration object containing necessary parameters.
+        headers (dict[str, Any] | None): Optional headers to include in the request.
+    Returns:
+        dict[str, Any]: The token information if the request is successful.
+    Raises:
+        BadRequestError: If the request is malformed or contains invalid parameters.
+        UnauthorizedError: If the request is unauthorized.
+        AuthenticationError: If there is an error obtaining the token information.
+    """
+    auth_headers = {}
+    auth_headers['Authorization'] = f'Bearer {access_token}'
+    
+    response = await session.get(headers=auth_headers)
+    
+    if response.status_code == 200:
+        return response.json()
+    else:
+        if response.status_code == 400:
+            raise BadRequestError(status_code=response.status_code, message=f"Bad request: {response.text}")
+        elif response.status_code == 401:
+            raise UnauthorizedError(status_code=response.status_code, message=f"Unauthorized access: {response.text}")
+        else:
+            raise AuthenticationError(f"Failed to get token information: {response.status_code} - {response.text}")

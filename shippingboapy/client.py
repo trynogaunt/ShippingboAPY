@@ -1,6 +1,6 @@
 import httpx
 from shippingboapy.config import ShippingBoConfig
-from shippingboapy.auth import TokenData, get_token, refresh_token
+from shippingboapy.auth import TokenData, get_token, refresh_token, is_token_expired, get_token_information
 import asyncio
 from shippingboapy.exceptions import BadRequestError, AuthenticationError, TokenRefreshError, UnexpectedError, ForbiddenError, NotFoundError, ServerError
 from shippingboapy.resources.product import ProductResource
@@ -29,6 +29,7 @@ from shippingboapy.resources.update_hook import UpdateHookResource
 from shippingboapy.resources.shipment_pallet import ShipmentPalletResource
 from shippingboapy.resources.reseller import ResellerResource
 from shippingboapy.resources.reseller_product import ResellerProductResource
+import time
 
 from typing import Callable, Awaitable, Any, Protocol
 
@@ -69,6 +70,7 @@ class Client:
             client_id=client_id,
             client_secret=client_secret
         )
+        
         
         self.token: TokenData | None = TokenData(
             access_token=str(access_token),
@@ -173,9 +175,24 @@ class Client:
             case _:
                 raise UnexpectedError(response.status_code, f"Unexpected error: {response.text}")
             
-    
+    async def _sync_token_info(self):
+        """Fetch real token metadata from ShippingBo and align local TokenData."""
+        if self.token is None:
+            raise AuthenticationError("No token to sync.")
+        info = await get_token_information(self.token.access_token, self.session)
+        self.token.expires_in = info["expires_in_seconds"]
+        self.token.scope = " ".join(info["scopes"]) if isinstance(info["scopes"], list) else info["scopes"]
+        self.token.created_at = int(time.time())
+
     async def _raw_request(self, method: str, endpoint: str, params: dict[str, Any] | None = None, **kwargs: Any) -> httpx.Response:
         
+        if await is_token_expired(self.token, self.session):
+            try:
+                new_token : TokenData | None = await refresh_token(self.token.refresh_token, self.session, self.config, on_refresh=self.on_token_refresh)
+                self._set_token(new_token)
+            except Exception as e:
+                raise TokenRefreshError(f"Failed to refresh token: {str(e)}") from e
+
         if self.token is None:
             raise AuthenticationError("Access token is missing. Please authenticate first.")
         
@@ -236,7 +253,16 @@ class Client:
             self._set_token(new_token)
         except Exception as e:
             raise TokenRefreshError(f"Failed to refresh token: {str(e)}") from e
-        
+
+    async def get_token_info(self, access_token: str) -> dict[str, Any]:
+        if self.token is None:
+            raise AuthenticationError("Access token is missing. Please authenticate first.")
+        try:
+            token_info = await get_token_information(self.token.access_token, self.session)
+            return token_info
+        except Exception as e:
+            raise AuthenticationError(f"Failed to get token information: {str(e)}") from e
+
     @classmethod
     async def from_auth_code(cls, auth_code: str, app_id: str, api_version: str, client_id: str, client_secret: str, is_staging: bool = False, redirect_uri: str | None = None, headers: dict[str, Any] | None = None, on_token_refresh: OnTokenRefreshCallback | None = None) -> "Client":
         config_dict : dict[str, Any] = {
@@ -269,6 +295,27 @@ class Client:
        
         return cls
     
+    @classmethod
+    async def run(cls, access_token: str, refresh_token: str, app_id: str, api_version: str, client_id: str, client_secret: str, is_staging: bool = False, on_token_refresh: OnTokenRefreshCallback | None = None) -> "Client":
+        self = cls(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            app_id=app_id,
+            api_version=api_version,
+            client_id=client_id,
+            client_secret=client_secret,
+            is_staging=is_staging,
+            on_token_refresh=on_token_refresh
+        )
+
+        if self.token and self.token.created_at is None:
+            token_info = await get_token_information(self.token.access_token, self.session)
+            self.token.expires_in = int(token_info.get("expires_in_seconds", 0)) if token_info else 0
+            self.token.scope = token_info.get("scopes", "") if token_info else ""
+            self.token.created_at = int(token_info.get("created_at", 0)) if token_info else 0
+
+        return self
+
     async def close(self):
         await self.session.aclose()
     
