@@ -14,14 +14,17 @@ TSummary = TypeVar("TSummary", bound=BaseModel)
 
 class BaseResource:
     _path: ClassVar[str] 
+    _dict_header: ClassVar[str] = ""
     _model: ClassVar[type[BaseModel]]
     
     def __init__(self, client: "Client"):
         self.client = client
     
     def _unwrap(self, response: object) -> object:
-        if isinstance(response, dict) and self._path in response:
-            return response[self._path]
+        focused_header = self._dict_header if self._dict_header else self._path
+
+        if isinstance(response, dict) and focused_header in response:
+            return response[focused_header]
         return response
 
 class Gettable(BaseResource, Generic[TRead]):
@@ -43,6 +46,34 @@ class Gettable(BaseResource, Generic[TRead]):
         response = self._unwrap(response)
 
         return cast(TRead, self._model.model_validate(response))
+
+class FilterableGettable(Gettable[TRead], Generic[TRead]):
+    async def get(self, search: Optional[list[Filter]] = None) -> TRead:
+        """
+        Get a resource by its ID with optional filtering.
+
+        Args:
+            resource_id (int | str): The ID of the resource to retrieve.
+            search (list[Filter], optional): A list of Filter objects representing the search criteria.
+
+        Returns:
+            TRead: The resource with the specified ID that matches the search criteria.
+        """
+        params = {}
+        
+        if search is not None:
+            for filter_obj in search:
+                key = f"search{filter_obj.to_params()}"
+                params[key] = str(filter_obj.value)
+        
+        response = await self.client._request("GET", f"{self._path}", params=params)
+
+        if response is None:
+            return []
+        
+        response = self._unwrap(response)
+
+        return [cast(TRead, self._model.model_validate(item)) for item in response]
 
 class Listable(BaseResource, Generic[TSummary]):
     _list_model: ClassVar[type[BaseModel]]
