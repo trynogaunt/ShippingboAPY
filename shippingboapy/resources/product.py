@@ -6,7 +6,6 @@ from shippingboapy.models.product import Product, ProductCreate
 
 class ProductResource(Gettable[Product], Updatable[Product, Product], Creatable[ProductCreate, Product], Deletable):
     _path = "products"
-    _dict_headers = ["product"]
     _model = Product
  
     async def list(self, limit: str = 50, offset: str = 0, is_pack: str = None, search: Optional[list[Filter]] = None) -> list[Product]:
@@ -34,6 +33,6 @@ class ProductResource(Gettable[Product], Updatable[Product, Product], Creatable[
         
         response = self._unwrap(response)
 
-        print(f"List Products Response: {response}")  # Debugging line to print the response
+
 
         return [cast(Product, self._model.model_validate(item)) for item in response]

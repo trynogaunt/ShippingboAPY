@@ -14,7 +14,7 @@ TSummary = TypeVar("TSummary", bound=BaseModel)
 
 class BaseResource:
     _path: ClassVar[str] 
-    _dict_header: ClassVar[str] = ""
+    _dict_header: ClassVar[str] = []
     _model: ClassVar[type[BaseModel]]
     
     def __init__(self, client: "Client"):
@@ -27,7 +27,7 @@ class BaseResource:
         probable_headers.append(self._path)
         single_item_headers = [header[:-1] for header in probable_headers if header.endswith('s')]
         probable_headers.extend(single_item_headers)
-        print(f"Unwrapping response with probable headers: {probable_headers}")  # Debugging line to print probable headers
+
         for header in probable_headers:
             if isinstance(response, dict) and header in response:
                 return response[header]
