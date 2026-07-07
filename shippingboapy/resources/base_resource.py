@@ -157,10 +157,14 @@ class Creatable(BaseResource, Generic[TCreate, TRead]):
        
         response = await self.client._request("POST", self._path, json=data.model_dump(by_alias=True, exclude_none=True))
         
+        print(f"Response from POST request: {response}")  # Debugging line
+
         if response is None:
             raise ValueError("Failed to create resource.")
 
         response = self._unwrap(response)
+
+        print(f"Response after unwrapping: {response}")  # Debugging line
 
         return cast(TRead, self._model.model_validate(response))
 

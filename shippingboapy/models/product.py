@@ -135,7 +135,7 @@ class Product(BaseModel):
     title: Optional[str] = Field(None, description="The title of the product.")
     total_physical_stock: Optional[int] = Field(None, description="Only for OMS: total physical stock computed from suppliers")
     unit_volume: Optional[int] = Field(None, description="The unit volume of the product in cubic millimeters, height * length * width")
-    user_ref: str = Field(..., description="The main reference of the product, usually useful to match product reference if orders")
+    user_ref: Optional[str] = Field(None, description="The main reference of the product, usually useful to match product reference if orders")
     weight: Optional[int] = Field(None, description="The weight of the product in grams.")
     width: Optional[int] = Field(None, description="The width of the product in millimeters.")
     
