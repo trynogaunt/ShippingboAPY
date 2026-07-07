@@ -2,7 +2,7 @@ import httpx
 from shippingboapy.config import ShippingBoConfig
 from shippingboapy.auth import TokenData, get_token, refresh_token, is_token_expired, get_token_information
 import asyncio
-from shippingboapy.exceptions import BadRequestError, AuthenticationError, TokenRefreshError, UnexpectedError, ForbiddenError, NotFoundError, ServerError
+from shippingboapy.exceptions import BadRequestError, AuthenticationError, TokenRefreshError, UnexpectedError, ForbiddenError, NotFoundError, ServerError, ConflictError
 from shippingboapy.resources.product import ProductResource
 from shippingboapy.resources.order import OrderResource
 from shippingboapy.resources.order_tag import OrderTagResource
@@ -168,6 +168,8 @@ class Client:
                 raise ForbiddenError(response.status_code, f"Forbidden access: {response.text}")
             case 404:
                 raise NotFoundError(response.status_code, f"Resource not found: {response.text}")
+            case 409:
+                raise ConflictError(response.status_code, f"Entity already exists: {response.text}")
             case 422:
                 raise BadRequestError(response.status_code, f"Unprocessable entity: {response.text}")
             case s if s >= 500:

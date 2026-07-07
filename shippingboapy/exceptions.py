@@ -52,3 +52,7 @@ class ServerError(APIRequestError):
 class UnexpectedError(APIRequestError):
     """Raised when an unexpected error occurs."""
     pass
+
+class ConflictError(APIRequestError):
+    """Raised when there is a conflict with the current state of the resource."""
+    pass
