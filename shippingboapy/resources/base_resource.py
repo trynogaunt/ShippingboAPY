@@ -21,10 +21,18 @@ class BaseResource:
         self.client = client
     
     def _unwrap(self, response: object) -> object:
-        focused_header = self._dict_header if self._dict_header else self._path
-
-        if isinstance(response, dict) and focused_header in response:
-            return response[focused_header]
+        
+        probable_headers = []
+        probable_headers.append(self._dict_header) if self._dict_header else None
+        probable_headers.append(self._path)
+        single_item_headers = [header[:-1] for header in probable_headers if header.endswith('s')]
+        probable_headers.extend(single_item_headers)
+        print(f"Unwrapping response with probable headers: {probable_headers}")  # Debugging line to print probable headers
+        for header in probable_headers:
+            if isinstance(response, dict) and header in response:
+                return response[header]
+            else:
+                continue
         return response
 
 class Gettable(BaseResource, Generic[TRead]):
