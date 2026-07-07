@@ -5,7 +5,7 @@ from shippingboapy.models.types import ShippingboDateTime
 class Address(BaseModel):
     apartement_number: Optional[str] = Field(None, description="The number of the apartment, if applicable.")
     building: Optional[str] = Field(None, alias="building", description="The building name or number, if applicable.")
-    city: str = Field(..., alias="city", description="The city of the address.")
+    city: Optional[str] = Field(None, alias="city", description="The city of the address.")
     civility: Optional[str] = Field(None, alias="civilitity", description="The civility of the recipient (e.g., Mr, Ms, Company).")
     company_name: Optional[str] = Field(None, alias="company_name", description="The name of the company, if applicable.")
     country: str = Field(..., alias="country", description="The country of the address.")

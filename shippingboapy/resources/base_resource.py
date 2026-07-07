@@ -142,7 +142,7 @@ class MandatoryFilterableListable(FilterableListable[TSummary], Generic[TSummary
         return await super().list(search=search)
 
 class Creatable(BaseResource, Generic[TCreate, TRead]):
-    async def create(self, data: TCreate) -> TRead:
+    async def create(self, data: dict | TCreate) -> TRead:
         """
         Create a new resource.
 
@@ -152,6 +152,9 @@ class Creatable(BaseResource, Generic[TCreate, TRead]):
         Returns:
             TRead: The created resource.
         """
+        if isinstance(data, dict):
+            data = cast(TCreate, self._model.model_validate(data))
+       
         response = await self.client._request("POST", self._path, json=data.model_dump(by_alias=True, exclude_none=True))
         
         if response is None:
@@ -162,7 +165,7 @@ class Creatable(BaseResource, Generic[TCreate, TRead]):
         return cast(TRead, self._model.model_validate(response))
 
 class Updatable(BaseResource, Generic[TUpdate, TRead]):
-    async def update(self, resource_id: int | str, data: TUpdate) -> TRead:
+    async def update(self, resource_id: int | str, data: dict | TUpdate) -> TRead:
         """
         Update an existing resource.
 
@@ -173,6 +176,10 @@ class Updatable(BaseResource, Generic[TUpdate, TRead]):
         Returns:
             TRead: The updated resource.
         """
+
+        if isinstance(data, dict):
+            data = cast(TUpdate, self._model.model_validate(data))
+       
         response = await self.client._request("PATCH", f"{self._path}/{resource_id}", json=data.model_dump(by_alias=True, exclude_none=True))     
 
         if response is None:

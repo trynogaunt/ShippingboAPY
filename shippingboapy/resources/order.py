@@ -1,13 +1,14 @@
 from __future__ import annotations
 from shippingboapy.resources.base_resource import Gettable, Creatable, Updatable
-from shippingboapy.models.order import Order, OrderCreate, OrderSummary, ArchivedOrder, SuborderSplit, Suborder, OrderItemUpdate
+from shippingboapy.models.order import Order, OrderCreate, OrderSummary, ArchivedOrder, SuborderSplit, Suborder, OrderItemUpdate, OrderUpdate
 from shippingboapy.models.filter import Filter
 from typing import List, Optional, Literal
 
 #TODO Finishing Order endpoint implementation, done until remove from run, all endpoint before are implemented, but not tested yet. Need to implement the rest of the endpoints and test all of them.
 
-class OrderResource(Gettable[Order], Creatable[OrderCreate, Order], Updatable[Order, Order]):
+class OrderResource(Gettable[Order], Creatable[OrderCreate, Order], Updatable[Order, OrderUpdate]):
     _path = "orders"
+    _dict_header = "order"
     _model = Order
     _list_model = OrderSummary
 

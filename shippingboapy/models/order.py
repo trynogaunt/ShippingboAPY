@@ -171,7 +171,7 @@ class Shipment(BaseModel):
         "validate_assignment": True
     }
 class OrderBase(BaseModel):
-    id: int = Field(..., alias="id")
+    id: Optional[int] = Field(None, alias="id")
     origin_ref: Optional[str] = Field(None, alias="origin_ref")
     source: Optional[str] = Field(None, alias="source")
     state: Optional[str] = Field(None, alias="state")
@@ -364,6 +364,15 @@ class Suborder(BaseModel):
     state: str = Field(..., alias="state", description="The state of the suborder (e.g., pending, processing, shipped, etc.).")
     total_quantity: int = Field(..., alias="total_quantity", description="The total quantity of items in the suborder.")
 
+    model_config = {
+        "extra": "allow",
+        "populate_by_name": True,
+        "validate_assignment": True
+    }
+
+class OrderUpdate(BaseModel):
+    state: Optional[str] = Field(None, alias="state", description="The updated state of the order (e.g., pending, processing, shipped, etc.).")
+ 
     model_config = {
         "extra": "allow",
         "populate_by_name": True,
