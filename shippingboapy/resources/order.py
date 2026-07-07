@@ -131,18 +131,28 @@ class OrderResource(Gettable[Order], Creatable[OrderCreate, Order], Updatable[Or
 
         return [Suborder.model_validate(item) for item in response]
     
-    async def update_order_items(self, order_id: int | str, order_items: list[OrderItemUpdate]) -> Order:
+    async def update_order_items(self, order_id: int | str, order_items: list[OrderItemUpdate | dict]) -> Order:
         """
         Update the items of an order.
 
         Args:
             order_id (int | str): The ID of the order to update.
-            order_items (list[OrderItemUpdate]): A list of OrderItemUpdate objects representing the updated order items.
+            order_items (list[OrderItemUpdate | dict]): A list of OrderItemUpdate objects or dictionaries representing the updated order items.
         
         Returns:
             Order: The updated order.
         """
-        response = await self.client._request("PATCH", f"{self._path}/{order_id}/update_order_items", json={"order_items": [item.model_dump(by_alias=True, exclude_none=True) for item in order_items]})
+
+        normalized_list = []
+
+        for i, item in enumerate(order_items):
+            if isinstance(item, dict):
+                new_item = OrderItemUpdate.model_validate(item)
+                normalized_list.append(new_item)
+            else:
+                normalized_list.append(item)
+
+        response = await self.client._request("PATCH", f"{self._path}/{order_id}/update_order_items", json={"order_items": [item.model_dump(by_alias=True, exclude_none=True) for item in normalized_list]})
 
         if response is None:
             raise ValueError(f"Order with ID {order_id} not found or could not be updated.")
@@ -152,17 +162,20 @@ class OrderResource(Gettable[Order], Creatable[OrderCreate, Order], Updatable[Or
         return Order.model_validate(response)
     
     #TODO rework all order models
-    async def add_order_item(self, order_id: int | str, order_item: OrderItemUpdate) -> Order:
+    async def add_order_item(self, order_id: int | str, order_item: OrderItemUpdate | dict) -> Order:
         """
         Add an item to an order.
 
         Args:
             order_id (int | str): The ID of the order to add the item to.
-            order_item (OrderItemUpdate): The OrderItemUpdate object representing the item to add.
+            order_item (OrderItemUpdate | dict): The OrderItemUpdate object or dictionary representing the item to add.
         
         Returns:
             Order: The updated order with the new item added.
         """
+        if isinstance(order_item, dict):
+            order_item = OrderItemUpdate.model_validate(order_item)
+
         response = await self.client._request("POST", f"{self._path}/{order_id}/add_order_item", json=order_item.model_dump(by_alias=True, exclude_none=True))
 
         if response is None:
