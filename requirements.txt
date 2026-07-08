@@ -40,7 +40,6 @@ requests-toolbelt==1.0.0
 rfc3986==2.0.0
 rich==15.0.0
 SecretStorage==3.5.0
--e git+https://github.com/trynogaunt/ShippingboAPY@5bc998fa73e9d88b8205ef8fbfb8a4ae96d16905#egg=shippingbo_apy
 twine==6.2.0
 typing-inspection==0.4.2
 typing_extensions==4.15.0
