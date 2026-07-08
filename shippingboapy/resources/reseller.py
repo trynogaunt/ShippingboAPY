@@ -1,5 +1,5 @@
 from __future__ import annotations
-from shippingbo.resources.base_resource import Gettable, Listable
+from shippingboapy.resources.base_resource import Gettable, Listable
 from shippingboapy.models.reseller import Reseller
 
 
