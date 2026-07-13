@@ -38,9 +38,8 @@ class ProductVariationStockResource:
         data = await self.client._request("GET", "/product_stock_variations", params=params)
         if data is None:
             return []
-        
-        if isinstance(data, dict) and "stock_variations" in data:
-            data = data.get("stock_variations", [])
+        if isinstance(data, dict) and "product_stock_variations" in data:
+            data = data.get("product_stock_variations", [])
         
         return [ProductStockVariation.model_validate(item) for item in data]
         

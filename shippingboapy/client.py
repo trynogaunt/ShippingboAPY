@@ -236,6 +236,7 @@ class Client:
             return await self._process_response(response)
 
     async def _request(self, method: str, endpoint: str, params: dict[str, Any] | None = None, **kwargs: Any) -> Any:
+
         response = await self._raw_request(method, endpoint, params, **kwargs)
         if not response.content:
             return {}

@@ -33,4 +33,4 @@ class Filter(BaseModel):
         return key
 
 class ProductVariationStockFilter(Filter):
-    _JOIN_FIELDS: ClassVar[dict[str, str]] = {"ean13": "product", "title": "product", "user_ref": "product"}
+    _JOIN_FIELDS: ClassVar[dict[str, str]] = {"ean13": "products", "title": "product", "user_ref": "product"}
